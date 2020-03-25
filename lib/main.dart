@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:e_movies/pages/main_page.dart';
+
+import 'providers/movies.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,15 +13,28 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'eMovies',
-      theme: ThemeData(
-        primaryColor: Color(0xFF1C306D),
-        accentColor: Color(0xFFFFAD32),
-        scaffoldBackgroundColor: Colors.transparent,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: Movies()),
+      ],
+      child: MaterialApp(
+        title: 'eMovies',
+        theme: ThemeData(
+          primaryColor: Color(0xFF1C306D),
+          accentColor: Color(0xFFFFAD32),
+          scaffoldBackgroundColor: Colors.transparent,
+          textTheme: TextTheme(
+            headline6: TextStyle(
+              fontSize: 18,
+              fontFamily: 'Roboto',
+              // fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        home: MainPage(),
+        debugShowCheckedModeBanner: false,
       ),
-      home: MainPage(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

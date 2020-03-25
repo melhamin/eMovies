@@ -1,3 +1,4 @@
+import 'package:e_movies/genres.dart';
 import 'package:flutter/material.dart';
 
 class EAppBar extends StatefulWidget {
@@ -24,6 +25,8 @@ class _EAppBarState extends State<EAppBar> {
     _searchFieldController.dispose();
   }
 
+  
+
   List<Widget> _buildActions() {
     if (_isSearching)
       return [
@@ -49,7 +52,7 @@ class _EAppBarState extends State<EAppBar> {
         onPressed: () {
           setState(() {
             _isSearching = true;
-          });
+          });                          
         },
       ),
     ];

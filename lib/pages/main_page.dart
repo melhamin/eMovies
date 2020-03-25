@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/widgets/bottom_tab_bar.dart';
-import 'package:e_movies/pages/all_movies_page.dart';
 import 'package:e_movies/pages/favorites_page.dart';
 import 'package:e_movies/widgets/e_app_bar.dart';
+import 'all_movies_page.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  int _selectedIndex = 0;
+  int _selectedIndex = 0;  
 
   @override
   initState() {
@@ -34,7 +34,7 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  void _onTap(int newIndex) {
+  void _onTap(int newIndex) {    
     setState(() {
       _selectedIndex = newIndex;
       _tabController.index = newIndex;
@@ -45,7 +45,12 @@ class _MainPageState extends State<MainPage>
   Widget build(BuildContext context) {
     final _background_image = Image.asset(
       'assets/images/background_image.jpg',
-      fit: BoxFit.cover,         
+      fit: BoxFit.cover,
+    );
+
+    final currentPage = _BottomTabs(
+      currentIndex: _selectedIndex,
+      onTap: _onTap,
     );
 
     final _content = Scaffold(
@@ -56,14 +61,14 @@ class _MainPageState extends State<MainPage>
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
-          _BottomTabs(
-            currentIndex: _selectedIndex,
-            onTap: _onTap,
-          ),
+          currentPage,
+          // _BottomTabs(
+          //   currentIndex: _selectedIndex,
+          //   onTap: _onTap,
+          // ),
         ],
       ),
     );
-
     return Stack(
       fit: StackFit.expand,
       children: <Widget>[
@@ -92,12 +97,18 @@ class _BottomTabs extends StatelessWidget {
         onTap: onTap,
         items: [
           BottomNavigationBarItem(
-            title: Text('Trending', style: TextStyle(fontSize: 12),),
+            title: Text(
+              'Trending',
+              style: TextStyle(fontSize: 12),
+            ),
             icon: Icon(Icons.theaters),
             backgroundColor: Theme.of(context).primaryColor,
           ),
           BottomNavigationBarItem(
-            title: Text('Favorites', style: TextStyle(fontSize: 12),),
+            title: Text(
+              'Favorites',
+              style: TextStyle(fontSize: 12),
+            ),
             icon: Icon(Icons.favorite),
             backgroundColor: Theme.of(context).primaryColor,
           ),
