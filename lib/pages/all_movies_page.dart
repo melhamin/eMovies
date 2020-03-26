@@ -35,9 +35,10 @@ class _AllMoviesState extends State<AllMoviesPage> {
 
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
+    // super.build(context);    
     final movies = Provider.of<Movies>(context).movies;
     return GridView.builder(
+      key: PageStorageKey('AllMoviesPage'),
       itemCount: movies.length,
       itemBuilder: (ctx, i) {
         final item = movies[i];
