@@ -37,17 +37,15 @@ class _AllMoviesState extends State<AllMoviesPage> {
   Widget build(BuildContext context) {
     // super.build(context);   
     print('AllMoviesPage ---> build called...'); 
-    final movies = Provider.of<Movies>(context, listen: false).movies;
+    final movies = Provider.of<Movies>(context).movies;
     return GridView.builder(
       key: PageStorageKey('AllMoviesPage'),
-      cacheExtent: 50,
+      // cacheExtent: 50,
       itemCount: movies.length,
       itemBuilder: (ctx, i) {
         final item = movies[i];
-        return MovieItem(
-          title: item.title,
-          genreIds: item.genreIDs,
-          imageUrl: item.imageUrl,
+        return MovieItem(   
+          id: item.id,                 
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

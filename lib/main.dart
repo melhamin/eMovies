@@ -1,3 +1,4 @@
+import 'package:e_movies/pages/movie_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,14 +19,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: Movies()),
       ],
       child: MaterialApp(
-        title: 'eMovies',
+        title: 'eMovies',        
         theme: ThemeData(
           primaryColor: Color(0xFF1C306D),
           accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
             headline6: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontFamily: 'Roboto',
               // fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         ),
         home: MainPage(),
         debugShowCheckedModeBanner: false,
+        routes: {
+          MovieDetailPage.routeName: (ctx) => MovieDetailPage(),
+        },
       ),
     );
   }

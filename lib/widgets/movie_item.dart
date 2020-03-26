@@ -1,107 +1,123 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:provider/provider.dart';
 
 import 'package:e_movies/genres.dart';
+import '../pages/movie_details_page.dart';
+import '../providers/movies.dart';
 
 class MovieItem extends StatelessWidget {
-  final String title;
-  final dynamic genreIds;
-  final String imageUrl;
-  // final DateTime releaseDate;
+  final int id;
 
   MovieItem({
-    this.title,
-    this.genreIds,
-    this.imageUrl,
-    // this.releaseDate,
+    this.id,
   });
 
-  Widget _buildMovieItem() {
-    return Container(
-        child: Positioned.fill(
-      child: Text(title),
-      top: 10,
-      left: 10,
-    ));
+  String getGenreName(int genreId) {
+    return GENRES[genreId];
   }
 
-  String getGenreName() { 
-    return GENRES[genreIds[0]];   
-    // String res = '';   
-    // genreIds.forEach((id) {
-    //   res += '${GENRES[id]}, ';
-    // });
-    // res = res.substring(0, res.length - 2);
-    // print(res);
-    // return res;
+  void _onDetailsPressed(BuildContext context, int id) {
+    Navigator.of(context).pushNamed(MovieDetailPage.routeName, arguments: id);
+  }
+
+  String _formatDate(DateTime date) {
+    return intl.DateFormat('dd MM yyyy').format(date);
+  }
+
+  Widget _buildBackgroundImage(String imageUrl) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      imageBuilder: (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          color: const Color(0xff000000),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.7), BlendMode.dstATop),
+            image: imageProvider,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context, double screenWidth, String title,
+      int genreId, DateTime date) {
+    return Positioned.directional(
+      width: screenWidth / 2,
+      height: 75,
+      bottom: 0,
+      textDirection: TextDirection.ltr,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromRGBO(0, 0, 0, 0.9),
+                  Color.fromRGBO(0, 0, 0, 0)
+                ]),
+            backgroundBlendMode: BlendMode.dstIn),
+        constraints: BoxConstraints(maxWidth: screenWidth / 2 - 20),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title == null ? 'N/A' : title,
+                style: Theme.of(context).textTheme.headline6,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
+              FittedBox(
+                child: Text(
+                  getGenreName(genreId),
+                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(height: 5),
+              FittedBox(
+                child: Text(
+                  _formatDate(date),
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     print('MovieItem ---> build called...');
+    final movie = Provider.of<Movies>(context, listen: false).findById(id);
     final screenWidth = MediaQuery.of(context).size.width;
     return ClipRRect(
       child: GridTile(
         child: GestureDetector(
           child: Stack(
             children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xff000000),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                    image: NetworkImage(imageUrl),
-                  ),
-                ),
-              ),
-              Positioned.directional(
-                textDirection: TextDirection.ltr,
-                bottom: 20,
-                start: 20,
-                child: Container(
-                  constraints: BoxConstraints(maxWidth: screenWidth / 2 - 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title,
-                          style: Theme.of(context).textTheme.headline6,
-                          softWrap: false,
-                          overflow: TextOverflow.ellipsis),
-                      Text(                        
-                        getGenreName(),
-                        style: TextStyle(fontSize: 16, color: Colors.white70), 
-                        softWrap: false,  
-                        overflow: TextOverflow.ellipsis,                     
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              // Positioned.directional(
-              //   textDirection: TextDirection.ltr,
-              //   bottom: 40,
-              //   start: 10,
-              // Column(
-              //   children: <Widget>[
-              //     Align(
-              //       alignment: Alignment.bottomLeft,
-              //       child: Text(
-              //         title,
-              //         style: Theme.of(context).textTheme.headline6,
-              //         overflow: TextOverflow.fade,
-              //       ),
-              //     ),
-              //     Text('Action'),
-              //   ],
-              // ),
-              // Container(
-              //   padding: EdgeInsets.only(right: 20),
-              // ),
-              // ),
+              _buildBackgroundImage(movie.imageUrl),
+              _buildFooter(
+                context,
+                screenWidth,
+                movie.title,
+                movie.genreIDs[0],
+                movie.releaseDate,
+              )
             ],
           ),
-          onTap: () {},
+          onTap: () => _onDetailsPressed(context, id),
         ),
       ),
     );

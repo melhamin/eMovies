@@ -25,8 +25,6 @@ class _EAppBarState extends State<EAppBar> {
     _searchFieldController.dispose();
   }
 
-  
-
   List<Widget> _buildActions() {
     if (_isSearching)
       return [
@@ -52,7 +50,7 @@ class _EAppBarState extends State<EAppBar> {
         onPressed: () {
           setState(() {
             _isSearching = true;
-          });                          
+          });
         },
       ),
     ];
@@ -71,13 +69,21 @@ class _EAppBarState extends State<EAppBar> {
     );
   }
 
+  Widget _backButton() {
+    return BackButton(onPressed: () {
+      setState(() {
+        _isSearching = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: false,
       title: _isSearching ? _buildSearchField() : EMoviesIcon(),
-      leading: _isSearching ? BackButton() : null,
+      leading: _isSearching ? _backButton() : null,
       actions: _buildActions(),
     );
   }
@@ -86,8 +92,13 @@ class _EAppBarState extends State<EAppBar> {
 class EMoviesIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Text('eMovies'),
+    return Container(
+      width: 40,
+      height: 40,
+      child: Image.asset(
+        'assets/images/logo.png',
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

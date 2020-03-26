@@ -1,11 +1,10 @@
+import 'package:e_movies/pages/most_watched_page.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:e_movies/widgets/bottom_tab_bar.dart';
 import 'package:e_movies/pages/favorites_page.dart';
 import 'package:e_movies/widgets/e_app_bar.dart';
 import 'all_movies_page.dart';
-import '../providers/movies.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -15,7 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  int _selectedIndex = 1;  
+  int _selectedIndex = 0;  
 
   @override
   initState() {
@@ -23,7 +22,7 @@ class _MainPageState extends State<MainPage>
     // Future.delayed(Duration.zero).then((value) => {
     //   Provider.of<Movies>(context, listen: false).fetch(),
     // });
-    _tabController = TabController(vsync: this, length: 2);
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   Widget _buildTabContent() {
@@ -34,6 +33,7 @@ class _MainPageState extends State<MainPage>
         children: <Widget>[
           AllMoviesPage(),
           FavoritesPage(),
+          MostWatchedPage(),
         ],
       ),
     );
@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage>
     );
 
     final _content = Scaffold(
-      appBar: PreferredSize(
+      appBar: PreferredSize(        
         child: EAppBar(),
         preferredSize: Size.fromHeight(kToolbarHeight),
       ),
@@ -111,6 +111,14 @@ class _BottomTabs extends StatelessWidget {
               style: TextStyle(fontSize: 12),
             ),
             icon: Icon(Icons.favorite),
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+          BottomNavigationBarItem(
+            title: Text(
+              'Most Watched',
+              style: TextStyle(fontSize: 12),
+            ),
+            icon: Icon(Icons.tv),
             backgroundColor: Theme.of(context).primaryColor,
           ),
         ],

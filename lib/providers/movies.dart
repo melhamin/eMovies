@@ -14,17 +14,17 @@ class MovieItem {
   final String imageUrl;
   @required
   final String overview;
-  final DateTime release_date;
+  final DateTime releaseDate;
   @required
   final List<dynamic> genreIDs;
   @required
-  final String original_language;
+  final String originalLanguage;
   @required
-  final double vote_average;
+  final double voteAverage;
   @required
-  final int vote_count;
+  final int voteCount;
   @required
-  final String media_type;
+  final String mediaType;
 
   final double popularity;
 
@@ -34,17 +34,17 @@ class MovieItem {
     this.imageUrl,
     this.genreIDs,
     this.overview,
-    this.release_date,
-    this.original_language,
-    this.media_type,
-    this.vote_average,
-    this.vote_count,
+    this.releaseDate,
+    this.originalLanguage,
+    this.mediaType,
+    this.voteAverage,
+    this.voteCount,
     this.popularity,
   });
 
   @override
   String toString() {
-    return 'id: $id\n title:$title\n imageUrl: $imageUrl\n overview: $overview\n vote_average: $vote_average\n release_date: $release_date\n';
+    return 'id: $id\n title:$title\n imageUrl: $imageUrl\n overview: $overview\n vote_average: $voteAverage\n release_date: $releaseDate\n';
   }
 }
 
@@ -75,13 +75,13 @@ class Movies with ChangeNotifier {
         genreIDs: element['genre_ids'],
         imageUrl: '$IMAGE_URL/${element['poster_path']}',
         overview: element['overview'],
-        release_date: element['release_date'] == null
+        releaseDate: element['release_date'] == null
             ? DateTime.parse('0000-00-00')
             : DateTime.tryParse(element['release_date']),
-        original_language: element['original_language'],
-        media_type: element['media_type'],
-        vote_average: element['vote_average'],
-        vote_count: element['vote_count'],
+        originalLanguage: element['original_language'],
+        mediaType: element['media_type'],
+        voteAverage: element['vote_average'],
+        voteCount: element['vote_count'],
         popularity: element['popularity'],
       ));
       //   print(element['genre_ids']);
@@ -95,4 +95,9 @@ class Movies with ChangeNotifier {
     //   print(element.toString());
     // });
   }
+
+  MovieItem findById(int id) {
+    return _movies.firstWhere((element) => element.id == id);
+  }
+
 }
