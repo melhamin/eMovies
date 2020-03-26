@@ -37,6 +37,7 @@ class MovieItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('MovieItem ---> build called...');
     final screenWidth = MediaQuery.of(context).size.width;
     return ClipRRect(
       child: GridTile(

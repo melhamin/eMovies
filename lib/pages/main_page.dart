@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:e_movies/widgets/bottom_tab_bar.dart';
 import 'package:e_movies/pages/favorites_page.dart';
 import 'package:e_movies/widgets/e_app_bar.dart';
 import 'all_movies_page.dart';
+import '../providers/movies.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -13,11 +15,14 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  int _selectedIndex = 0;  
+  int _selectedIndex = 1;  
 
   @override
   initState() {
     super.initState();
+    // Future.delayed(Duration.zero).then((value) => {
+    //   Provider.of<Movies>(context, listen: false).fetch(),
+    // });
     _tabController = TabController(vsync: this, length: 2);
   }
 
@@ -61,11 +66,7 @@ class _MainPageState extends State<MainPage>
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
-          currentPage,
-          // _BottomTabs(
-          //   currentIndex: _selectedIndex,
-          //   onTap: _onTap,
-          // ),
+          currentPage,         
         ],
       ),
     );

@@ -50,7 +50,7 @@ class MovieItem {
 
 class Movies with ChangeNotifier {
   static const API_KEY = '0ce2331b7a1f2dd735ece9351d3fa34c';
-  static const IMAGE_WEIGHT = 'original';
+  static const IMAGE_WEIGHT = 'w500';
   static const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
 
   List<MovieItem> _movies = [];
