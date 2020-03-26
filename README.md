@@ -1,4 +1,4 @@
-# e_movies
+# eMovies
 
 A new Flutter project.
 
