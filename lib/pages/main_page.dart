@@ -70,12 +70,14 @@ class _MainPageState extends State<MainPage>
         ],
       ),
     );
-    return Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        _background_image,
-        _content,
-      ],
+    return SafeArea(
+          child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          _background_image,
+          _content,
+        ],
+      ),
     );
   }
 }

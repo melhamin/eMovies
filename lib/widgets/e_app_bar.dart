@@ -1,4 +1,3 @@
-import 'package:e_movies/genres.dart';
 import 'package:flutter/material.dart';
 
 class EAppBar extends StatefulWidget {

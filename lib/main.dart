@@ -19,12 +19,17 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: Movies()),
       ],
       child: MaterialApp(
-        title: 'eMovies',        
+        title: 'eMovies',
         theme: ThemeData(
           primaryColor: Color(0xFF1C306D),
           accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
+            subtitle1: TextStyle(
+              fontSize: 12,
+              fontFamily: 'Roboto',
+              color: Colors.white70,
+            ),
             headline6: TextStyle(
               fontSize: 16,
               fontFamily: 'Roboto',
