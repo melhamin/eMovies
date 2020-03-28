@@ -52,6 +52,34 @@ class _EAppBarState extends State<EAppBar> {
           });
         },
       ),
+      PopupMenuButton(        
+        elevation: 10,
+        color: Theme.of(context).primaryColor,
+        itemBuilder: (context) => [
+          PopupMenuItem(            
+            child: Text(
+              'Entry 1',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          PopupMenuItem(
+            child: Text(
+              'Entry 2',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+          PopupMenuItem(
+            child: Text(
+              'Entry 3',
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          ),
+        ],
+      ),
     ];
   }
 

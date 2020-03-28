@@ -2,44 +2,47 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class MovieItem {
-  @required
+
   final int id;
-  @required
+
   final String title;
-  @required
+
   final String imageUrl;
-  @required
+
   final String overview;
   final DateTime releaseDate;
-  @required
+
   final List<dynamic> genreIDs;
-  @required
+
   final String originalLanguage;
-  @required
+
+  final String status;
+
   final double voteAverage;
-  @required
+
   final int voteCount;
-  @required
+
   final String mediaType;
 
   final double popularity;
 
   MovieItem({
-    this.id,
-    this.title,
-    this.imageUrl,
-    this.genreIDs,
-    this.overview,
-    this.releaseDate,
-    this.originalLanguage,
-    this.mediaType,
-    this.voteAverage,
-    this.voteCount,
-    this.popularity,
+    @required this.id,
+    @required this.title,
+    @required this.imageUrl,
+    @required this.genreIDs,
+    @required this.overview,
+    @required this.releaseDate,
+    @required this.originalLanguage,
+    @required this.status,
+    @required this.mediaType,
+    @required this.voteAverage,
+    @required this.voteCount,
+    @required this.popularity,
   });
 
   @override
@@ -53,14 +56,14 @@ class Movies with ChangeNotifier {
   static const IMAGE_WEIGHT = 'w500';
   static const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
 
-  List<MovieItem> _movies = [];
+  List<MovieItem> _movies = [];  
 
   List<MovieItem> get movies {
     return [..._movies];
   }
 
   Future<void> fetch() async {
-    var url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
+    final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
     final response = await http.get(url);
 
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -79,6 +82,7 @@ class Movies with ChangeNotifier {
             ? DateTime.parse('0000-00-00')
             : DateTime.tryParse(element['release_date']),
         originalLanguage: element['original_language'],
+        status: element['release_date'] == null ? 'Not Released': 'Released',
         mediaType: element['media_type'],
         voteAverage: element['vote_average'],
         voteCount: element['vote_count'],

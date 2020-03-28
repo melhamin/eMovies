@@ -14,7 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  int _selectedIndex = 0;  
+  int _selectedIndex = 1;
 
   @override
   initState() {
@@ -22,7 +22,11 @@ class _MainPageState extends State<MainPage>
     // Future.delayed(Duration.zero).then((value) => {
     //   Provider.of<Movies>(context, listen: false).fetch(),
     // });
-    _tabController = TabController(vsync: this, length: 3);
+    _tabController = TabController(
+      vsync: this,
+      length: 3,
+      initialIndex: _selectedIndex,
+    );
   }
 
   Widget _buildTabContent() {
@@ -39,7 +43,7 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  void _onTap(int newIndex) {    
+  void _onTap(int newIndex) {
     setState(() {
       _selectedIndex = newIndex;
       _tabController.index = newIndex;
@@ -59,19 +63,19 @@ class _MainPageState extends State<MainPage>
     );
 
     final _content = Scaffold(
-      appBar: PreferredSize(        
+      appBar: PreferredSize(
         child: EAppBar(),
         preferredSize: Size.fromHeight(kToolbarHeight),
       ),
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
-          currentPage,         
+          currentPage,
         ],
       ),
     );
     return SafeArea(
-          child: Stack(
+      child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
           _background_image,
