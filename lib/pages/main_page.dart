@@ -1,10 +1,12 @@
 import 'package:e_movies/pages/most_watched_page.dart';
+import 'package:e_movies/pages/trending_movies_page.dart';
+import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/widgets/bottom_tab_bar.dart';
 import 'package:e_movies/pages/favorites_page.dart';
 import 'package:e_movies/widgets/e_app_bar.dart';
-import 'all_movies_page.dart';
+
 
 class MainPage extends StatefulWidget {
   @override
@@ -35,8 +37,8 @@ class _MainPageState extends State<MainPage>
         controller: _tabController,
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          AllMoviesPage(),
-          FavoritesPage(),
+          UpcomingMoviesPage(),
+          TrendingMoviesPage(),
           MostWatchedPage(),
         ],
       ),

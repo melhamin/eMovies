@@ -42,7 +42,7 @@ class _EAppBarState extends State<EAppBar> {
           },
         ),
       ];
-    return [
+    return [            
       IconButton(
         color: Colors.white70,
         icon: Icon(Icons.search),
@@ -111,7 +111,7 @@ class _EAppBarState extends State<EAppBar> {
       centerTitle: false,
       title: _isSearching ? _buildSearchField() : EMoviesIcon(),
       leading: _isSearching ? _backButton() : null,
-      actions: _buildActions(),
+      actions: _buildActions(),            
     );
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:provider/provider.dart';
 
 import 'package:e_movies/genres.dart';
 import '../pages/movie_details_page.dart';
-import '../providers/movies.dart';
 
 class MovieItem extends StatelessWidget {
-  final int id;
+  // final int id;
+  final movie;
 
   MovieItem({
-    this.id,
+    // this.id,
+    this.movie,
   });
 
   String getGenreName(int genreId) {
@@ -99,8 +99,8 @@ class MovieItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('MovieItem ---> build called...');
-    final movie = Provider.of<Movies>(context, listen: false).findById(id);
+    // print('MovieItem ---> build called...');
+    // final movie = Provider.of<Movies>(context, listen: false).findById(id);
     final screenWidth = MediaQuery.of(context).size.width;
     return ClipRRect(
       child: GridTile(
@@ -112,12 +112,12 @@ class MovieItem extends StatelessWidget {
                 context,
                 screenWidth,
                 movie.title,
-                movie.genreIDs[0],
+                movie.genreIDs[0]?? -1,
                 movie.releaseDate,
               )
             ],
           ),
-          onTap: () => _onDetailsPressed(context, id),
+          onTap: () => _onDetailsPressed(context, movie.id),
         ),
       ),
     );

@@ -24,45 +24,42 @@ class MovieDetailPage extends StatelessWidget {
           padding: const EdgeInsets.only(left: 8.0),
           child: Container(
             height: 31,
-            child: Flexible(
-              flex: 1,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    height: 30,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white54)),
-                    child: Center(
-                      child: Text(
-                        (5 * movie.voteAverage / 10).toStringAsFixed(1),
-                        style: TextStyle(color: Colors.white70),
-                      ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 30,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white54)),
+                  child: Center(
+                    child: Text(
+                      (5 * movie.voteAverage / 10).toStringAsFixed(1),
+                      style: TextStyle(color: Colors.white70),
                     ),
                   ),
-                  SizedBox(width: 5),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      RatingBar(
-                        initialRating: 5 * movie.voteAverage / 10,
-                        maxRating: 10,
-                        direction: Axis.horizontal,
-                        itemSize: 15,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 5,
-                        ),
-                        onRatingUpdate: (double) {},
+                ),
+                SizedBox(width: 5),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    RatingBar(
+                      initialRating: 5 * movie.voteAverage / 10,
+                      maxRating: 10,
+                      direction: Axis.horizontal,
+                      itemSize: 15,
+                      itemBuilder: (context, index) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 5,
                       ),
-                      Text(
-                        movie.voteCount.toString() + ' votes',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      onRatingUpdate: (double) {},
+                    ),
+                    Text(
+                      movie.voteCount.toString() + ' votes',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -152,7 +149,7 @@ class MovieDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final id = ModalRoute.of(context).settings.arguments as int;
-    final movie = Provider.of<Movies>(context).findById(id);
+    final movie = Provider.of<Movies>(context).findByIdUpcoming(id);
     final _height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
