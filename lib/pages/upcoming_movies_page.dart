@@ -104,6 +104,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
             print('--------------> i: $i    ${movies[i].title}');
             return MovieItem(
               movie: movies[i],
+              type: 'upcoming',
             );
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

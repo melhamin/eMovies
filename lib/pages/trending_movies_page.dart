@@ -99,6 +99,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
             print('--------------> i: $i    ${movies[i].title}');
             return MovieItem(
               movie: movies[i],
+              type: 'trending',
             );
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

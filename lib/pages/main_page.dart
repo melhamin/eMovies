@@ -107,18 +107,18 @@ class _BottomTabs extends StatelessWidget {
         items: [
           BottomNavigationBarItem(
             title: Text(
-              'Trending',
+              'Upcoming',
               style: TextStyle(fontSize: 12),
             ),
-            icon: Icon(Icons.theaters),
+            icon: Icon(Icons.event),
             backgroundColor: Theme.of(context).primaryColor,
           ),
           BottomNavigationBarItem(
             title: Text(
-              'Favorites',
+              'Trending',
               style: TextStyle(fontSize: 12),
             ),
-            icon: Icon(Icons.favorite),
+            icon: Icon(Icons.theaters),
             backgroundColor: Theme.of(context).primaryColor,
           ),
           BottomNavigationBarItem(

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:e_movies/providers/movies.dart';
 
 class EAppBar extends StatefulWidget {
   @override
@@ -47,6 +50,7 @@ class _EAppBarState extends State<EAppBar> {
         color: Colors.white70,
         icon: Icon(Icons.search),
         onPressed: () {
+          Provider.of<Movies>(context, listen:false).getMovieDetails(181812);
           setState(() {
             _isSearching = true;
           });
