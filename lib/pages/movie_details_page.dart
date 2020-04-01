@@ -1,10 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
 
 import '../providers/movies.dart';
 import 'package:e_movies/genres.dart';
+import '../widgets/movie_item.dart' as mo;
 
 class MovieDetailPage extends StatefulWidget {
   static const routeName = '/movie-detail-page';
@@ -97,7 +100,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     RatingBar.readOnly(
-                      initialRating: 5 * movie.voteAverage / 10,
+                      initialRating: (5 * movie.voteAverage / 10),
                       filledIcon: Icons.star,
                       emptyIcon: Icons.star_border,
                       isHalfAllowed: true,
@@ -259,9 +262,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         Center(
           child: FlatButton(
-            child: Text(
-              more ? 'Show more' : 'Show less',
-              style: TextStyle(color: Colors.white70),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                // more ? CupertinoIcons.ellipsis : CupertinoIcons.ellipsis,
+                // color: Colors.white,
+                more ? 'Show more...' : 'Show less...',
+                style: TextStyle(color: Colors.white70),
+              ),
             ),
             onPressed: () {
               setState(() {
@@ -307,22 +315,36 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         _buildDetailsItem('Budget:', detailedMovie.budget.toString()),
         _buildDetailsItem('Reveue:', detailedMovie.revenue.toString()),
         _buildDetailsItem('Popularity:', detailedMovie.popularity.toString()),
-        _buildDetailsItem('Companies:',
-            _getCompanyOrCountry(detailedMovie.productionCompanies)),
+        _buildDetailsItem('Countries:',
+            _getCompanyOrCountry(detailedMovie.productionContries)),
         Stack(
           children: <Widget>[
-            _buildDetailsItem('Countries:',
-                _getCompanyOrCountry(detailedMovie.productionContries)),
-            _toggleDetails(false),
+            _buildDetailsItem('Companies:',
+                _getCompanyOrCountry(detailedMovie.productionCompanies)),
           ],
         ),
-        // Stack(
-        //   children: <Widget>[
-        //     _showMoreDetail(),
-        //   ],
-        // ),
+        _toggleDetails(false),
       ],
     );
+  }
+
+  Widget _similarMovies(List<MovieItem> similarMovies, String type) {
+    return GridView.builder(
+        itemCount: similarMovies.length,
+        itemBuilder: (context, index) {
+    return mo.MovieItem(
+      movie: similarMovies[index],
+      type: type,
+    );        
+        },
+        scrollDirection: Axis.horizontal,      
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 1, 
+    childAspectRatio: 1,
+    crossAxisSpacing: 5, 
+    mainAxisSpacing: 5,
+        ),
+      );
   }
 
   @override
@@ -364,6 +386,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                           !_moreDetails
                               ? lessDetailed(movie)
                               : detailed(movie, _detailedMovie),
+                              if(_isLoading)
+                              Center(child: CircularProgressIndicator()),
+                              if(!_isLoading)
+                              Container(
+                                height: 150,
+                                child: _similarMovies(_similar, type),
+                              ),
                         ],
                       ),
                     ),

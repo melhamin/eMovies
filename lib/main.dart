@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'eMovies',
         theme: ThemeData(
-          primaryColor: Color(0xFF1C306D),
+          primaryColor: Color(0xff1C306D),
           accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
