@@ -52,8 +52,8 @@ class _LoadingIndicatorState extends State<ImageLoadingIndicator>
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   Decoration boxDecoration(Animation<double> animation) {
@@ -140,8 +140,8 @@ class _LineLoadingIndicatorState extends State<LineLoadingIndicator>
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   Decoration boxDecoration(Animation animation) {
