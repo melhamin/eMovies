@@ -95,11 +95,10 @@ class _AllMoviesState extends State<TrendingMoviesPage>
           cacheExtent: 12,
           itemCount: movies.length,
           itemBuilder: (ctx, i) {
-            print('--------------> i: $i');
-            print('--------------> i: $i    ${movies[i].title}');
+            // print('--------------> id: ${movies[i].id}');
+            // print('--------------> i: $i    ${movies[i].title}');
             return MovieItem(
-              movie: movies[i],
-              type: 'trending',
+              movie: movies[i],              
             );
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -21,9 +21,10 @@ class MovieItem {
   int budget;
   String homepage;
   double popularity;
+  int revenue;
+  List<dynamic> reviews;
   List<dynamic> productionCompanies;
   List<dynamic> productionContries;
-  int revenue;
   List<dynamic> cast;
   List<dynamic> recommendations;
   List<dynamic> similar;
@@ -51,6 +52,7 @@ class MovieItem {
     this.recommendations,
     this.similar,
     this.popularity,
+    this.reviews,
   });
 
   static const IMAGE_WEIGHT = 'w500';
@@ -82,20 +84,21 @@ class MovieItem {
 
   static MovieItem fromJsonDetails(dynamic json) {
     return MovieItem(
-      // id: json['id'],
-      // title: json['title'],
-      // genreIDs: json['genres']['id'],
-      // imageUrl: json['poster_path'] == null
-      //     ? null
-      //     : '$IMAGE_URL/${json['poster_path']}',
-      // overview: json['overview'],
-      // releaseDate: json['release_date'] == null
-      //     ? DateTime.parse('0000-00-00')
-      //     : DateTime.tryParse(json['release_date']),
-      // originalLanguage: json['original_language'],
-      // status: json['release_date'] == null ? 'Not Released' : 'Released',
-      // mediaType: json['media_type'],
-      // voteAverage: json['vote_average'] + 0.0,
+      id: json['id'],
+      title: json['title'],
+      genreIDs: json['genres'],
+      // genreIDs: null,
+      imageUrl: json['poster_path'] == null
+          ? null
+          : '$IMAGE_URL/${json['poster_path']}',
+      overview: json['overview'],
+      releaseDate: json['release_date'] == null
+          ? DateTime.parse('0000-00-00')
+          : DateTime.tryParse(json['release_date']),
+      originalLanguage: json['original_language'],
+      status: json['release_date'] == null ? 'Not Released' : 'Released',
+      mediaType: json['media_type'],
+      voteAverage: json['vote_average'] + 0.0,
       // voteAverage: 9.3,
       duration: json['runtime'],
       voteCount: json['vote_count'],
@@ -103,6 +106,7 @@ class MovieItem {
       homepage: json['homepage'],
       revenue: json['revenue'],
       cast: json['credits']['cast'],
+      reviews: json['reviews']['results'],
       productionCompanies: json['production_companies'],
       productionContries: json['production_countries'],
       similar: json['similar']['results'],
@@ -200,15 +204,16 @@ class Movies with ChangeNotifier {
 
   Future<void> getMovieDetails(int id) async {
     final url =
-        'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits%2Crecommendations,similar';
+        'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits%2Crecommendations,similar,reviews';
 
     final response = await http.get(url);
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     _detailedMovie = MovieItem.fromJsonDetails(responseData);
 
-    _detailedMovie.cast.forEach((element) { 
-      print('Actor: -----------------> ${element['name']}');
-    });
+    // _detailedMovie.reviews.forEach((element) { 
+    //   print('Actor: -----------------> ${element['author']}');
+    //   print('content: -----------------> ${element['content']}');
+    // });
 
     _recommendations.clear();
     _similar.clear();

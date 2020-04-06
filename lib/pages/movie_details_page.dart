@@ -1,3 +1,4 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
 
+import 'package:e_movies/widgets/loading_indicator.dart';
 import '../providers/movies.dart';
 import 'package:e_movies/genres.dart';
 import '../widgets/movie_item.dart' as mo;
@@ -27,155 +29,175 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   void initState() {
+    super.initState();
     _isLoading = true;
     _isInitLoaded = true;
     _moreDetails = false;
-    super.initState();
-    // Future.delayed(Duration(seconds: 3)).then((_) {
-    //   final args =
-    //       ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    //   type = args['type'];
-    //   id = args['id'];
-    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     if (_isInitLoaded) {
-      // setState(() {
-      //   _isLoading = true;
-      // });
-      final args =
-          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-      final id = args['id'];
-      print('id mov ***---------------> $id');
-      Provider.of<Movies>(context, listen: false)
-          .getMovieDetails(id)
-          .then((_) => {
-                setState(() {
+      final id = ModalRoute.of(context).settings.arguments as int;
+      Provider.of<Movies>(context, listen: false).getMovieDetails(id).then(
+            (_) => {
+              setState(
+                () {
                   _detailedMovie =
                       Provider.of<Movies>(context, listen: false).movieDetails;
                   _recommended =
                       Provider.of<Movies>(context, listen: false).recommended;
                   _similar =
                       Provider.of<Movies>(context, listen: false).similar;
+                  // Future.delayed(Duration(seconds: 2)).then((value) => _isLoading = false );
                   _isLoading = false;
-                })
-              });
+                },
+              )
+            },
+          );
     }
     _isInitLoaded = false;
     super.didChangeDependencies();
   }
 
-  Widget _buildTitleAndRatingBar(BuildContext context, MovieItem movie) {
+  // Widget loading(Animation<double> animation, double height, double width) {
+  // return Container(
+  //   height: height * 0.20,
+  //   width: width * 0.8,
+  //   child: Column(
+  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: <Widget>[
+  //       Container(
+  //         height: height * 0.009,
+  //         width: width * 0.7,
+  //         decoration: boxDecoration(animation),
+  //       ),
+  //       Container(
+  //         height: height * 0.008,
+  //         width: width * 0.5,
+  //         decoration: boxDecoration(animation),
+  //       ),
+  //     ],
+  //   ),
+  // );
+  // }
+
+  Widget _buildTitleAndRatingBar(
+      BuildContext context, MovieItem movie, double width) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Flexible(
-          flex: 3,
-          child: Text(
-            movie.title,
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ),
+        _isLoading
+            ? LineLoadingIndicator(width: width * 0.6, singleLine: true)
+            : Flexible(
+                flex: 3,
+                child: Text(
+                  movie.title,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: Container(
-            height: 31,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  height: 30,
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.white54)),
-                  child: Center(
-                    child: Text(
-                      (5 * movie.voteAverage / 10).toStringAsFixed(1),
-                      style: TextStyle(color: Colors.white70),
-                    ),
+          child: _isLoading
+              ? LineLoadingIndicator(
+                  width: width * 0.2,
+                  singleLine: true,
+                )
+              : Container(
+                  height: 31,
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white54)),
+                        child: Center(
+                          child: Text(
+                            (5 * movie.voteAverage / 10).toStringAsFixed(1),
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          RatingBar.readOnly(
+                            initialRating: (5 * movie.voteAverage / 10),
+                            filledIcon: Icons.star,
+                            emptyIcon: Icons.star_border,
+                            isHalfAllowed: true,
+                            halfFilledIcon: Icons.star_half,
+                            size: 15,
+                            filledColor: Colors.amber,
+                            emptyColor: Colors.amberAccent,
+                            maxRating: 5,
+                          ),
+                          Text(
+                            movie.voteCount.toString() + ' votes',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    RatingBar.readOnly(
-                      initialRating: (5 * movie.voteAverage / 10),
-                      filledIcon: Icons.star,
-                      emptyIcon: Icons.star_border,
-                      isHalfAllowed: true,
-                      halfFilledIcon: Icons.star_half,
-                      size: 15,
-                      filledColor: Colors.amber,
-                      emptyColor: Colors.amberAccent,
-                      maxRating: 5,
-                    ),
-                    // RatingBar(
-                    //   initialRating: 5 * movie.voteAverage / 10,
-                    //   maxRating: 10,
-                    //   direction: Axis.horizontal,
-                    //   itemSize: 15,
-                    //   itemBuilder: (context, index) => Icon(
-                    //     Icons.star,
-                    //     color: Colors.amber,
-                    //     size: 5,
-                    //   ),
-                    //   onRatingUpdate: (double) {},
-                    // ),
-                    Text(
-                      movie.voteCount.toString() + ' votes',
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
         ),
       ],
     );
   }
 
   Widget _buildSliverAppBar(
-      BuildContext context, MovieItem movie, double _height) {
+      BuildContext context, MovieItem movie, double _height, double _width) {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 0.4 * _height,
       leading: BackButton(),
       // centerTitle: true,
       stretch: true,
-      flexibleSpace: FlexibleSpaceBar(
-        centerTitle: true,
-        collapseMode: CollapseMode.parallax,
-        titlePadding: EdgeInsets.only(bottom: 0),
-        stretchModes: [StretchMode.zoomBackground],
-        title: Container(
-          height: 40,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromRGBO(0, 0, 0, 0),
-                  Color.fromRGBO(0, 0, 0, 0.9),
-                ]),
-          ),
-          child: Center(
-            child: Text(
-              movie.title,
-              style: TextStyle(fontSize: 14),
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
+      flexibleSpace: _isLoading
+          ? ImageLoadingIndicator(
+              height: _height * 0.4,
+              width: _width,
+            )
+          : FlexibleSpaceBar(
+              centerTitle: true,
+              collapseMode: CollapseMode.parallax,
+              titlePadding: EdgeInsets.only(bottom: 0),
+              stretchModes: [StretchMode.zoomBackground],
+              title: Container(
+                height: 40,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color.fromRGBO(0, 0, 0, 0),
+                        Color.fromRGBO(0, 0, 0, 0.9),
+                      ]),
+                ),
+                child: Center(
+                  child: Text(
+                    movie.title,
+                    style: TextStyle(fontSize: 14),
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              background: Image.network(
+                movie.imageUrl,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        ),
-        background: Image.network(
-          movie.imageUrl,
-          fit: BoxFit.cover,
-        ),
-      ),
       automaticallyImplyLeading: false,
     );
   }
@@ -211,8 +233,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   String _getGenres(List<dynamic> genreIds) {
     if (genreIds == null || genreIds.isEmpty) return 'N/A';
     String str = '';
-    genreIds.forEach((id) {
-      str += GENRES[id] + ', ';
+    genreIds.forEach((elem) {
+      // print('id: --------------- $id');
+      str += GENRES[elem['id']] + ', ';
     });
     str = str.substring(0, str.lastIndexOf(','));
     return str;
@@ -260,10 +283,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             ),
           ),
         ),
-        Center(
+        Align(
+          alignment: Alignment.bottomCenter,
           child: FlatButton(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(
                 // more ? CupertinoIcons.ellipsis : CupertinoIcons.ellipsis,
                 // color: Colors.white,
@@ -282,27 +306,32 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget lessDetailed(MovieItem movie) {
-    return Column(
-      children: <Widget>[
-        _buildDetailsItem('Genre:', _getGenres(movie.genreIDs)),
-        _buildDetailsItem('Status:', movie.status),
-        Stack(
-          children: <Widget>[
-            _buildDetailsItem(
-              'Release Date:',
-              _formatDate(movie.releaseDate),
-            ),
-            _toggleDetails(true),
-          ],
-        ),
-      ],
-    );
+  Widget lessDetailed(MovieItem movie, double width) {
+    return _isLoading
+        ? LineLoadingIndicator(
+            width: width * 0.4,
+            singleLine: false,
+          )
+        : Column(
+            children: <Widget>[
+              _buildDetailsItem('Genre:', _getGenres(movie.genreIDs)),
+              _buildDetailsItem('Status:', movie.status),
+              Stack(
+                children: <Widget>[
+                  _buildDetailsItem(
+                    'Release Date:',
+                    _formatDate(movie.releaseDate),
+                  ),
+                  _toggleDetails(true),
+                ],
+              ),
+            ],
+          );
   }
 
   Widget detailed(MovieItem movie, MovieItem detailedMovie) {
     return Column(
-      children: <Widget>[
+      children: [
         _buildDetailsItem('Genre:', _getGenres(movie.genreIDs)),
         _buildDetailsItem('Status:', movie.status),
         _buildDetailsItem(
@@ -312,8 +341,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         _buildDetailsItem(
             'Duration:', detailedMovie.duration.toString() + ' min'),
         _buildDetailsItem('Actors:', _getCast(detailedMovie.cast)),
-        _buildDetailsItem('Budget:', detailedMovie.budget.toString()),
-        _buildDetailsItem('Reveue:', detailedMovie.revenue.toString()),
+        _buildDetailsItem(
+            'Budget:',
+            (detailedMovie.budget == null || detailedMovie.budget <= 0)
+                ? 'N/A'
+                : detailedMovie.budget.toString() + '\$'),
+        _buildDetailsItem('Reveue:', detailedMovie.revenue.toString() + '\$'),
         _buildDetailsItem('Popularity:', detailedMovie.popularity.toString()),
         _buildDetailsItem('Countries:',
             _getCompanyOrCountry(detailedMovie.productionContries)),
@@ -328,88 +361,142 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget _similarMovies(List<MovieItem> similarMovies, String type) {
-    return GridView.builder(
-        itemCount: similarMovies.length,
-        itemBuilder: (context, index) {
-    return mo.MovieItem(
-      movie: similarMovies[index],
-      type: type,
-    );        
-        },
-        scrollDirection: Axis.horizontal,      
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 1, 
-    childAspectRatio: 1,
-    crossAxisSpacing: 5, 
-    mainAxisSpacing: 5,
-        ),
-      );
+  Widget _extraMovies(
+      List<MovieItem> similarMovies, double height, String title) {
+    return Container(
+      height: 0.3 * height,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Text(title, style: Theme.of(context).textTheme.headline6),
+          ),
+          Flexible(
+            child: GridView.builder(
+              itemCount: similarMovies.length,
+              itemBuilder: (context, index) {
+                return _isLoading
+                    ? ImageLoadingIndicator(
+                        height: height,
+                        width: 30,
+                      )
+                    : mo.MovieItem(
+                        movie: similarMovies[index],
+                      );
+              },
+              scrollDirection: Axis.horizontal,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 1,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviews(List<dynamic> reviews, double height) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      height: 0.4 * height,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Reviews',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Divider(
+            color: Colors.white70,
+          ),
+          Flexible(
+            child: ListView.builder(
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Author: ' + reviews[index]['author'],
+                            style: TextStyle(color: Colors.white)),
+                        subtitle: Text(
+                            'Content: ' +
+                                reviews[index]['content'].substring(
+                                  0,
+                                  50,
+                                ),
+                            style: TextStyle(color: Colors.white70)),
+                        onTap: () {},
+                      ),
+                      Divider(
+                        color: Colors.white70,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    print('_isLoading --------------> $_isLoading');
-    final args =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    final type = args['type'];
-    final id = args['id'];
-    final movie = type == 'upcoming'
-        ? Provider.of<Movies>(context, listen: false).findByIdUpcoming(id)
-        : Provider.of<Movies>(context, listen: false).findByIdTrending(id);
     final _height = MediaQuery.of(context).size.height;
-    if (!_isLoading)
-      print('recommended -----------------> ${_recommended[0].title}');
+    final _width = MediaQuery.of(context).size.width;
+
+    final transparentBackground = Container(
+      color: TRRANSPARENT_BACKGROUND_COLOR,
+    );
+
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: <Widget>[
-            Image.asset('assets/images/background_image.jpg'),
-            NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) =>
-                  [_buildSliverAppBar(context, movie, _height)],
-              body: Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 10, right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTitleAndRatingBar(context, movie),
-                    SizedBox(height: 10),
-                    Text(
-                      movie.overview,
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    SizedBox(height: 10),
-                    Flexible(
-                      child: ListView(
-                        children: <Widget>[
-                          !_moreDetails
-                              ? lessDetailed(movie)
-                              : detailed(movie, _detailedMovie),
-                              if(_isLoading)
-                              Center(child: CircularProgressIndicator()),
-                              if(!_isLoading)
-                              Container(
-                                height: 150,
-                                child: _similarMovies(_similar, type),
-                              ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        body: Stack(children: <Widget>[
+          Image.asset('assets/images/background_image_1.jpg'),
+          transparentBackground,
+          // _isLoading
+          //   )
+          NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) =>
+                [_buildSliverAppBar(context, _detailedMovie, _height, _width)],
+            body: Padding(
+              padding: const EdgeInsets.only(top: 15.0, left: 10, right: 10),
+              child: ListView(
+                children: [
+                  _buildTitleAndRatingBar(context, _detailedMovie, _width),
+                  SizedBox(height: 10),
+                  _isLoading
+                      ? LineLoadingIndicator(
+                          width: _width,
+                          singleLine: false,
+                        )
+                      : Text(
+                          _detailedMovie.overview,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                  SizedBox(height: 10),
+                  !_moreDetails
+                      ? lessDetailed(_detailedMovie, _width)
+                      : detailed(_detailedMovie, _detailedMovie),
+                  // if (_isLoading) Center(child: CircularProgressIndicator()),
+                  if (!_isLoading)
+                    _extraMovies(_recommended, _height, 'You May Also Like'),
+                  if (!_isLoading)
+                    _buildReviews(_detailedMovie.reviews, _height),
+                  if (!_isLoading)
+                    _extraMovies(_similar, _height, 'Similar Movies'),
+                ],
               ),
             ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(
-            Icons.favorite_border,
           ),
-          backgroundColor: Theme.of(context).accentColor,
-          onPressed: () {},
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        ]),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/most_watched_page.dart';
 import 'package:e_movies/pages/trending_movies_page.dart';
 import 'package:e_movies/pages/upcoming_movies_page.dart';
@@ -55,8 +56,12 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     final _background_image = Image.asset(
-      'assets/images/background_image.jpg',
+      'assets/images/background_image_1.jpg',
       fit: BoxFit.cover,
+    );
+
+    final transparentBackground = Container(
+      color: TRRANSPARENT_BACKGROUND_COLOR,
     );
 
     final currentPage = _BottomTabs(
@@ -81,6 +86,7 @@ class _MainPageState extends State<MainPage>
         fit: StackFit.expand,
         children: <Widget>[
           _background_image,
+          transparentBackground,
           _content,
         ],
       ),

@@ -59,9 +59,9 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           movieOperation = CancelableOperation.fromFuture(
-                  Provider.of<Movies>(context, listen: false)
-                      .fetchUpcomingMovies(curPage + 1))
-              .then(
+            Provider.of<Movies>(context, listen: false)
+                .fetchUpcomingMovies(curPage + 1),
+          ).then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
@@ -88,7 +88,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
   Widget build(BuildContext context) {
     super.build(context);
     var movies = Provider.of<Movies>(context).upcomingMovies;
-    print('------------> length: ${movies.length}');
+    // print('------------> length: ${movies.length}');
     return NotificationListener(
       onNotification: onNotification,
       child: RefreshIndicator(
@@ -100,11 +100,8 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
           cacheExtent: 12,
           itemCount: movies.length,
           itemBuilder: (ctx, i) {
-            print('--------------> i: $i');
-            print('--------------> i: $i    ${movies[i].title}');
             return MovieItem(
               movie: movies[i],
-              type: 'upcoming',
             );
           },
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
