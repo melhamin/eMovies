@@ -31,7 +31,7 @@ class _LoadingIndicatorState extends State<ImageLoadingIndicator>
       duration: Duration(seconds: 1),
     );
 
-    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+    _animation = Tween<double>(begin: -2.0, end: 2.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOutSine,
@@ -63,9 +63,18 @@ class _LoadingIndicatorState extends State<ImageLoadingIndicator>
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            Colors.grey[700],
-            Colors.grey[600],
-            Colors.grey[700],
+            Color(0xFF1C306D),
+            Color(0xFF1C506D),
+            Color(0xFF1C306D),
+          //   Colors.lightBlue[900],
+          // Colors.lightBlue[800],
+          // Colors.lightBlue[900],
+          //   Colors.blue[900],
+          // Colors.blue[800],
+          // Colors.blue[900],
+            // Colors.grey[700],
+            // Colors.grey[600],
+            // Colors.grey[700],
           ],
           stops: [
             _animation.value * 0.1,
@@ -119,7 +128,7 @@ class _LineLoadingIndicatorState extends State<LineLoadingIndicator>
       duration: Duration(seconds: 1),
     );
 
-    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+    _animation = Tween<double>(begin: -2.0, end: 2.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.easeInOutSine,
@@ -151,12 +160,24 @@ class _LineLoadingIndicatorState extends State<LineLoadingIndicator>
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
         colors: [
-          Colors.grey[700],
-          Colors.grey[600],
-          Colors.grey[700],
+           Color(0xFF1C306D),
+            Color(0xFF1C506D),
+            Color(0xFF1C306D),
+          // Colors.lightBlue[900],
+          // Colors.lightBlue[800],
+          // Colors.lightBlue[900],
+          // Colors.blue[900],
+          // Colors.blue[800],
+          // Colors.blue[900],
+          // Color(0xff1C306D),
+          //   Color(0xff1C306D),
+          //   Color(0xff1C306D),
+          // Colors.grey[700],
+          // Colors.grey[600],
+          // Colors.grey[700],
         ],
         stops: [
-          _animation.value * 0.1,
+          _animation.value - 2,
           _animation.value,
           _animation.value + 2,
         ],
@@ -205,91 +226,3 @@ class _LineLoadingIndicatorState extends State<LineLoadingIndicator>
     );
   }
 }
-
-// class LineLoadingIndicator extends StatefulWidget {
-//   final double height;
-//   final double width;
-//   final Color color;
-
-//   LineLoadingIndicator({
-//     this.color = Colors.grey,
-//     @required this.height,
-//     @required this.width,
-//   });
-
-//   @override
-//   _LoadingIndicatorState createState() => _LoadingIndicatorState();
-// }
-
-// class _LineLoadingIndicator extends State<_LineLoadingIndicator>
-//     with SingleTickerProviderStateMixin {
-//   AnimationController _animationController;
-//   Animation<double> _animation;
-
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     _animationController = AnimationController(
-//       vsync: this,
-//       duration: Duration(seconds: 3),
-//     );
-
-//     _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
-//       CurvedAnimation(
-//         parent: _animationController,
-//         curve: Curves.easeInOutSine,
-//       ),
-//     );
-
-//     _animation.addStatusListener((status) {
-//       if (status == AnimationStatus.completed ||
-//           status == AnimationStatus.dismissed) {
-//         _animationController.repeat();
-//       } else if (status == AnimationStatus.dismissed) {
-//         _animationController.forward();
-//       }
-//     });
-//     _animationController.forward();
-//   }
-
-//   @override
-//   void dispose() {
-//     // TODO: implement dispose
-//     super.dispose();
-//     _animationController.dispose();
-//   }
-
-//   Decoration boxDecoration(Animation<double> animation) {
-//     return BoxDecoration(
-//       shape: BoxShape.rectangle,
-//       gradient: LinearGradient(
-//           begin: Alignment.centerLeft,
-//           end: Alignment.centerRight,
-//           colors: [
-//             Colors.grey[700],
-//             Colors.grey[600],
-//             Colors.grey[700],
-//           ],
-//           stops: [
-//             _animation.value *0.1,
-//             _animation.value,
-//             _animation.value + 2,
-//           ]),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AnimatedBuilder(
-//       animation: _animation,
-//       builder: (context, child) {
-//         return Container(
-//           height: widget.height,
-//           width: widget.width,
-//           decoration: boxDecoration(_animation),
-//         );
-//       },
-//     );
-//   }
-// }

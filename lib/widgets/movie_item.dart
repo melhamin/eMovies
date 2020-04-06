@@ -33,23 +33,20 @@ class MovieItem extends StatelessWidget {
     // if(imageUrl == null) imageUrl = 'blob:https://www.pngfuel.com/5e3dae69-7ade-4e65-b1ab-8a2cd4eedc6c';
     return imageUrl == null
         ? Image.asset('assets/images/loading.png', fit: BoxFit.cover)
-        : Hero(
-          tag: movie.id,
-                  child: CachedNetworkImage(
+        : CachedNetworkImage(
               imageUrl: imageUrl,
               imageBuilder: (context, imageProvider) => Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xff000000),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                    image: imageProvider,
-                  ),
+        color: const Color(0xff000000),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.7), BlendMode.dstATop),
+          image: imageProvider,
+        ),
                 ),
               ),
-            ),
-        );
+            );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,
