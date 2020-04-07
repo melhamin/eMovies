@@ -11,6 +11,7 @@ enum MovieLoaderStatus {
 }
 
 class UpcomingMoviesPage extends StatefulWidget {
+  static const routeName = '/upcoming-page';
   UpcomingMoviesPage({
     Key key,
   }) : super(key: key);

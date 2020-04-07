@@ -1,4 +1,6 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/pages/main_page.dart';
+import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,6 +12,7 @@ import 'package:e_movies/widgets/loading_indicator.dart';
 import '../providers/movies.dart';
 import 'package:e_movies/genres.dart';
 import '../widgets/movie_item.dart' as mo;
+import '../pages/trending_movies_page.dart';
 
 class MovieDetailPage extends StatefulWidget {
   static const routeName = '/movie-detail-page';
@@ -24,8 +27,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   bool _moreDetails;
 
   MovieItem _detailedMovie;
-  List<MovieItem> _recommended;
-  List<MovieItem> _similar;
+  List<MovieItem> _recommended = [];
+  List<MovieItem> _similar = [];
 
   // ScrollPhysics scrollPhysics = ScrollPhysics(NeverScrollableScrollPhysics());
 
@@ -104,53 +107,50 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: _isLoading
-              ? LineLoadingIndicator(
-                  width: width * 0.2,
-                  singleLine: true,
-                )
-              : Container(
-                  height: 31,
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        height: 30,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white54)),
-                        child: Center(
-                          child: Text(
-                            (5 * movie.voteAverage / 10).toStringAsFixed(1),
-                            style: TextStyle(color: Colors.white70),
-                          ),
+        _isLoading
+            ? LineLoadingIndicator(
+                width: width * 0.2,
+                singleLine: true,
+              )
+            : Container(
+                height: 31,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      height: 30,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white54)),
+                      child: Center(
+                        child: Text(
+                          (5 * movie.voteAverage / 10).toStringAsFixed(1),
+                          style: Theme.of(context).textTheme.subtitle2,
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          RatingBar.readOnly(
-                            initialRating: (5 * movie.voteAverage / 10),
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            isHalfAllowed: true,
-                            halfFilledIcon: Icons.star_half,
-                            size: 15,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amberAccent,
-                            maxRating: 5,
-                          ),
-                          Text(
-                            movie.voteCount.toString() + ' votes',
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 5),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        RatingBar.readOnly(
+                          initialRating: (5 * movie.voteAverage / 10),
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          isHalfAllowed: true,
+                          halfFilledIcon: Icons.star_half,
+                          size: 15,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amberAccent,
+                          maxRating: 5,
+                        ),
+                        Text(
+                          movie.voteCount.toString() + ' votes',
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-        ),
+              ),
       ],
     );
   }
@@ -161,6 +161,13 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       pinned: true,
       expandedHeight: 0.4 * _height,
       leading: BackButton(),
+      actions: [
+        IconButton(icon: Icon(Icons.close), onPressed: () {
+          Navigator.of(context).popUntil((route) {            
+            return !(route.settings.name == MovieDetailPage.routeName);            
+          });          
+        },),
+      ],
       // centerTitle: true,
       stretch: true,
       flexibleSpace: _isLoading
@@ -197,7 +204,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               ),
               background: Image.network(
                 movie.imageUrl,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
       automaticallyImplyLeading: false,
@@ -210,9 +217,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
       children: <Widget>[
         Text(
           left,
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         Flexible(
           child: Padding(
@@ -220,9 +225,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             child: Container(
               child: Text(
                 right,
-                style: TextStyle(
-                  color: Colors.white70,
-                ),
+                style: Theme.of(context).textTheme.subtitle2,
                 softWrap: true,
               ),
             ),
@@ -289,7 +292,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         ),
         Align(
           alignment: Alignment.bottomCenter,
-          child: InkWell(                        
+          child: InkWell(
             child: ListTile(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -383,8 +386,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget _extraMovies(
+  Widget _buildExtraMovies(
       List<MovieItem> similarMovies, double height, String title) {
+    print('building $title ---------> for movie');
+    print('first movie ------------> ${similarMovies[0].title}');
     return Container(
       height: 0.3 * height,
       child: Column(
@@ -421,59 +426,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
-  Widget _buildReviews(List<dynamic> reviews, double height) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      height: 0.3 * height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Reviews',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          Divider(
-            color: Colors.white70,
-          ),
-          Flexible(
-            child: ListView.builder(
-              itemCount: reviews.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  height: 100,
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text('Author: ' + reviews[index]['author'],
-                            style: TextStyle(color: Colors.white)),
-                        subtitle: Text(
-                            (reviews[index]['context'] == null ||
-                                    reviews[index]['context'].length == 0)
-                                ? 'No content...'
-                                : 'Content: ' +
-                                    reviews[index]['content'].substring(
-                                      0,
-                                      reviews[index]['context'].length > 50
-                                          ? 50
-                                          : reviews[index]['context'].length,
-                                    ),
-                            style: TextStyle(color: Colors.white70)),
-                        onTap: () {},
-                      ),
-                      Divider(
-                        color: Colors.white70,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOverview(double width) {
     return _isLoading
         ? LineLoadingIndicator(
@@ -482,8 +434,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           )
         : Text(
             _detailedMovie.overview,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.subtitle2,
           );
+  }
+
+  Widget _buildDetails(double height, double width) {
+    return AnimatedContainer(
+      height: _moreDetails ? height * 0.54 : height * 0.13,
+      curve: Curves.easeInOutSine,
+      duration: Duration(milliseconds: 600),
+      child: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: _moreDetails
+            ? detailed(_detailedMovie, _detailedMovie)
+            : lessDetailed(_detailedMovie, width),
+      ),
+    );
   }
 
   @override
@@ -500,41 +466,105 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         body: Stack(children: <Widget>[
           Image.asset('assets/images/background_image_1.jpg'),
           transparentBackground,
-          // _isLoading
-          //   )
           NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) =>
                 [_buildSliverAppBar(context, _detailedMovie, _height, _width)],
             body: Padding(
-              padding: const EdgeInsets.only(top: 15.0, left: 10, right: 10),
+              padding: const EdgeInsets.only(left: 10, right: 10),
               child: ListView(
                 children: [
-                  _buildTitleAndRatingBar(context, _detailedMovie, _width),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: _buildTitleAndRatingBar(
+                        context, _detailedMovie, _width),
+                  ),
                   SizedBox(height: 10),
                   _buildOverview(_width),
                   SizedBox(height: 10),
-                  AnimatedContainer(
-                    height: _moreDetails ? _height * 0.51 : _height * 0.13,
-                    curve: Curves.easeInOutSine,
-                    duration: Duration(milliseconds: 600),
-                    child: SingleChildScrollView(
-                      physics: NeverScrollableScrollPhysics(),
-                      child: _moreDetails
-                          ? detailed(_detailedMovie, _detailedMovie)
-                          : lessDetailed(_detailedMovie, _width),
-                    ),
-                  ),
+                  _buildDetails(_height, _width),
                   // SizedBox(height: 10),
-                  _extraMovies(_recommended, _height, 'You May Also Like'),
+                  if (_recommended.length > 0)
+                    _buildExtraMovies(
+                        _recommended, _height, 'You May Also Like'),
                   if (!_isLoading)
-                    _buildReviews(_detailedMovie.reviews, _height),
-                  if (!_isLoading)
-                    _extraMovies(_similar, _height, 'Similar Movies'),
+                    if (_detailedMovie.reviews.length > 0)
+                      Reviews(
+                          context: context,
+                          reviews: _detailedMovie.reviews,
+                          height: _height),
+                  if (!_isLoading && _similar.length > 0)
+                    _buildExtraMovies(_similar, _height, 'Similar Movies'),
                 ],
               ),
             ),
           ),
         ]),
+      ),
+    );
+  }
+}
+
+class Reviews extends StatelessWidget {
+  const Reviews({
+    Key key,
+    @required this.context,
+    @required this.reviews,
+    @required this.height,
+  }) : super(key: key);
+
+  final BuildContext context;
+  final List reviews;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final boxHeight = 0.3 * height;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      height: boxHeight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Reviews',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Divider(
+            color: Colors.white70,
+          ),
+          Flexible(
+            child: ListView.builder(
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: <Widget>[
+                    ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 0),
+                      title: Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: Text(reviews[index]['author'],
+                            style: Theme.of(context).textTheme.subtitle1),
+                      ),
+                      subtitle: Text(
+                          (reviews[index]['content'] == null ||
+                                  reviews[index]['content'].length == 0)
+                              ? 'No content...'
+                              : reviews[index]['content'].substring(
+                                  0,
+                                  reviews[index]['content'].length > 200
+                                      ? 200
+                                      : reviews[index]['content'].length,
+                                ),
+                          style: Theme.of(context).textTheme.subtitle2),
+                      onTap: () {},
+                    ),
+                    Divider(color: Colors.white70),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

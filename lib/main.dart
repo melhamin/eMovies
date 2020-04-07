@@ -1,4 +1,6 @@
 import 'package:e_movies/pages/movie_details_page.dart';
+import 'package:e_movies/pages/trending_movies_page.dart';
+import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +28,20 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
             subtitle1: TextStyle(
+              fontSize: 14,
+              fontFamily: 'OpenSans',
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+            subtitle2: TextStyle(
               fontSize: 12,
-              fontFamily: 'Roboto',
+              fontFamily: 'OpenSans',
               color: Colors.white70,
             ),
             headline6: TextStyle(
               fontSize: 16,
-              fontFamily: 'Roboto',
-              // fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans',              
+              fontWeight: FontWeight.w500,
               color: Colors.white,
             ),
           ),
@@ -41,7 +49,10 @@ class MyApp extends StatelessWidget {
         home: MainPage(),
         debugShowCheckedModeBanner: false,
         routes: {
+          MainPage.routeName: (ctx) => MainPage(),
           MovieDetailPage.routeName: (ctx) => MovieDetailPage(),
+          TrendingMoviesPage.routeName: (ctx) => TrendingMoviesPage(),
+          UpcomingMoviesPage.routeName: (ctx) => UpcomingMoviesPage(),
         },
       ),
     );

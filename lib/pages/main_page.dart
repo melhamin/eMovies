@@ -5,11 +5,11 @@ import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/widgets/bottom_tab_bar.dart';
-import 'package:e_movies/pages/favorites_page.dart';
 import 'package:e_movies/widgets/e_app_bar.dart';
 
 
 class MainPage extends StatefulWidget {
+  static const routeName = '/main-page';
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -18,6 +18,12 @@ class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   int _selectedIndex = 1;
+
+  Map<int, String> _titles = {
+    0: 'Upcoming',
+    1: 'Trending',
+    2: 'Most Watched',
+  };
 
   @override
   initState() {
@@ -71,7 +77,7 @@ class _MainPageState extends State<MainPage>
 
     final _content = Scaffold(
       appBar: PreferredSize(
-        child: EAppBar(),
+        child: EAppBar(_titles[_selectedIndex]),
         preferredSize: Size.fromHeight(kToolbarHeight),
       ),
       body: Stack(

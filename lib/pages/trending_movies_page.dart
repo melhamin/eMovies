@@ -11,6 +11,7 @@ enum MovieLoaderStatus {
 }
 
 class TrendingMoviesPage extends StatefulWidget {
+  static const routeName = '/trending-page';
   TrendingMoviesPage({
     Key key,
   }) : super(key: key);

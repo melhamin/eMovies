@@ -18,7 +18,7 @@ class MovieItem extends StatelessWidget {
     return GENRES[genreId];
   }
 
-  void _onDetailsPressed(BuildContext context, int id) {
+  void _onDetailsPressed(BuildContext context, int id) {    
     Navigator.of(context).pushNamed(MovieDetailPage.routeName,
         arguments: id);
   }

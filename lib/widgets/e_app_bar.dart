@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:e_movies/providers/movies.dart';
 
 class EAppBar extends StatefulWidget {
+  final title;
+
+  EAppBar(this.title);
   @override
   _EAppBarState createState() => _EAppBarState();
 }
@@ -49,8 +52,7 @@ class _EAppBarState extends State<EAppBar> {
       IconButton(
         color: Colors.white70,
         icon: Icon(Icons.search),
-        onPressed: () {
-          Provider.of<Movies>(context, listen:false).getMovieDetails(181812);
+        onPressed: () {          
           setState(() {
             _isSearching = true;
           });
@@ -108,12 +110,22 @@ class _EAppBarState extends State<EAppBar> {
     });
   }
 
+  Widget app() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Flexible(flex: 1, child: EMoviesIcon()),
+        Flexible(flex: 3, child: Align(alignment: Alignment.center, child: Text(widget.title))),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
       centerTitle: false,
-      title: _isSearching ? _buildSearchField() : EMoviesIcon(),
+      title: _isSearching ? _buildSearchField() : app(),
       leading: _isSearching ? _backButton() : null,
       actions: _buildActions(),            
     );

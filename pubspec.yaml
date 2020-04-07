@@ -66,8 +66,18 @@ flutter:
   fonts:
     - family: Roboto
       fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/fonts/Roboto-Medium.ttf          
+        - asset: assets/fonts/Roboto-Italic.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf 
+
+    - family: RobotoCondensed
+      fonts:
+        - asset: assets/fonts/roboto_condensed/RobotoCondensed-Italic.ttf
+          weight: 900
+        # - asset: assets/fonts/Roboto-Medium.ttf          
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
+        # - asset: assets/fonts/Roboto-Medium.ttf          
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
