@@ -94,7 +94,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   // }
 
   Widget _buildTitleAndRatingBar(
-      BuildContext context, MovieItem movie, double width) {
+      BuildContext context, MovieItem movie, double width, double height) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -113,11 +113,11 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                 singleLine: true,
               )
             : Container(
-                height: 31,
+                height: height * 0.04,
                 child: Row(
                   children: <Widget>[
                     Container(
-                      height: 30,
+                      height: height * 0.039,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.white54)),
                       child: Center(
@@ -181,7 +181,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
               titlePadding: EdgeInsets.only(bottom: 0),
               stretchModes: [StretchMode.zoomBackground],
               title: Container(
-                height: 40,
+                height: _height * 0.05,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -201,7 +201,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ),
+              ),              
               background: Image.network(
                 movie.imageUrl,
                 fit: BoxFit.fill,
@@ -238,10 +238,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   String _getGenres(List<dynamic> genreIds) {
     if (genreIds == null || genreIds.isEmpty) return 'N/A';
     String str = '';
-    genreIds.forEach((elem) {
-      // print('id: --------------- $id');
-      str += GENRES[elem['id']] + ', ';
-    });
+    int length = genreIds.length > 4 ? 4 : genreIds.length;
+    for(int i = 0; i < length; i++) {
+      str += GENRES[genreIds[i]['id']] + ', ';
+    }
+    // genreIds.forEach((elem) {
+    //   // print('id: --------------- $id');
+    //   str += GENRES[elem['id']] + ', ';
+    // });
     str = str.substring(0, str.lastIndexOf(','));
     return str;
   }
@@ -256,9 +260,10 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     int length = cast.length > 10 ? 10 : cast.length;
     for (int i = 0; i < length; i++) {
       res += cast[i]['name'] + ', ';
-    }
-    res = res.substring(0, res.lastIndexOf(' '));
-    res += '...';
+    }    
+    res = res.substring(0, res.lastIndexOf(','));
+    if(length >= 10)
+    res += ',...';
 
     return res;
   }
@@ -266,9 +271,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   String _getCompanyOrCountry(List<dynamic> data) {
     if (data == null || data.isEmpty) return 'N/A';
     String res = '';
-    data.forEach((element) {
-      res += element['name'] + ', ';
-    });
+    int length = data.length > 2 ? 2 : data.length;
+    for(int i = 0; i < length; i++)
+     {
+       res += data[i]['name'] + ', ';
+     }    
+    // data.forEach((element) {
+    //   res += element['name'] + ', ';
+    // });
     res = res.substring(0, res.lastIndexOf(','));
     return res;
   }
@@ -440,7 +450,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   Widget _buildDetails(double height, double width) {
     return AnimatedContainer(
-      height: _moreDetails ? height * 0.54 : height * 0.13,
+      height: _moreDetails ? height * 0.36 : height * 0.1,
       curve: Curves.easeInOutSine,
       duration: Duration(milliseconds: 600),
       child: SingleChildScrollView(
@@ -476,7 +486,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: _buildTitleAndRatingBar(
-                        context, _detailedMovie, _width),
+                        context, _detailedMovie, _width, _height),
                   ),
                   SizedBox(height: 10),
                   _buildOverview(_width),

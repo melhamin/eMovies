@@ -14,7 +14,7 @@ class BottomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabBar(
+    return CupertinoTabBar(      
       backgroundColor: Colors.black54,
       inactiveColor: Color(0xff78909c),
       activeColor: Colors.white,

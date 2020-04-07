@@ -34,19 +34,19 @@ class MovieItem extends StatelessWidget {
     return imageUrl == null
         ? Image.asset('assets/images/loading.png', fit: BoxFit.cover)
         : CachedNetworkImage(
-              imageUrl: imageUrl,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-        color: const Color(0xff000000),
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.7), BlendMode.dstATop),
-          image: imageProvider,
+                imageUrl: imageUrl,
+                imageBuilder: (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          color: const Color(0xff000000),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.7), BlendMode.dstATop),
+            image: imageProvider,
+          ),
         ),
                 ),
-              ),
-            );
+              );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,

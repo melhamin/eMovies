@@ -34,15 +34,15 @@ class _MainPageState extends State<MainPage>
     _tabController = TabController(
       vsync: this,
       length: 3,
-      initialIndex: _selectedIndex,
+      initialIndex: _selectedIndex,          
     );
   }
 
   Widget _buildTabContent() {
     return Positioned.fill(
       child: TabBarView(
-        controller: _tabController,
-        physics: NeverScrollableScrollPhysics(),
+        controller: _tabController,        
+        physics: NeverScrollableScrollPhysics(),        
         children: <Widget>[
           UpcomingMoviesPage(),
           TrendingMoviesPage(),
