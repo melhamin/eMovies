@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart' as intl;
 
-import 'package:e_movies/genres.dart';
+import 'package:e_movies/consts/consts.dart';
 import '../pages/movie_details_page.dart';
 
 class MovieItem extends StatelessWidget {
@@ -23,14 +23,11 @@ class MovieItem extends StatelessWidget {
         arguments: id);
   }
 
-  String _formatDate(DateTime date) {
-    return intl.DateFormat('dd MM yyyy').format(date);
+  String _formatDate(DateTime date) {  
+    return date == null ? 'Unk' : intl.DateFormat.yMMMd().format(date);
   }
 
-  Widget _buildBackgroundImage(BuildContext context, String imageUrl) {
-    // if(imageUrl == 'null' || imageUrl.length == 0 || imageUrl == null)
-    // print('imageUrl --------------------> null TITLE: ${movie.title}');
-    // if(imageUrl == null) imageUrl = 'blob:https://www.pngfuel.com/5e3dae69-7ade-4e65-b1ab-8a2cd4eedc6c';
+  Widget _buildBackgroundImage(BuildContext context, String imageUrl) {    
     return imageUrl == null
         ? Image.asset('assets/images/loading.png', fit: BoxFit.cover)
         : CachedNetworkImage(
@@ -74,7 +71,7 @@ class MovieItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title == null ? 'N/A' : title,
+                title == null ? 'Unk' : title,
                 style: Theme.of(context).textTheme.headline6,
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
@@ -105,10 +102,9 @@ class MovieItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print('MovieItem ---> build called...');
-    // final movie = Provider.of<Movies>(context, listen: false).findById(id);
+
     final screenWidth = MediaQuery.of(context).size.width;
-    // print('genreId --------------- > ${movie.genreIDs[0]}');
+        
     return GestureDetector(
       onTap: () => _onDetailsPressed(context, movie.id),
       child: ClipRRect(

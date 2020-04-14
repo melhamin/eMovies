@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
-import '../providers/movies.dart' show Movies;
+import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
 
 enum MovieLoaderStatus {
@@ -44,7 +44,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<Movies>(context, listen: false).fetchTrendingMovies();
+      Provider.of<MoviesProvider>(context, listen: false).fetchTrendingMovies();
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -77,34 +77,40 @@ class _AllMoviesState extends State<TrendingMoviesPage>
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
-      await Provider.of<Movies>(context, listen: false).fetchTrendingMovies();
+      await Provider.of<MoviesProvider>(context, listen: false).fetchTrendingMovies();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var movies = Provider.of<Movies>(context).trendingMovies;
+    var movies = Provider.of<MoviesProvider>(context).trendingMovies;
     print('------------> length: ${movies.length}');
-    return NotificationListener(
-      onNotification: onNotification,
-      child: RefreshIndicator(
-        onRefresh: () => _refreshMovies(movies.length == 0),
-        backgroundColor: Theme.of(context).primaryColor,
-        child: GridView.builder(
-          controller: scrollController,          
-          key: PageStorageKey('TrendingMoviesPage'),
-          cacheExtent: 12,
-          itemCount: movies.length,
-          itemBuilder: (ctx, i) {
-            // print('--------------> id: ${movies[i].id}');
-            // print('--------------> i: $i    ${movies[i].title}');
-            return MovieItem(
-              movie: movies[i],              
-            );
-          },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2 / 3,
+    return SafeArea(
+      child: Scaffold(
+        body: NotificationListener(
+          onNotification: onNotification,
+          child: RefreshIndicator(
+            onRefresh: () => _refreshMovies(movies.length == 0),
+            backgroundColor: Theme.of(context).primaryColor,
+            child: GridView.builder(
+              controller: scrollController,
+              key: PageStorageKey('TrendingMoviesPage'),
+              cacheExtent: 12,
+              itemCount: movies.length,
+              itemBuilder: (ctx, i) {
+                // print('--------------> id: ${movies[i].id}');
+                // print('--------------> i: $i    ${movies[i].title}');
+                return MovieItem(
+                  movie: movies[i],
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 2 / 3,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+              ),
+            ),
           ),
         ),
       ),

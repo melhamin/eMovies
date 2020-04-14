@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:e_movies/consts/consts.dart';
+
 class MovieItem {
   final int id;
   final String title;
@@ -53,50 +55,23 @@ class MovieItem {
     this.similar,
     this.popularity,
     this.reviews,
-  });
+  });  
 
-  static const IMAGE_WEIGHT = 'w500';
-  static const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
-  static const PLACEHOLDER_IMAGE_URL =
-      'blob:https://www.pngfuel.com/5e3dae69-7ade-4e65-b1ab-8a2cd4eedc6c';
-
-  static MovieItem fromJson(dynamic element) {
-    return MovieItem(
-      id: element['id'],
-      title: element['title'],
-      genreIDs: element['genre_ids'],
-      imageUrl: element['poster_path'] == null
-          ? null
-          : '$IMAGE_URL/${element['poster_path']}',
-      overview: element['overview'],
-      releaseDate: element['release_date'] == null
-          ? DateTime.parse('0000-00-00')
-          : DateTime.tryParse(element['release_date']),
-      originalLanguage: element['original_language'],
-      status: element['release_date'] == null ? 'Not Released' : 'Released',
-      mediaType: element['media_type'],
-      voteAverage: element['vote_average'] + 0.0,
-      // voteAverage: 9.3,
-      voteCount: element['vote_count'],
-      // popularity: 9.3
-    );
-  }
-
-  static MovieItem fromJsonDetails(dynamic json) {
+  static MovieItem fromJson(dynamic json) {
     return MovieItem(
       id: json['id'],
-      title: json['title'],
-      genreIDs: json['genres'],
+      title: json['title'] == null ? json['name'] : json['title'] ?? null,
+      genreIDs: json['genre_ids'],
       // genreIDs: null,
       imageUrl: json['poster_path'] == null
           ? null
           : '$IMAGE_URL/${json['poster_path']}',
       overview: json['overview'],
-      releaseDate: json['release_date'] == null
-          ? DateTime.parse('0000-00-00')
-          : DateTime.tryParse(json['release_date']),
+      releaseDate: json['release_date'] != null
+          ? DateTime.tryParse(json['release_date'])
+          : null,
       originalLanguage: json['original_language'],
-      status: json['release_date'] == null ? 'Not Released' : 'Released',
+      status: json['release_date'],
       mediaType: json['media_type'],
       voteAverage: json['vote_average'] + 0.0,
       // voteAverage: 9.3,
@@ -105,15 +80,51 @@ class MovieItem {
       budget: json['budget'],
       homepage: json['homepage'],
       revenue: json['revenue'],
-      cast: json['credits']['cast'],
-      reviews: json['reviews']['results'],
+      // cast: json['credits']['cast'],
+      reviews: json['reviews'] == null ? null : json['reviews']['results'],
       productionCompanies: json['production_companies'],
       productionContries: json['production_countries'],
-      similar: json['similar']['results'],
-      recommendations: json['recommendations']['results'],
+      similar: json['similar'] == null ? null : json['similar']['results'],
+      recommendations: json['recommendations'] == null
+          ? null
+          : json['recommendations']['results'],
       popularity: json['popularity'] + 0.0,
+      // popularity: 9.3
     );
   }
+
+  // static MovieItem fromJsonDetails(dynamic json) {
+  //   return MovieItem(
+  //     id: json['id'],
+  //     title: json['title'],
+  //     genreIDs: json['genres'],
+  //     // genreIDs: null,
+  //     imageUrl: json['poster_path'] == null
+  //         ? null
+  //         : '$IMAGE_URL/${json['poster_path']}',
+  //     overview: json['overview'],
+  //     releaseDate: json['release_date'] == null
+  //         ? DateTime.parse('0000-00-00')
+  //         : DateTime.tryParse(json['release_date']),
+  //     originalLanguage: json['original_language'],
+  //     status: json['release_date'] == null ? 'Not Released' : 'Released',
+  //     mediaType: json['media_type'],
+  //     voteAverage: json['vote_average'] + 0.0,
+  //     // voteAverage: 9.3,
+  //     duration: json['runtime'],
+  //     voteCount: json['vote_count'],
+  //     budget: json['budget'],
+  //     homepage: json['homepage'],
+  //     revenue: json['revenue'],
+  //     cast: json['credits']['cast'],
+  //     reviews: json['reviews']['results'],
+  //     productionCompanies: json['production_companies'],
+  //     productionContries: json['production_countries'],
+  //     similar: json['similar']['results'],
+  //     recommendations: json['recommendations']['results'],
+  //     popularity: json['popularity'] + 0.0,
+  //   );
+  // }
 
   @override
   String toString() {
@@ -121,7 +132,7 @@ class MovieItem {
   }
 }
 
-class Movies with ChangeNotifier {
+class MoviesProvider with ChangeNotifier {
   static const API_KEY = '0ce2331b7a1f2dd735ece9351d3fa34c';
   static const BASE_URL = 'https://api.themoviedb.org/3/movie';
 
@@ -208,7 +219,7 @@ class Movies with ChangeNotifier {
 
     final response = await http.get(url);
     final responseData = json.decode(response.body) as Map<String, dynamic>;
-    _detailedMovie = MovieItem.fromJsonDetails(responseData);
+    _detailedMovie = MovieItem.fromJson(responseData);
 
     // _detailedMovie.reviews.forEach((element) { 
     //   print('Actor: -----------------> ${element['author']}');

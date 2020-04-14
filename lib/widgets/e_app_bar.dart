@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/providers/movies_provider.dart';
 
 class EAppBar extends StatefulWidget {
   final title;
@@ -26,8 +26,8 @@ class _EAppBarState extends State<EAppBar> {
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _searchFieldController.dispose();
+    super.dispose();
   }
 
   List<Widget> _buildActions() {

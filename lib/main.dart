@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:e_movies/pages/main_page.dart';
 
-import 'providers/movies.dart';
+import 'providers/movies_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,13 +18,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: Movies()),
+        ChangeNotifierProvider.value(value: MoviesProvider()),
       ],
       child: MaterialApp(
         title: 'eMovies',
         theme: ThemeData(
-          primaryColor: Color(0xff1C306D),
-          accentColor: Color(0xFFFFAD32),
+          // primaryColor: Color(0xff1C306D),
+          primaryColor: Colors.black,
+          accentColor: Colors.redAccent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          // accentColor: Color(0xff1C306D),
+          // accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
             subtitle1: TextStyle(
@@ -44,7 +49,7 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Colors.white,
             ),
-          ),
+          ),          
         ),
         home: MainPage(),
         debugShowCheckedModeBanner: false,

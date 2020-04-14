@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class BottomTabBar extends StatelessWidget {
+class BottomBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final List<BottomNavigationBarItem> items;
 
-  BottomTabBar({
+  BottomBar({
     @required this.currentIndex,
     @required this.items,
     @required this.onTap,
@@ -14,11 +14,11 @@ class BottomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabBar(      
+    return CupertinoTabBar(            
       backgroundColor: Colors.black54,
-      inactiveColor: Color(0xff78909c),
-      activeColor: Colors.white,
-      iconSize: 30,
+      inactiveColor: Colors.white54,
+      activeColor: Theme.of(context).accentColor,
+      iconSize: 25,
       currentIndex: currentIndex,
       onTap: onTap,
       items: items,

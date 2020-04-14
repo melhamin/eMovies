@@ -1,12 +1,10 @@
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/most_watched_page.dart';
-import 'package:e_movies/pages/trending_movies_page.dart';
-import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/material.dart';
 
-import 'package:e_movies/widgets/bottom_tab_bar.dart';
-import 'package:e_movies/widgets/e_app_bar.dart';
-
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/pages/most_watched_page.dart';
+import 'package:e_movies/pages/movies_screen.dart';
+import 'package:e_movies/pages/tv_screen.dart';
+import 'package:e_movies/widgets/bottom_tabs.dart';
 
 class MainPage extends StatefulWidget {
   static const routeName = '/main-page';
@@ -17,13 +15,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-  int _selectedIndex = 1;
+  PageController _pageController;
+  int _selectedIndex = 0;
 
-  Map<int, String> _titles = {
-    0: 'Upcoming',
-    1: 'Trending',
-    2: 'Most Watched',
-  };
 
   @override
   initState() {
@@ -34,18 +28,20 @@ class _MainPageState extends State<MainPage>
     _tabController = TabController(
       vsync: this,
       length: 3,
-      initialIndex: _selectedIndex,          
+      initialIndex: _selectedIndex,
     );
+    _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
   }
 
   Widget _buildTabContent() {
     return Positioned.fill(
-      child: TabBarView(
-        controller: _tabController,        
-        physics: NeverScrollableScrollPhysics(),        
+      child: PageView(
+        controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
+        pageSnapping: false,
         children: <Widget>[
-          UpcomingMoviesPage(),
-          TrendingMoviesPage(),
+          MoviesScreen(),
+          TVScreen(),
           MostWatchedPage(),
         ],
       ),
@@ -56,6 +52,7 @@ class _MainPageState extends State<MainPage>
     setState(() {
       _selectedIndex = newIndex;
       _tabController.index = newIndex;
+      _pageController.jumpToPage(newIndex);
     });
   }
 
@@ -70,16 +67,12 @@ class _MainPageState extends State<MainPage>
       color: TRRANSPARENT_BACKGROUND_COLOR,
     );
 
-    final currentPage = _BottomTabs(
+    final currentPage = BottomTabs(
       currentIndex: _selectedIndex,
       onTap: _onTap,
     );
 
     final _content = Scaffold(
-      appBar: PreferredSize(
-        child: EAppBar(_titles[_selectedIndex]),
-        preferredSize: Size.fromHeight(kToolbarHeight),
-      ),
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
@@ -87,60 +80,20 @@ class _MainPageState extends State<MainPage>
         ],
       ),
     );
+
+    // return Stack(
+    //   children: [
+    //     _background_image,
+    //     _content,
+    //   ],
+    // );    
     return SafeArea(
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          _background_image,
-          transparentBackground,
+          // _background_image,
+          // transparentBackground,
           _content,
-        ],
-      ),
-    );
-  }
-}
-
-class _BottomTabs extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
-  _BottomTabs({
-    this.currentIndex,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: BottomTabBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
-        items: [
-          BottomNavigationBarItem(
-            title: Text(
-              'Upcoming',
-              style: TextStyle(fontSize: 12),
-            ),
-            icon: Icon(Icons.event),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          BottomNavigationBarItem(
-            title: Text(
-              'Trending',
-              style: TextStyle(fontSize: 12),
-            ),
-            icon: Icon(Icons.theaters),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          BottomNavigationBarItem(
-            title: Text(
-              'Most Watched',
-              style: TextStyle(fontSize: 12),
-            ),
-            icon: Icon(Icons.tv),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
         ],
       ),
     );

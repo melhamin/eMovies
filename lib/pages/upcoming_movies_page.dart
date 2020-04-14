@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
-import '../providers/movies.dart' show Movies;
+import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
 
 enum MovieLoaderStatus {
@@ -45,7 +45,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<Movies>(context, listen: false).fetchUpcomingMovies(1);
+      Provider.of<MoviesProvider>(context, listen: false).fetchUpcomingMovies(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -60,7 +60,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           movieOperation = CancelableOperation.fromFuture(
-            Provider.of<Movies>(context, listen: false)
+            Provider.of<MoviesProvider>(context, listen: false)
                 .fetchUpcomingMovies(curPage + 1),
           ).then(
             (_) {
@@ -78,7 +78,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh) {
-      await Provider.of<Movies>(context, listen: false).fetchUpcomingMovies(1);
+      await Provider.of<MoviesProvider>(context, listen: false).fetchUpcomingMovies(1);
       setState(() {
         curPage = 1;
       });
@@ -88,26 +88,32 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var movies = Provider.of<Movies>(context).upcomingMovies;
+    var movies = Provider.of<MoviesProvider>(context).upcomingMovies;
     // print('------------> length: ${movies.length}');
-    return NotificationListener(
-      onNotification: onNotification,
-      child: RefreshIndicator(
-        onRefresh: () => _refreshMovies(movies.length == 0),
-        backgroundColor: Theme.of(context).primaryColor,
-        child: GridView.builder(
-          controller: scrollController,
-          key: PageStorageKey('UpcomingMoviesPage'),
-          cacheExtent: 12,
-          itemCount: movies.length,
-          itemBuilder: (ctx, i) {
-            return MovieItem(
-              movie: movies[i],
-            );
-          },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2 / 3,
+    return SafeArea(
+      child: Scaffold(
+        body: NotificationListener(
+          onNotification: onNotification,
+          child: RefreshIndicator(
+            onRefresh: () => _refreshMovies(movies.length == 0),
+            backgroundColor: Theme.of(context).primaryColor,
+            child: GridView.builder(
+              controller: scrollController,
+              key: PageStorageKey('UpcomingMoviesPage'),
+              cacheExtent: 12,
+              itemCount: movies.length,
+              itemBuilder: (ctx, i) {
+                return MovieItem(
+                  movie: movies[i],
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 2 / 3,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+              ),
+            ),
           ),
         ),
       ),

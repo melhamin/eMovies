@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
 
 import 'package:e_movies/widgets/loading_indicator.dart';
-import '../providers/movies.dart';
+import '../providers/movies_provider.dart';
 import 'package:e_movies/genres.dart';
 import '../widgets/movie_item.dart' as mo;
 import '../pages/trending_movies_page.dart';
@@ -49,16 +49,16 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   void didChangeDependencies() {
     if (_isInitLoaded) {
       final id = ModalRoute.of(context).settings.arguments as int;
-      Provider.of<Movies>(context, listen: false).getMovieDetails(id).then(
+      Provider.of<MoviesProvider>(context, listen: false).getMovieDetails(id).then(
             (_) => {
               setState(
                 () {
                   _detailedMovie =
-                      Provider.of<Movies>(context, listen: false).movieDetails;
+                      Provider.of<MoviesProvider>(context, listen: false).movieDetails;
                   _recommended =
-                      Provider.of<Movies>(context, listen: false).recommended;
+                      Provider.of<MoviesProvider>(context, listen: false).recommended;
                   _similar =
-                      Provider.of<Movies>(context, listen: false).similar;
+                      Provider.of<MoviesProvider>(context, listen: false).similar;
                   // Future.delayed(Duration(seconds: 2)).then((value) => _isLoading = false );
                   _isLoading = false;
                 },
