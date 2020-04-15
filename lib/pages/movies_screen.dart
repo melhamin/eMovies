@@ -1,6 +1,7 @@
 import 'package:e_movies/pages/trending_movies_page.dart';
 import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class MoviesScreen extends StatefulWidget {
@@ -37,22 +38,21 @@ class _MoviesScreenState extends State<MoviesScreen>
       ),
     );
 
-    final content = Scaffold(
+    final content = TabBarView(            
+      controller: _tabController,
+      children: [
+        TrendingMoviesPage(),
+        UpcomingMoviesPage(),
+        UpcomingMoviesPage(),
+      ],
+
       // appBar: PreferredSize(
       //   child: NavBar(tabController: _tabController, onTap: _onTap),
       //   preferredSize: Size.fromHeight(kToolbarHeight),
       // ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          TrendingMoviesPage(),
-          UpcomingMoviesPage(),
-          UpcomingMoviesPage(),
-        ],
-      ),
     );
 
-    return SafeArea(
+    return SafeArea(      
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -104,7 +104,7 @@ class NavBar extends StatelessWidget {
             controller: tabController,
             tabs: [
               Text('Genres'),
-              Text('Trending'),              
+              Text('Trending'),
               Text('Upcming'),
             ],
           ),

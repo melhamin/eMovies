@@ -1,9 +1,10 @@
+import 'package:e_movies/pages/details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:e_movies/consts/consts.dart';
-import '../pages/movie_details_page.dart';
+import '../pages/details_page.dart';
 
 class MovieItem extends StatelessWidget {
   // final int id;
@@ -19,7 +20,7 @@ class MovieItem extends StatelessWidget {
   }
 
   void _onDetailsPressed(BuildContext context, int id) {    
-    Navigator.of(context).pushNamed(MovieDetailPage.routeName,
+    Navigator.of(context).pushNamed(DetailsPage.routeName,
         arguments: id);
   }
 
@@ -30,20 +31,24 @@ class MovieItem extends StatelessWidget {
   Widget _buildBackgroundImage(BuildContext context, String imageUrl) {    
     return imageUrl == null
         ? Image.asset('assets/images/loading.png', fit: BoxFit.cover)
-        : CachedNetworkImage(
-                imageUrl: imageUrl,
-                imageBuilder: (context, imageProvider) => Container(
-        decoration: BoxDecoration(
-          color: const Color(0xff000000),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.7), BlendMode.dstATop),
-            image: imageProvider,
+        : Hero(
+          tag: imageUrl,
+                  child: CachedNetworkImage(
+            fadeInCurve: Curves.easeIn,
+                  imageUrl: imageUrl,
+                  imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            color: const Color(0xff000000),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.7), BlendMode.dstATop),
+              image: imageProvider,
+            ),
           ),
-        ),
+                  ),
                 ),
-              );
+        );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,
@@ -57,11 +62,11 @@ class MovieItem extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
                 colors: [
-                  Color.fromRGBO(0, 0, 0, 0.9),
-                  Color.fromRGBO(0, 0, 0, 0)
+                  Color.fromRGBO(0, 0, 0, 0.2),
+                  Color.fromRGBO(0, 0, 0, 1),
                 ]),
             backgroundBlendMode: BlendMode.dstIn),
         constraints: BoxConstraints(maxWidth: screenWidth / 2 - 20),
