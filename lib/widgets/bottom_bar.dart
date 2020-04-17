@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,14 +16,14 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabBar(            
-      backgroundColor: Colors.black54,
-      inactiveColor: Colors.white54,
-      activeColor: Theme.of(context).accentColor,
-      iconSize: 25,
-      currentIndex: currentIndex,
-      onTap: onTap,
-      items: items,
-    );
+    return CupertinoTabBar(                        
+        backgroundColor: Colors.black54,
+        inactiveColor: Colors.white54,
+        activeColor: Theme.of(context).accentColor,
+        iconSize: 25,
+        currentIndex: currentIndex,
+        onTap: onTap,
+        items: items,
+      );
   }
 }

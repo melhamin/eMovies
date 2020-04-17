@@ -26,11 +26,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           // primaryColor: Color(0xff1C306D),
           primaryColor: Colors.black,
-          accentColor: Colors.redAccent,
+          // accentColor: Colors.amber,
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           // accentColor: Color(0xff1C306D),
-          // accentColor: Color(0xFFFFAD32),
+          accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
             subtitle1: TextStyle(
@@ -44,16 +44,28 @@ class MyApp extends StatelessWidget {
               fontFamily: 'OpenSans',
               color: Colors.white70,
             ),
-            headline6: TextStyle(
-              fontSize: 16,
+            headline3: TextStyle(
+              fontSize: 12,
               fontFamily: 'OpenSans',              
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            headline4: TextStyle(
+              fontSize: 14,
+              fontFamily: 'OpenSans',              
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            headline6: TextStyle(
+              fontSize: 18,
+              fontFamily: 'OpenSans',              
+              fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
             headline5: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontFamily: 'OpenSans',              
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),          

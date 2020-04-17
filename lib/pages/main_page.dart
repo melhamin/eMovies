@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
@@ -69,14 +71,30 @@ class _MainPageState extends State<MainPage>
 
     final currentPage = BottomTabs(
       currentIndex: _selectedIndex,
-      onTap: _onTap,
+      onTap: _onTap,      
     );
+
+    // final bottom = Stack(
+    //   children: [
+    //     currentPage,
+    //     Container(
+    //       height: 56,
+    //       child: BackdropFilter(
+    //         filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
+    //         child: Container(
+    //           color: Colors.black.withOpacity(0),
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
 
     final _content = Scaffold(
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
           currentPage,
+          // bottom,
         ],
       ),
     );

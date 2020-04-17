@@ -1,3 +1,4 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
@@ -11,7 +12,7 @@ enum MovieLoaderStatus {
 }
 
 class UpcomingMoviesPage extends StatefulWidget {
-  static const routeName = '/upcoming-page';
+  static const routeName = '/upcoming-page';  
   UpcomingMoviesPage({
     Key key,
   }) : super(key: key);
@@ -105,6 +106,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
               itemBuilder: (ctx, i) {
                 return MovieItem(
                   movie: movies[i],
+                  tag: UPCOMING_TAG,
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

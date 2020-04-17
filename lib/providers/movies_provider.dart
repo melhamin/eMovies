@@ -218,8 +218,10 @@ class MoviesProvider with ChangeNotifier {
         'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits%2Crecommendations,similar,reviews';
 
     final response = await http.get(url);
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    // print('MovieDetails ----------->- ${response.body}');
+    final responseData = json.decode(response.body) as Map<String, dynamic>;    
     _detailedMovie = MovieItem.fromJson(responseData);
+    print('MovieDetails title -------------->${_detailedMovie.title}');
 
     // _detailedMovie.reviews.forEach((element) { 
     //   print('Actor: -----------------> ${element['author']}');
@@ -237,8 +239,7 @@ class MoviesProvider with ChangeNotifier {
       _recommendations.add(MovieItem.fromJson(element));
     });
 
-    notifyListeners();
-
+    notifyListeners();    
     // print(response.body);
   }
 }

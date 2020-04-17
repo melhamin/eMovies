@@ -4,6 +4,7 @@ import 'package:async/async.dart';
 
 import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
+import 'package:e_movies/consts/consts.dart';
 
 enum MovieLoaderStatus {
   STABLE,
@@ -12,6 +13,7 @@ enum MovieLoaderStatus {
 
 class TrendingMoviesPage extends StatefulWidget {
   static const routeName = '/trending-page';
+  
   TrendingMoviesPage({
     Key key,
   }) : super(key: key);
@@ -102,6 +104,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
                 // print('--------------> i: $i    ${movies[i].title}');
                 return MovieItem(
                   movie: movies[i],
+                  tag: TRENDING_TAG,
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

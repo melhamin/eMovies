@@ -24,6 +24,8 @@ dependencies:
   cached_network_image: ^2.0.0
   intl: ^0.16.1
   rating_bar: ^0.2.0  
+  transparent_image: ^1.0.0 
+  flutter_spinkit: "^4.1.2" 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -45,12 +47,11 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/background_image.jpg
+  assets:    
     - assets/images/background_image_1.jpg
     - assets/images/logo.png
-    - assets/images/loading.png
-    - assets/images/trending.svg
+    - assets/images/poster_placeholder.png
+    - assets/images/loading.png    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
