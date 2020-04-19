@@ -1,7 +1,9 @@
 import 'package:e_movies/pages/details_page.dart';
 import 'package:e_movies/pages/trending_movies_page.dart';
 import 'package:e_movies/pages/upcoming_movies_page.dart';
+import 'package:e_movies/pages/video_page.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/pages/main_page.dart';
@@ -35,38 +37,42 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
             subtitle1: TextStyle(
               fontSize: 14,
-              fontFamily: 'OpenSans',
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
+              fontFamily: 'Helvatica',
+              // fontWeight: FontWeight.w500,
+              color: Colors.white54,
             ),
             subtitle2: TextStyle(
               fontSize: 12,
-              fontFamily: 'OpenSans',
-              color: Colors.white70,
+              fontFamily: 'Roboto',
+              color: Colors.white60,
             ),
+            
             headline3: TextStyle(
-              fontSize: 12,
-              fontFamily: 'OpenSans',              
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontSize: 14,
+              fontFamily: 'Helvatica',                       
+              height: 1.5,
+              fontWeight: FontWeight.w600,
+
+              color: Hexcolor('#DEDEDE'),
             ),
             headline4: TextStyle(
               fontSize: 14,
-              fontFamily: 'OpenSans',              
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+              fontFamily: 'Helvatica',              
+              // fontWeight: FontWeight.bold,
+              color: Hexcolor('#DEDEDE'),
             ),
             headline6: TextStyle(
-              fontSize: 18,
-              fontFamily: 'OpenSans',              
+              fontSize: 21,
+              // height: 1.5,
+              fontFamily: 'Helvatica',              
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Hexcolor('#DEDEDE')
             ),
             headline5: TextStyle(
               fontSize: 16,
-              fontFamily: 'OpenSans',              
+              fontFamily: 'Helvatica',              
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Hexcolor('#DEDEDE'),
             ),
           ),          
         ),
@@ -77,6 +83,7 @@ class MyApp extends StatelessWidget {
           DetailsPage.routeName: (ctx) => DetailsPage(),
           TrendingMoviesPage.routeName: (ctx) => TrendingMoviesPage(),
           UpcomingMoviesPage.routeName: (ctx) => UpcomingMoviesPage(),
+          VideoPage.routeName: (ctx) => VideoPage(),
         },
       ),
     );

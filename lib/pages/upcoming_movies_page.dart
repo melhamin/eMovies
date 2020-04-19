@@ -99,14 +99,14 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
+              physics: BouncingScrollPhysics(),
               controller: scrollController,
               key: PageStorageKey('UpcomingMoviesPage'),
               cacheExtent: 12,
               itemCount: movies.length,
               itemBuilder: (ctx, i) {
                 return MovieItem(
-                  movie: movies[i],
-                  tag: UPCOMING_TAG,
+                  movie: movies[i],                  
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

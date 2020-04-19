@@ -1,7 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'package:e_movies/consts/consts.dart';
 
 class BottomBar extends StatelessWidget {
   final int currentIndex;

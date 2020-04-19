@@ -95,6 +95,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
+              physics: BouncingScrollPhysics(),
               controller: scrollController,
               key: PageStorageKey('TrendingMoviesPage'),
               cacheExtent: 12,
@@ -103,8 +104,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
                 // print('--------------> id: ${movies[i].id}');
                 // print('--------------> i: $i    ${movies[i].title}');
                 return MovieItem(
-                  movie: movies[i],
-                  tag: TRENDING_TAG,
+                  movie: movies[i],                  
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

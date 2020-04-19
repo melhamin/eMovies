@@ -18,16 +18,19 @@ class MovieItem {
   final double voteAverage;
   final int voteCount;
   final String mediaType;
-
+  
   int duration;
   int budget;
   String homepage;
   double popularity;
   int revenue;
+  List<dynamic> images;
+  List<dynamic> videos;
   List<dynamic> reviews;
   List<dynamic> productionCompanies;
   List<dynamic> productionContries;
   List<dynamic> cast;
+  List<dynamic> crew;
   List<dynamic> recommendations;
   List<dynamic> similar;
 
@@ -43,25 +46,27 @@ class MovieItem {
     @required this.mediaType,
     @required this.voteAverage,
     @required this.voteCount,
-
+    this.crew,
+    this.images,
+    this.videos,
     this.duration,
     this.budget,
     this.homepage,
     this.revenue,
-    this.cast,    
+    this.cast,
     this.productionCompanies,
     this.productionContries,
     this.recommendations,
     this.similar,
     this.popularity,
     this.reviews,
-  });  
+  });
 
   static MovieItem fromJson(dynamic json) {
     return MovieItem(
       id: json['id'],
       title: json['title'] == null ? json['name'] : json['title'] ?? null,
-      genreIDs: json['genre_ids'],
+      genreIDs: json['genre_ids'] == null ? json['genres'] : json['genre_ids'],
       // genreIDs: null,
       imageUrl: json['poster_path'] == null
           ? null
@@ -74,13 +79,18 @@ class MovieItem {
       status: json['release_date'],
       mediaType: json['media_type'],
       voteAverage: json['vote_average'] + 0.0,
+      videos:
+          json['videos'] == null ? null : json['videos']['results'],
+      images:
+          json['images'] == null ? null : json['images']['backdrops'],
       // voteAverage: 9.3,
       duration: json['runtime'],
       voteCount: json['vote_count'],
       budget: json['budget'],
       homepage: json['homepage'],
       revenue: json['revenue'],
-      // cast: json['credits']['cast'],
+      cast: json['credits'] == null ? null : json['credits']['cast'],
+      crew: json['credits'] == null ? null : json['credits']['crew'],
       reviews: json['reviews'] == null ? null : json['reviews']['results'],
       productionCompanies: json['production_companies'],
       productionContries: json['production_countries'],
@@ -214,32 +224,33 @@ class MoviesProvider with ChangeNotifier {
   }
 
   Future<void> getMovieDetails(int id) async {
-    final url =
-        'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits%2Crecommendations,similar,reviews';
+    // final url =
+    //     'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews';
+    final url = 'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews,images&include_image_language=en,null';
 
     final response = await http.get(url);
     // print('MovieDetails ----------->- ${response.body}');
-    final responseData = json.decode(response.body) as Map<String, dynamic>;    
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
     _detailedMovie = MovieItem.fromJson(responseData);
-    print('MovieDetails title -------------->${_detailedMovie.title}');
+    print('MovieDetails videos -------------->${_detailedMovie.videos}');
 
-    // _detailedMovie.reviews.forEach((element) { 
+    // _detailedMovie.reviews.forEach((element) {
     //   print('Actor: -----------------> ${element['author']}');
     //   print('content: -----------------> ${element['content']}');
     // });
 
-    _recommendations.clear();
+    // _recommendations.clear();
     _similar.clear();
 
     _detailedMovie.similar.forEach((element) {
       _similar.add(MovieItem.fromJson(element));
     });
 
-    _detailedMovie.recommendations.forEach((element) {
-      _recommendations.add(MovieItem.fromJson(element));
-    });
+    // _detailedMovie.recommendations.forEach((element) {
+    //   _recommendations.add(MovieItem.fromJson(element));
+    // });
 
-    notifyListeners();    
+    notifyListeners();
     // print(response.body);
   }
 }

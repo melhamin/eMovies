@@ -1,31 +1,45 @@
 import 'package:e_movies/pages/details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:e_movies/consts/consts.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../pages/details_page.dart';
 
-class MovieItem extends StatelessWidget {
-  // final int id;
+class MovieItem extends StatelessWidget {  
   final movie;
-  final String
-      tag; // to use in hero animation to avoid duplicate tag for trending and upcoming pages
+  final bool withoutFooter;
 
-  MovieItem({
-    // this.id,
-    this.movie,
-    this.tag,
+  MovieItem({    
+    this.movie, 
+    this.withoutFooter = false,   
   });
+
+  Route _buildRoute(int id) {
+    return PageRouteBuilder(
+      settings: RouteSettings(arguments: id),
+      pageBuilder: (context, animation, secondaryAnimation) => DetailsPage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end = Offset.zero;          // if y > 0 and x = 0 transition is from bottom to top
+        // var curve = Curves.bounceIn;
+        var tween = Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
+        var offsetAnimation = animation.drive(tween);        
+
+        return SlideTransition(          
+          position: offsetAnimation,
+          child: child,
+        );
+      },      
+    );
+  }
 
   String getGenreName(int genreId) {
     return GENRES[genreId];
   }
 
-  void _onDetailsPressed(BuildContext context, int id) {
-    Navigator.of(context)
-        .pushNamed(DetailsPage.routeName, arguments: {'id': id, 'tag': tag});
+  void _navigate(BuildContext context, int id) {
+    Navigator.of(context).push(_buildRoute(id));
   }
 
   String _formatDate(DateTime date) {
@@ -35,28 +49,11 @@ class MovieItem extends StatelessWidget {
   Widget _buildBackgroundImage(BuildContext context, String imageUrl) {
     return imageUrl == null
         ? Image.asset('assets/images/poster_placeholder.png', fit: BoxFit.cover)
-        : Hero(
-            tag: imageUrl,
-            child: FadeInImage.memoryNetwork(
-              placeholder: kTransparentImage,
-              image: imageUrl,
-            ),
-            // child: CachedNetworkImage(
-            //   fadeInCurve: Curves.bounceIn,
-            //   imageUrl: imageUrl,
-            //   imageBuilder: (context, imageProvider) => Container(
-            //     decoration: BoxDecoration(
-            //       color: const Color(0xff000000),
-            //       image: DecorationImage(
-            //         fit: BoxFit.cover,
-            //         colorFilter: ColorFilter.mode(
-            //             Colors.black.withOpacity(0.7), BlendMode.dstATop),
-            //         image: imageProvider,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-          );
+        : FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          fadeInCurve: Curves.easeInOutSine,
+          image: imageUrl,
+        );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,
@@ -90,10 +87,11 @@ class MovieItem extends StatelessWidget {
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
               ),
+              SizedBox(height: 5),
               FittedBox(
                 child: Text(
                   getGenreName(genreId),
-                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  style: Theme.of(context).textTheme.subtitle1,
                   softWrap: false,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -102,7 +100,7 @@ class MovieItem extends StatelessWidget {
               FittedBox(
                 child: Text(
                   _formatDate(date),
-                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                  style: Theme.of(context).textTheme.subtitle1,
                   softWrap: false,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -119,12 +117,13 @@ class MovieItem extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
-      onTap: () => _onDetailsPressed(context, movie.id),
+      onTap: () => _navigate(context, movie.id),
       child: ClipRRect(
         child: GridTile(
           child: Stack(
             children: <Widget>[
               _buildBackgroundImage(context, movie.imageUrl),
+              if(!withoutFooter)
               _buildFooter(
                 context,
                 screenWidth,

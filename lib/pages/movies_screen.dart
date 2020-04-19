@@ -104,10 +104,10 @@ class NavBar extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               controller: tabController,
-              tabs: [
-                Text('Genres'),
-                Text('Trending'),
-                Text('Upcming'),
+              tabs: [                                
+                Text('Genres', style: TextStyle(color: Colors.white)),
+                Text('Trending', style: TextStyle(color: Colors.white)),
+                Text('Upcming',  style: TextStyle(color: Colors.white)),
               ],
             ),
           ),

@@ -1,12 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_movies/pages/video_page.dart';
+import 'package:e_movies/providers/cast_provider.dart';
+import 'package:e_movies/widgets/details_item.dart';
+import 'package:expand_widget/expand_widget.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/movie_item.dart' as wid;
 import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/cast_item.dart' as wid;
 
 class DetailsPage extends StatefulWidget {
   static const routeName = '/details-page';
@@ -14,39 +21,84 @@ class DetailsPage extends StatefulWidget {
   _DetailsPageState createState() => _DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> {
-  // MovieItem film;
+class _DetailsPageState extends State<DetailsPage>
+    with SingleTickerProviderStateMixin {
   bool _isInitLoaded = true;
   bool _isFetching = true;
+  MovieItem film;
+  List<CastItem> cast = [];
+  List<CastItem> crew = [];
+
+  AnimationController _animationController;
+  Animation<Offset> _animation;
+  // ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    // Future.delayed(Duration.zero).then((_) {
-    //   final args =
-    //       ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    //   final id = args['id'];
-    //   final tag = args['tag'];
-    //   Provider.of<MoviesProvider>(context, listen: false).getMovieDetails(id);
-    // });
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..forward();
+    _animation = Tween<Offset>(begin: Offset(1, 0), end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeIn,
+      ),
+    );
+    //   _scrollController = ScrollController(
+    //   initialScrollOffset: -1,
+
+    // );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _animationController.dispose();
   }
 
   @override
   void didChangeDependencies() {
     if (_isInitLoaded) {
-      final args =
-          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;       
-          final id = args['id'];
+      final id = ModalRoute.of(context).settings.arguments as int;
       Provider.of<MoviesProvider>(context, listen: false)
           .getMovieDetails(id)
           .then((value) {
         setState(() {
           _isFetching = false;
+          // Get film item
+          film =
+              Provider.of<MoviesProvider>(context, listen: false).movieDetails;
+
+          // get Crew data
+          film.crew.forEach((element) {
+            // print('name ---------> ${element['character']} ');
+            // if (element['job'] == 'Director') {
+            //   print('Director --------------> ${element['name']} ');
+            // }
+            crew.add(CastItem(
+              id: element['id'],
+              name: element['name'],
+              imageUrl: element['profile_path'],
+              job: element['job'],
+            ));
+          });
+          // Get cast data
+          film.cast.forEach((element) {
+            // print('name/ ---------> ${element['character']} ');
+            cast.add(CastItem(
+              id: element['id'],
+              name: element['name'],
+              imageUrl: element['profile_path'],
+              character: element['character'],
+            ));
+          });
         });
       });
     }
     _isInitLoaded = false;
-    // _isFetching = false;
     super.didChangeDependencies();
   }
 
@@ -57,6 +109,7 @@ class _DetailsPageState extends State<DetailsPage> {
         height: kToolbarHeight,
         decoration: BoxDecoration(
           color: Colors.black54,
+          // color: BASELINE_COLOR_TRANSPARENT,
           // backgroundBlendMode: BlendMode.dstIn,
         ),
         child: Row(
@@ -66,7 +119,7 @@ class _DetailsPageState extends State<DetailsPage> {
               child: Align(
                 alignment: Alignment.center - Alignment(0.2, 0),
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
+                  padding: const EdgeInsets.only(right: 3.0),
                   child: Text(
                     title,
                     style: Theme.of(context).textTheme.headline6,
@@ -83,77 +136,253 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   Widget _buildBottomIcons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+    return Container(
+      color: BASELINE_COLOR,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            Icons.favorite_border,
-            color: Colors.white,
-            size: 30,
+          IconButton(
+            icon: Icon(
+              Icons.favorite_border,
+              color: Theme.of(context).accentColor,
+              size: 30,
+            ),
+            onPressed: () {},
           ),
-          Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 30,
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).accentColor,
+              size: 30,
+            ),
+            onPressed: () {},
           ),
-          Icon(
-            Icons.share,
-            color: Colors.white,
-            size: 30,
-          ),
+          IconButton(
+            icon: Icon(
+              Icons.share,
+              color: Theme.of(context).accentColor,
+              size: 30,
+            ),
+            onPressed: () {},
+          )
         ],
       ),
     );
   }
 
   Widget _showLoadingIndicator() {
-    return SpinKitThreeBounce (      
-      size: 12,
+    return SpinKitThreeBounce(
+      size: 16,
       color: Colors.white,
+    );
+  }
+
+  Widget _buildRatings(double voteAverage) {
+    return Container(
+      padding: const EdgeInsets.only(top: 10, left: PADDING),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(width: 0.5, color: LINE_COLOR),
+        ),
+      ),
+      height: 55,
+      child: SlideTransition(
+        position: _animation,
+        child: GridView(
+          children: [
+            RatingItem(title: 'My Rating', subtitle: '9.3'),
+            RatingItem(title: 'TMDB Rating', subtitle: voteAverage.toString()),
+            // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
+            // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
+          ],
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            childAspectRatio: 1 / 3,
+          ),
+          scrollDirection: Axis.horizontal,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImages(MovieItem film) {
+    List<String> images = [];
+    if (film.images != null) {
+      film.images.forEach((element) {
+        images.add(IMAGE_URL + element['file_path']);
+      });
+    }
+
+    return film.images.length > 0
+        ? GridView.builder(
+          physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: PADDING),
+            // controller: _scrollController,
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return CachedNetworkImage(
+                imageUrl: images[index],
+                fadeInCurve: Curves.fastOutSlowIn,
+              );
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              childAspectRatio: 2 / 3,
+              mainAxisSpacing: 3,
+            ),
+            scrollDirection: Axis.horizontal,
+          )
+        : null;
+  }
+
+  // Widget _buildSectionTitle(String title) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Padding(
+  //         padding: const EdgeInsets.only(left: PADDING),
+  //         child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+  //       ),
+  //       // Divider(color: LINE_COLOR),
+  //     ],
+  //   );
+  // }
+
+  Widget _buildOverview(String overview) {
+    return overview == null
+        ? null
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // _buildSectionTitle('Overview'),
+              SizedBox(height: 5),
+              Container(
+                padding: EdgeInsets.only(left: PADDING, right: 10, top: 5),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: LINE_COLOR, width: 0.5),
+                  ),
+                  color: BASELINE_COLOR,
+                ),
+                child: (overview == null || overview.length == 0)
+                    ? Text(
+                        'Overview not available',
+                        style: Theme.of(context).textTheme.headline4,
+                      )
+                    : ExpandText(
+                        overview,
+                        maxLength: 3,
+                        style: Theme.of(context).textTheme.headline3,
+                        arrowColor: Theme.of(context).accentColor,
+                      ),
+              ),
+            ],
+          );
+  }
+
+  String _getGenres(List<dynamic> ids) {
+    if (ids == null || ids.length == 0) return 'N/A';
+    int length = ids.length < 3 ? ids.length : 3;
+    String res = '';
+    for (int i = 0; i < length; i++) {
+      res = res + GENRES[ids[i]['id']] + ', ';
+    }
+    res = res.substring(0, res.lastIndexOf(','));
+    return res;
+  }
+
+  Widget _buildDetails(MovieItem film) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+          top: BorderSide(color: LINE_COLOR, width: 0.5),
+        ),
+        color: BASELINE_COLOR,
+      ),
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(0),
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          DetailsItem(
+            left: 'Release Date',
+            right: DateFormat.yMMMd().format(film.releaseDate),
+          ),
+          DetailsItem(
+            left: 'Runtime',
+            right: film.duration.toString() + ' min',
+          ),
+          DetailsItem(
+            left: 'Rating',
+            right: film.voteAverage.toString(),
+          ),
+          DetailsItem(
+            left: 'Genres',
+            right: _getGenres(film.genreIDs),
+            last: true,
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    final id = args['id'];
-    final tag = args['tag'];
-    // final film = _getFilm(id, tag);
-    final film =
-        Provider.of<MoviesProvider>(context, listen: false).movieDetails;
-    
-
-    print('isFetching =-----------> $_isFetching');
-
+    print('DetailsPage ---------------------> build()');
     return SafeArea(
       child: Scaffold(
         body: _isFetching
             ? Center(child: _showLoadingIndicator())
             : LayoutBuilder(
-              builder: (context, constraints) {
-                return Stack(
-                  children: [
-                    ListView(
-                      children: [
-                        Container(
-                          height: constraints.maxHeight * 0.9,
-                          child: InitialView(film: film),
-                        ),
-                        Container(
-                          color: Colors.black,
-                          height: constraints.maxHeight * 0.1,
-                          child: _buildBottomIcons(),
-                        ),
-                      ],
-                    ),
-                    _buildTopBar(film.title),
-                  ],
-                );
-              },                          
-            ),
+                builder: (context, constraints) {
+                  return Stack(
+                    children: [
+                      ListView(
+                        physics: BouncingScrollPhysics(),
+                        // padding: EdgeInsets.symmetric(vertical: APP_BAR_HEIGHT),
+                        addAutomaticKeepAlives: true,
+                        cacheExtent: 20,
+                        children: [
+                          Container(
+                            height: constraints.maxHeight * 0.9,
+                            child: InitialView(film: film),
+                          ),
+                          Container(
+                            color: Colors.black,
+                            height: constraints.maxHeight * 0.1,
+                            child: _buildBottomIcons(),
+                          ),
+                          // Divider(color: Colors.white38),
+                          _buildRatings(film.voteAverage),
+                          // Divider(color: Colors.white38),
+                          // SizedBox(height: 5),
+                          if (film.images != null && film.images.length > 0)
+                            Container(
+                                height: constraints.maxHeight * 0.2,
+                                child: _buildImages(film)),
+                          // SizedBox(height: 5),
+                          _buildOverview(film.overview),
+                          SizedBox(height: 30),
+                          _buildDetails(film),
+                          SizedBox(height: 30),
+                          // _buildCast(),
+                          Cast(cast: cast, crew: crew),
+                          SizedBox(height: 30),
+                          // Container(color: Colors.blue, height: 200),
+                          Container(
+                            height: constraints.maxHeight * 0.3,
+                            child: SimlarMovies(),
+                          ),
+                          SizedBox(height: 30),
+                        ],
+                      ),
+                      _buildTopBar(film.title),
+                    ],
+                  );
+                },
+              ),
       ),
     );
   }
@@ -185,114 +414,344 @@ class InitialView extends StatelessWidget {
     Widget _buildFooter() {
       return LayoutBuilder(
         builder: (context, constraints) {
-          return Align(
-            alignment: Alignment.bottomCenter,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: constraints.maxHeight * 0.15,
-                    color: Colors.black54,
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: (constraints.maxWidth * 0.3 + 20),
-                          top: 5,
-                        ),
-                        child: Container(
-                          width: constraints.maxWidth * 0.6,
-                          child: Text(
-                            film.title,
-                            softWrap: true,
-                            style: Theme.of(context).textTheme.headline5,
-                          ),
+          return Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: constraints.maxHeight * 0.15,
+                  color: BASELINE_COLOR,
+                  // color: Colors.black54,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: (constraints.maxWidth * 0.3),
+                        top: 10,
+                      ),
+                      child: Container(
+                        width: constraints.maxWidth * 0.6,
+                        child: Text(
+                          film.title,
+                          softWrap: true,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                     ),
                   ),
                 ),
-                // ),
-                Positioned(
-                  bottom: constraints.maxHeight * 0.02,
-                  left: 10,
-                  child: Column(
-                    children: [
-                      Card(
-                        elevation: 5,
-                        child: Container(
-                          width: constraints.maxWidth * 0.3,
-                          height: constraints.maxHeight * 0.2,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Container(
-                        width: constraints.maxWidth * 0.3,
-                        child: Center(
-                          child: Text(_getDateAndDuration(),
-                              style: Theme.of(context).textTheme.headline4),
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+              // ),
+              Positioned(
+                bottom: constraints.maxHeight * 0.03,
+                // left: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.play_circle_outline),
+                      iconSize: 80,
+                      color: Colors.amber,
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(VideoPage.routeName);
+                      },
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: PADDING),
+                      width: constraints.maxWidth * 0.4,
+                      child: Text(_getDateAndDuration(),
+                          style: Theme.of(context).textTheme.headline3),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       );
     }
 
     Widget _buildBackgroundImage(MovieItem film) {
-      return Stack(
-        children: [
-          film.imageUrl == null
-              ? Image.asset('assets/images/poster_placeholder.png',
-                  fit: BoxFit.cover)
-              : Hero(
-                  transitionOnUserGestures: true,
-                  tag: film.imageUrl,
-                  // child: FadeInImage.memoryNetwork(
-                  //   image: film.imageUrl,
-                  //   placeholder: kTransparentImage,
-                  //   fit: BoxFit.cover,
-                  //   width: double.infinity,
-                  //   fadeInCurve: Curves.elasticOut,
-                  // ),
-                  child: CachedNetworkImage(
-                    imageUrl: film.imageUrl,
-                    fadeInCurve: Curves.elasticOut,
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xff000000),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.7), BlendMode.dstATop),
-                          image: imageProvider,
-                        ),
-                      ),
-                    ),
+      return film.imageUrl == null
+          ? Image.asset('assets/images/poster_placeholder.png',
+              fit: BoxFit.cover)
+          : CachedNetworkImage(
+              imageUrl: film.imageUrl,
+              fadeInCurve: Curves.fastOutSlowIn,
+              imageBuilder: (context, imageProvider) => Container(
+                decoration: BoxDecoration(
+                  // color: const Color(0xff000000),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: imageProvider,
                   ),
                 ),
-          _buildFooter(),
-        ],
-      );
+              ),
+            );
     }
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return Stack(
           children: [
-            Container(
-              height: constraints.maxHeight,
-              child: _buildBackgroundImage(film),
+            Column(
+              children: [
+                Container(
+                  height: constraints.maxHeight - 1,
+                  child: _buildBackgroundImage(film),
+                ),
+                // TODO *** find the source of the padding ****
+                // Without this container there would be a tiny padding between
+                // footer and bottom of the background image
+                Container(
+                  height: 1,
+                  color: BASELINE_COLOR,
+                ),
+              ],
             ),
+            _buildFooter(),
           ],
         );
       },
     );
   }
 }
+
+class RatingItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  RatingItem({this.title, this.subtitle});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5.0),
+          child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5),
+          child: Text(subtitle, style: Theme.of(context).textTheme.headline4),
+        )
+      ],
+    );
+  }
+}
+
+class Cast extends StatefulWidget {
+  final List<CastItem> crew;
+  final List<CastItem> cast;
+  Cast({this.crew, this.cast});
+  @override
+  _CastState createState() => _CastState();
+}
+
+class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
+  bool _expanded = false;
+
+  // Get the name abbreviation for circle avatar in case image is not available
+  String _getName(String str) {
+    String res = '';
+    List<String> name = str.split(' ');
+    res = res + name[0][0].toUpperCase() + name[1][0].toUpperCase();
+    return res;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('Cast ------------------------> initState()');
+  }
+
+  void _onTap() {
+    setState(() {
+      _expanded = true;
+    });
+  }
+
+  // finds whether at index (index) is the last item
+  // and draw bottom border accroding to it
+  bool _isLasItem(int index) {
+    return (!_expanded
+        ? (index == 4 ? true : false)
+        : (index == _calcualteItemCount() - 1 ? true : false));
+  }
+
+  // Calculate number of items in different situations
+  int _calcualteItemCount() {
+    return widget.cast.length > 5
+        ? (_expanded ? (widget.cast.length > 10 ? 10 : widget.cast.length) : 5)
+        : widget.cast.length;
+
+    /**
+     * More clear implemention of above statement
+     */
+    // if (widget.cast.length > 5) {
+    //   if (_expanded) {
+    //     if (widget.cast.length > 10) {
+    //       return 10;
+    //     } else {
+    //       return widget.cast.length;
+    //     }
+    //   } else
+    //     return 5;
+    // }
+    // return widget.cast.length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    print('Cast ----------------------> build()');
+    CastItem director = widget.crew.firstWhere((element) {
+      return element.job == 'Director';
+    });
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (director != null)
+            Padding(
+              padding: const EdgeInsets.only(left: PADDING, bottom: 5),
+              child: Text('Director',
+                  style: Theme.of(context).textTheme.subtitle1),
+            ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+                top: BorderSide(width: 0.5, color: LINE_COLOR),
+              ),
+              color: BASELINE_COLOR,
+            ),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: director.imageUrl == null
+                    ? Theme.of(context).accentColor
+                    : Colors.black,
+                backgroundImage: director.imageUrl != null
+                    ? NetworkImage(IMAGE_URL + director.imageUrl)
+                    : null,
+                child: director.imageUrl != null
+                    ? null
+                    : Text(
+                        _getName(director.name),
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+              ),
+              title: Text(
+                director.name,
+                style: Theme.of(context).textTheme.headline3,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: PADDING, bottom: 5),
+            child: Text('Cast', style: Theme.of(context).textTheme.subtitle1),
+          ),
+          if (widget.cast != null && widget.cast.length > 0)
+            Flexible(
+              fit: FlexFit.loose,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+                    top: BorderSide(width: 0.5, color: LINE_COLOR),
+                  ),
+                  color: BASELINE_COLOR,
+                ),
+                child: ListView.builder(
+                  // addAutomaticKeepAlives: true,
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _calcualteItemCount(),
+                  itemBuilder: (context, index) {
+                    CastItem item = widget.cast[index];
+                    return wid.CastItem(
+                      title: item.name,
+                      subtitle: item.character,
+                      imageUrl: item.imageUrl,
+                      // to add border to all except last one
+                      last: _isLasItem(index),
+                    );
+                  },
+                ),
+              ),
+            ),
+          if (!_expanded && widget.cast.length > 5)
+            ListTile(
+              leading: Text(
+                'Show More...',
+                style: TextStyle(color: Colors.amber),
+              ),
+              onTap: _onTap,
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+}
+
+class SimlarMovies extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final movies = Provider.of<MoviesProvider>(context, listen: false).similar;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: PADDING),
+          child: Text('Similar Movies',
+              style: Theme.of(context).textTheme.subtitle1),
+        ),
+        SizedBox(height: 5),
+        Flexible(
+          child: Container(
+            color: BASELINE_COLOR,
+            child: GridView.builder(    
+              physics: BouncingScrollPhysics(),          
+              padding: EdgeInsets.symmetric(horizontal: PADDING),
+              itemCount: movies.length,
+              itemBuilder: (context, index) {
+                return wid.MovieItem(
+                  movie: movies[index],
+                  withoutFooter: true,
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 1.5,
+                mainAxisSpacing: 5,
+              ),
+              scrollDirection: Axis.horizontal,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/**
+ * Padding(
+              padding: const EdgeInsets.only(left: PADDING, bottom: 5),
+              child: Text('Director',
+                  style: Theme.of(context).textTheme.subtitle1),
+            ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+                top: BorderSide(width: 0.5, color: LINE_COLOR),
+              ),
+              color: BASELINE_COLOR,
+            ),
+ */
