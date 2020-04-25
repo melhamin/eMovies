@@ -39,10 +39,10 @@ class BottomTabs extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           title: Text(
-            'Most Watched',
+            'Search',
             style: TextStyle(fontSize: 14),
           ),
-          icon: Icon(Icons.watch_later),
+          icon: Icon(Icons.search),
           backgroundColor: Theme.of(context).primaryColor,
         ),
           ],

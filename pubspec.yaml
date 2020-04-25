@@ -54,8 +54,28 @@ flutter:
   assets:    
     - assets/images/background_image_1.jpg
     - assets/images/logo.png
-    - assets/images/poster_placeholder.png
-    - assets/images/loading.png    
+    - assets/images/poster_placeholder.png        
+    - assets/images/placeholder.png        
+    - assets/images/action.jpg
+    - assets/images/adventure.jpg
+    - assets/images/comedy.jpg
+    - assets/images/animation.jpg
+    - assets/images/comedy.jpg
+    - assets/images/crime.jpeg
+    - assets/images/documentary.jpg
+    - assets/images/drama.jpg
+    - assets/images/family.jpg
+    - assets/images/fantasy.jpg
+    - assets/images/history.jpg
+    - assets/images/horror.jpg
+    - assets/images/music.jpg
+    - assets/images/mystery.jpg
+    - assets/images/romance.jpg
+    - assets/images/sci-fi.jpg
+    - assets/images/thriller.jpg
+    - assets/images/war.jpg
+    - assets/images/western.jpg
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

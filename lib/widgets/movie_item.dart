@@ -1,18 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/details_page.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:e_movies/consts/consts.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../pages/details_page.dart';
 
-class MovieItem extends StatelessWidget {  
+class MovieItem extends StatelessWidget {
   final movie;
   final bool withoutFooter;
 
-  MovieItem({    
-    this.movie, 
-    this.withoutFooter = false,   
+  MovieItem({
+    this.movie,
+    this.withoutFooter = false,
   });
 
   Route _buildRoute(int id) {
@@ -20,22 +23,28 @@ class MovieItem extends StatelessWidget {
       settings: RouteSettings(arguments: id),
       pageBuilder: (context, animation, secondaryAnimation) => DetailsPage(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end = Offset.zero;          // if y > 0 and x = 0 transition is from bottom to top
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
         // var curve = Curves.bounceIn;
-        var tween = Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
-        var offsetAnimation = animation.drive(tween);        
+        var tween =
+            Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
+        var offsetAnimation = animation.drive(tween);
 
-        return SlideTransition(          
+        return SlideTransition(
           position: offsetAnimation,
           child: child,
         );
-      },      
+      },
     );
   }
 
   String getGenreName(int genreId) {
-    return GENRES[genreId];
+    if (GENRES.containsKey(genreId)) {
+      return GENRES[genreId];
+    }
+    return 'N/A';
   }
 
   void _navigate(BuildContext context, int id) {
@@ -46,14 +55,28 @@ class MovieItem extends StatelessWidget {
     return date == null ? 'Unk' : intl.DateFormat.yMMMd().format(date);
   }
 
-  Widget _buildBackgroundImage(BuildContext context, String imageUrl) {
+  Widget _buildBackgroundImage(
+      BuildContext context, String title, String imageUrl) {
     return imageUrl == null
-        ? Image.asset('assets/images/poster_placeholder.png', fit: BoxFit.cover)
-        : FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          fadeInCurve: Curves.easeInOutSine,
-          image: imageUrl,
-        );
+        ? PlaceHolderImage(title)
+        // ? Image.asset('assets/images/poster_placeholder.png', fit: BoxFit.cover)
+        : CachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (context, url) {
+              return Center(
+                child: SpinKitCircle(
+                  color: Theme.of(context).accentColor,
+                  size: LOADING_INDICATOR_SIZE,
+                ),
+              );
+            },
+          );
+    // : FadeInImage.memoryNetwork(
+    //   placeholder: kTransparentImage,
+    //   fadeInCurve: Curves.easeInOutSine,
+    //   image: imageUrl,
+    // );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,
@@ -118,12 +141,11 @@ class MovieItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _navigate(context, movie.id),
-      child: ClipRRect(
-        child: GridTile(
-          child: Stack(
-            children: <Widget>[
-              _buildBackgroundImage(context, movie.imageUrl),
-              if(!withoutFooter)
+      child: GridTile(
+        child: Stack(
+          children: <Widget>[
+            _buildBackgroundImage(context, movie.title, movie.imageUrl),
+            if (!withoutFooter)
               _buildFooter(
                 context,
                 screenWidth,
@@ -131,8 +153,7 @@ class MovieItem extends StatelessWidget {
                 movie.genreIDs.isNotEmpty ? movie.genreIDs[0] : -1,
                 movie.releaseDate,
               )
-            ],
-          ),
+          ],
         ),
       ),
     );

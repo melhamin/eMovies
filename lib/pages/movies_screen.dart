@@ -32,6 +32,7 @@ class _MoviesScreenState extends State<MoviesScreen>
 
   @override
   Widget build(BuildContext context) {
+    
     final navBar = Align(
       alignment: Alignment.topCenter,
       child: NavBar(
@@ -104,10 +105,10 @@ class NavBar extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               controller: tabController,
-              tabs: [                                
-                Text('Genres', style: TextStyle(color: Colors.white)),
-                Text('Trending', style: TextStyle(color: Colors.white)),
-                Text('Upcming',  style: TextStyle(color: Colors.white)),
+              tabs: [                                                
+                Text('Genres', style: Theme.of(context).textTheme.headline5),
+                Text('Trending', style: Theme.of(context).textTheme.headline5),
+                Text('Upcming',  style: Theme.of(context).textTheme.headline5),
               ],
             ),
           ),

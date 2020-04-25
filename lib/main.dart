@@ -1,7 +1,10 @@
+import 'package:e_movies/pages/cast_details.dart';
 import 'package:e_movies/pages/details_page.dart';
 import 'package:e_movies/pages/trending_movies_page.dart';
 import 'package:e_movies/pages/upcoming_movies_page.dart';
 import 'package:e_movies/pages/video_page.dart';
+import 'package:e_movies/providers/cast_provider.dart';
+import 'package:e_movies/widgets/image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: MoviesProvider()),
+        ChangeNotifierProvider.value(value: CastProvider()),
       ],
       child: MaterialApp(
         title: 'eMovies',
@@ -29,8 +33,8 @@ class MyApp extends StatelessWidget {
           // primaryColor: Color(0xff1C306D),
           primaryColor: Colors.black,
           // accentColor: Colors.amber,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
+          // splashColor: Colors.transparent,
+          // highlightColor: Colors.transparent,
           // accentColor: Color(0xff1C306D),
           accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
@@ -56,9 +60,9 @@ class MyApp extends StatelessWidget {
               color: Hexcolor('#DEDEDE'),
             ),
             headline4: TextStyle(
-              fontSize: 14,
+              fontSize: 28,
               fontFamily: 'Helvatica',              
-              // fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold,
               color: Hexcolor('#DEDEDE'),
             ),
             headline6: TextStyle(
@@ -67,13 +71,13 @@ class MyApp extends StatelessWidget {
               fontFamily: 'Helvatica',              
               fontWeight: FontWeight.bold,
               color: Hexcolor('#DEDEDE')
-            ),
+            ),            
             headline5: TextStyle(
               fontSize: 16,
               fontFamily: 'Helvatica',              
               fontWeight: FontWeight.bold,
               color: Hexcolor('#DEDEDE'),
-            ),
+            ),            
           ),          
         ),
         home: MainPage(),
@@ -84,6 +88,8 @@ class MyApp extends StatelessWidget {
           TrendingMoviesPage.routeName: (ctx) => TrendingMoviesPage(),
           UpcomingMoviesPage.routeName: (ctx) => UpcomingMoviesPage(),
           VideoPage.routeName: (ctx) => VideoPage(),
+          ImageView.routeName: (ctx) => ImageView(),
+          CastDetails.routeName: (ctx) => CastDetails(),
         },
       ),
     );

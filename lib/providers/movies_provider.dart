@@ -103,39 +103,6 @@ class MovieItem {
     );
   }
 
-  // static MovieItem fromJsonDetails(dynamic json) {
-  //   return MovieItem(
-  //     id: json['id'],
-  //     title: json['title'],
-  //     genreIDs: json['genres'],
-  //     // genreIDs: null,
-  //     imageUrl: json['poster_path'] == null
-  //         ? null
-  //         : '$IMAGE_URL/${json['poster_path']}',
-  //     overview: json['overview'],
-  //     releaseDate: json['release_date'] == null
-  //         ? DateTime.parse('0000-00-00')
-  //         : DateTime.tryParse(json['release_date']),
-  //     originalLanguage: json['original_language'],
-  //     status: json['release_date'] == null ? 'Not Released' : 'Released',
-  //     mediaType: json['media_type'],
-  //     voteAverage: json['vote_average'] + 0.0,
-  //     // voteAverage: 9.3,
-  //     duration: json['runtime'],
-  //     voteCount: json['vote_count'],
-  //     budget: json['budget'],
-  //     homepage: json['homepage'],
-  //     revenue: json['revenue'],
-  //     cast: json['credits']['cast'],
-  //     reviews: json['reviews']['results'],
-  //     productionCompanies: json['production_companies'],
-  //     productionContries: json['production_countries'],
-  //     similar: json['similar']['results'],
-  //     recommendations: json['recommendations']['results'],
-  //     popularity: json['popularity'] + 0.0,
-  //   );
-  // }
-
   @override
   String toString() {
     return 'budget: $budget\n revenue:$revenue\n productionCompanies: $productionCompanies\similar: $similar\n'; // \n overview: $overview\n vote_average: $voteAverage\n release_date: $releaseDate
@@ -143,8 +110,7 @@ class MovieItem {
 }
 
 class MoviesProvider with ChangeNotifier {
-  static const API_KEY = '0ce2331b7a1f2dd735ece9351d3fa34c';
-  static const BASE_URL = 'https://api.themoviedb.org/3/movie';
+  
 
   // List of trending and upcoming movies with less detail
   List<MovieItem> _upcomingMovies = [];
@@ -154,6 +120,26 @@ class MoviesProvider with ChangeNotifier {
   MovieItem _detailedMovie;
   List<MovieItem> _recommendations = [];
   List<MovieItem> _similar = [];
+
+  // Genres
+  List<MovieItem> _action = [];
+  List<MovieItem> _adventure = [];
+  List<MovieItem> _animation = [];
+  List<MovieItem> _comedy = [];
+  List<MovieItem> _crime = [];
+  List<MovieItem> _drama = [];
+  List<MovieItem> _family = [];
+  List<MovieItem> _fantasy = [];
+  List<MovieItem> _history = [];
+  List<MovieItem> _documentary = [];
+  List<MovieItem> _horror = [];
+  List<MovieItem> _music = [];
+  List<MovieItem> _mystery = [];
+  List<MovieItem> _romance = [];
+  List<MovieItem> _scifi = [];
+  List<MovieItem> _thriller = [];
+  List<MovieItem> _war = [];
+  List<MovieItem> _western = [];
 
   // getters
   List<MovieItem> get upcomingMovies {
@@ -181,7 +167,7 @@ class MoviesProvider with ChangeNotifier {
     //https://api.themoviedb.org/3/trending/all/day?api_key=0ce2331b7a1f2dd735ece9351d3fa34c
     // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
     final url =
-        'https://api.themoviedb.org/3/trending/all/day?api_key=$API_KEY';
+        '$BASE_URL/trending/all/day?api_key=$API_KEY';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -195,7 +181,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchUpcomingMovies(int page) async {
     // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
-    final url = '$BASE_URL/upcoming?api_key=$API_KEY&language=en-US&page=$page';
+    final url = '$BASE_URL/movie/upcoming?api_key=$API_KEY&language=en-US&page=$page';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -226,13 +212,14 @@ class MoviesProvider with ChangeNotifier {
   Future<void> getMovieDetails(int id) async {
     // final url =
     //     'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews';
-    final url = 'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews,images&include_image_language=en,null';
+    
+    try { final url = '$BASE_URL/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews,images&include_image_language=en,null';
 
     final response = await http.get(url);
     // print('MovieDetails ----------->- ${response.body}');
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     _detailedMovie = MovieItem.fromJson(responseData);
-    print('MovieDetails videos -------------->${_detailedMovie.videos}');
+    // print('MovieDetails videos -------------->${_detailedMovie.videos}');
 
     // _detailedMovie.reviews.forEach((element) {
     //   print('Actor: -----------------> ${element['author']}');
@@ -251,6 +238,342 @@ class MoviesProvider with ChangeNotifier {
     // });
 
     notifyListeners();
+    } catch (error) {
+      print('fetchMovieDetaisl error -----------> $error');
+      throw error;
+    }
     // print(response.body);
+  }
+
+  // Fetch genres
+  Future<void> fetchActions(int page) async {
+
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=28';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _action.add(MovieItem.fromJson(element));
+    });
+    // print('Action  -------------> ${response.body}');
+    notifyListeners();
+
+  }
+
+  List<MovieItem> get action {
+    return _action;
+  }
+
+  Future<void> fetchAdventure(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=12';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _adventure.add(MovieItem.fromJson(element));
+    });
+    // print('adventure  -------------> ${response.body}');
+    notifyListeners();
+
+  }
+
+  List<MovieItem> get adventrue {
+    return _adventure;
+  }
+
+  Future<void> fetchComedy(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=35';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _comedy.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+
+  }
+
+  List<MovieItem> get comedy {
+    return _comedy;
+  }  
+
+  Future<void> fetchAnimation(int page)  async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=16';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _animation.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+
+  }
+
+  List<MovieItem> get animation {
+    return _animation;
+  } 
+
+  Future<void> fetchCrime(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=80';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _crime.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get crime {
+    return _crime;
+  } 
+
+  Future<void> fetchFamily(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10751';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _family.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get family {
+    return _family;
+  } 
+
+  Future<void> fetchDocumentary(int page) async {  
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=99';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _documentary.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get documentary {
+    return _documentary;
+  } 
+
+  Future<void> fetchDrama(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=18';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _drama.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get drama {
+    return _drama;
+  } 
+
+  Future<void> fetchFantasy(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=14';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _fantasy.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get fantasy {
+    return _fantasy;
+  } 
+
+  Future<void> fetchHistory(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=36';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _history.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get history {
+    return _history;
+  } 
+
+  Future<void> fetchHorror(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=27';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _horror.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get horror {
+    return _horror;
+  } 
+
+  Future<void> fetchMusic(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10402';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _music.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get music {
+    return _music;
+  } 
+
+  Future<void> fetchMystery(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=9648';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _mystery.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get mystery {
+    return _mystery;
+  } 
+
+  Future<void> fetchRomance(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10749';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _romance.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get romance {
+    return _romance;
+  } 
+
+  Future<void> fetchSciFi(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=878';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _scifi.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();  
+  }
+
+  List<MovieItem> get scifi {
+    return _scifi;
+  } 
+
+  Future<void> fetchThriller(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=53';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _thriller.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get thriller {
+    return _thriller;
+  } 
+
+  Future<void> fetchWar(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10752';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _war.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get war {
+    return _war;
+  } 
+
+  Future<void> fetchWestern(int page) async {
+    final url = '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=37';
+    final response = await http.get(url);
+    // print('pageno =---------------------> $page' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+    moviesData.forEach((element) {
+      _western.add(MovieItem.fromJson(element));
+    });
+    // print('Comedy  -------------> ${response.body}');
+    notifyListeners();
+  }
+
+  List<MovieItem> get western {
+    return _western;
+  } 
+
+  Future<void> fetchGenres() async {
+    await fetchActions(1);
+    await fetchAdventure(1);
+    await fetchComedy(1);
+    await fetchAnimation(1);
+    await fetchCrime(1);
+    await fetchDocumentary(1);
+    await fetchDrama(1);
+    await fetchFamily(1);
+    await fetchHistory(1);
+    await fetchHorror(1);
+    await fetchMusic(1);
+    await fetchMystery(1);
+    await fetchRomance(1);
+    await fetchSciFi(1);
+    await fetchThriller(1);
+    await fetchWar(1);
+    await fetchWestern(1);   
   }
 }

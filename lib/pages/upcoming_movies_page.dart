@@ -112,8 +112,8 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 2 / 3,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
+                // crossAxisSpacing: 5,
+                // mainAxisSpacing: 5,
               ),
             ),
           ),

@@ -86,7 +86,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
   Widget build(BuildContext context) {
     super.build(context);
     var movies = Provider.of<MoviesProvider>(context).trendingMovies;
-    print('------------> length: ${movies.length}');
+    // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
         body: NotificationListener(
@@ -110,8 +110,8 @@ class _AllMoviesState extends State<TrendingMoviesPage>
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 2 / 3,
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 5,
+                // mainAxisSpacing: 5,
+                // crossAxisSpacing: 5,
               ),
             ),
           ),

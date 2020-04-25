@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast_provider.dart';
 import 'package:e_movies/widgets/details_item.dart';
+import 'package:e_movies/widgets/image_view.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/widgets/top_bar.dart';
 import 'package:expand_widget/expand_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -68,6 +71,7 @@ class _DetailsPageState extends State<DetailsPage>
           .then((value) {
         setState(() {
           _isFetching = false;
+          _isInitLoaded = false;
           // Get film item
           film =
               Provider.of<MoviesProvider>(context, listen: false).movieDetails;
@@ -98,41 +102,8 @@ class _DetailsPageState extends State<DetailsPage>
         });
       });
     }
-    _isInitLoaded = false;
+    
     super.didChangeDependencies();
-  }
-
-  Widget _buildTopBar(String title) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        height: kToolbarHeight,
-        decoration: BoxDecoration(
-          color: Colors.black54,
-          // color: BASELINE_COLOR_TRANSPARENT,
-          // backgroundBlendMode: BlendMode.dstIn,
-        ),
-        child: Row(
-          children: [
-            BackButton(color: Colors.white),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center - Alignment(0.2, 0),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 3.0),
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.headline6,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildBottomIcons() {
@@ -172,9 +143,9 @@ class _DetailsPageState extends State<DetailsPage>
   }
 
   Widget _showLoadingIndicator() {
-    return SpinKitThreeBounce(
-      size: 16,
-      color: Colors.white,
+    return SpinKitCircle(
+      size: LOADING_INDICATOR_SIZE,
+      color: Theme.of(context).accentColor,
     );
   }
 
@@ -184,9 +155,9 @@ class _DetailsPageState extends State<DetailsPage>
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(width: 0.5, color: LINE_COLOR),
+          bottom: BorderSide(width: 0.5, color: LINE_COLOR),
         ),
       ),
-      height: 55,
       child: SlideTransition(
         position: _animation,
         child: GridView(
@@ -206,6 +177,28 @@ class _DetailsPageState extends State<DetailsPage>
     );
   }
 
+  /**
+   * Build page route for image view
+   */
+  Route _buildRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => ImageView(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+        var tween = Tween(begin: begin, end: end);
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
   Widget _buildImages(MovieItem film) {
     List<String> images = [];
     if (film.images != null) {
@@ -216,14 +209,27 @@ class _DetailsPageState extends State<DetailsPage>
 
     return film.images.length > 0
         ? GridView.builder(
-          physics: BouncingScrollPhysics(),
+            physics: BouncingScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: PADDING),
             // controller: _scrollController,
             itemCount: images.length,
             itemBuilder: (context, index) {
-              return CachedNetworkImage(
-                imageUrl: images[index],
-                fadeInCurve: Curves.fastOutSlowIn,
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(_buildRoute());
+                },
+                child: CachedNetworkImage(
+                  imageUrl: images[index],
+                  fadeInCurve: Curves.fastOutSlowIn,
+                  placeholder: (context, url) {
+                    return Center(
+                      child: SpinKitCircle(
+                        size: LOADING_INDICATOR_SIZE,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    );
+                  },
+                ),
               );
             },
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -268,7 +274,7 @@ class _DetailsPageState extends State<DetailsPage>
                 child: (overview == null || overview.length == 0)
                     ? Text(
                         'Overview not available',
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headline3,
                       )
                     : ExpandText(
                         overview,
@@ -328,6 +334,19 @@ class _DetailsPageState extends State<DetailsPage>
     );
   }
 
+  Widget _buildSimilarMovies(BoxConstraints constraints) {
+    bool hasItem = (Provider.of<MoviesProvider>(context).similar != null &&
+        Provider.of<MoviesProvider>(context).similar.length > 0);
+    if (!hasItem) {
+      return Container();
+    } else {
+      return Container(
+        height: constraints.maxHeight * 0.3,
+        child: SimilarMovies(),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print('DetailsPage ---------------------> build()');
@@ -343,7 +362,7 @@ class _DetailsPageState extends State<DetailsPage>
                         physics: BouncingScrollPhysics(),
                         // padding: EdgeInsets.symmetric(vertical: APP_BAR_HEIGHT),
                         addAutomaticKeepAlives: true,
-                        cacheExtent: 20,
+                        // cacheExtent: 20,
                         children: [
                           Container(
                             height: constraints.maxHeight * 0.9,
@@ -354,31 +373,24 @@ class _DetailsPageState extends State<DetailsPage>
                             height: constraints.maxHeight * 0.1,
                             child: _buildBottomIcons(),
                           ),
-                          // Divider(color: Colors.white38),
-                          _buildRatings(film.voteAverage),
-                          // Divider(color: Colors.white38),
-                          // SizedBox(height: 5),
+                          Container(
+                            height: constraints.maxHeight * 0.1,
+                            child: _buildRatings(film.voteAverage),
+                          ),
                           if (film.images != null && film.images.length > 0)
                             Container(
                                 height: constraints.maxHeight * 0.2,
                                 child: _buildImages(film)),
-                          // SizedBox(height: 5),
                           _buildOverview(film.overview),
                           SizedBox(height: 30),
                           _buildDetails(film),
                           SizedBox(height: 30),
-                          // _buildCast(),
                           Cast(cast: cast, crew: crew),
-                          SizedBox(height: 30),
-                          // Container(color: Colors.blue, height: 200),
-                          Container(
-                            height: constraints.maxHeight * 0.3,
-                            child: SimlarMovies(),
-                          ),
-                          SizedBox(height: 30),
+                          // SizedBox(height: 30),
+                          _buildSimilarMovies(constraints),
                         ],
                       ),
-                      _buildTopBar(film.title),
+                      TopBar(film.title),
                     ],
                   );
                 },
@@ -473,8 +485,9 @@ class InitialView extends StatelessWidget {
 
     Widget _buildBackgroundImage(MovieItem film) {
       return film.imageUrl == null
-          ? Image.asset('assets/images/poster_placeholder.png',
-              fit: BoxFit.cover)
+          ? PlaceHolderImage(film.title)
+          // ? Image.asset('assets/images/poster_placeholder.png',
+          // fit: BoxFit.cover)
           : CachedNetworkImage(
               imageUrl: film.imageUrl,
               fadeInCurve: Curves.fastOutSlowIn,
@@ -532,7 +545,7 @@ class RatingItem extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 5),
-          child: Text(subtitle, style: Theme.of(context).textTheme.headline4),
+          child: Text(subtitle, style: Theme.of(context).textTheme.headline3),
         )
       ],
     );
@@ -648,47 +661,46 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: PADDING, bottom: 5),
-            child: Text('Cast', style: Theme.of(context).textTheme.subtitle1),
-          ),
           if (widget.cast != null && widget.cast.length > 0)
-            Flexible(
-              fit: FlexFit.loose,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                    top: BorderSide(width: 0.5, color: LINE_COLOR),
-                  ),
-                  color: BASELINE_COLOR,
+            SizedBox(height: 20),
+          if (widget.cast != null && widget.cast.length > 0)
+            Padding(
+              padding: const EdgeInsets.only(left: PADDING, bottom: 5),
+              child: Text('Cast', style: Theme.of(context).textTheme.subtitle1),
+            ),
+          if (widget.cast != null && widget.cast.length > 0)
+            AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              height: _calcualteItemCount() * 60.0, // ListTile height
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+                  top: BorderSide(width: 0.5, color: LINE_COLOR),
                 ),
-                child: ListView.builder(
-                  // addAutomaticKeepAlives: true,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: _calcualteItemCount(),
-                  itemBuilder: (context, index) {
-                    CastItem item = widget.cast[index];
-                    return wid.CastItem(
-                      title: item.name,
-                      subtitle: item.character,
-                      imageUrl: item.imageUrl,
-                      // to add border to all except last one
-                      last: _isLasItem(index),
-                    );
-                  },
-                ),
+                color: BASELINE_COLOR,
+              ),
+              child: ListView.builder(
+                // addAutomaticKeepAlives: true,
+                // shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _calcualteItemCount(),
+                itemBuilder: (context, index) {
+                  CastItem item = widget.cast[index];
+                  return wid.CastItem(
+                    item: item,
+                    // to add border to all except last one
+                    last: _isLasItem(index),
+                  );
+                },
               ),
             ),
-          if (!_expanded && widget.cast.length > 5)
+          if ((widget.cast.length > 5))
             ListTile(
               leading: Text(
-                'Show More...',
+                (!_expanded) ? 'Show More...' : '',
                 style: TextStyle(color: Colors.amber),
               ),
-              onTap: _onTap,
+              onTap: !_expanded ? _onTap : null,
             ),
         ],
       ),
@@ -700,43 +712,49 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
 }
 
-class SimlarMovies extends StatelessWidget {
+class SimilarMovies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movies = Provider.of<MoviesProvider>(context, listen: false).similar;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: PADDING),
-          child: Text('Similar Movies',
-              style: Theme.of(context).textTheme.subtitle1),
-        ),
-        SizedBox(height: 5),
-        Flexible(
-          child: Container(
-            color: BASELINE_COLOR,
-            child: GridView.builder(    
-              physics: BouncingScrollPhysics(),          
-              padding: EdgeInsets.symmetric(horizontal: PADDING),
-              itemCount: movies.length,
-              itemBuilder: (context, index) {
-                return wid.MovieItem(
-                  movie: movies[index],
-                  withoutFooter: true,
-                );
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 1.5,
-                mainAxisSpacing: 5,
-              ),
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-        ),
-      ],
-    );
+    return (movies == null || movies.length == 0)
+        ? Container()
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: constraints.maxHeight * 0.3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: PADDING),
+                      child: Text('Similar Movies',
+                          style: Theme.of(context).textTheme.subtitle1),
+                    ),
+                    SizedBox(height: 5),
+                    Flexible(
+                      child: GridView.builder(
+                        physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: PADDING),
+                        itemCount: movies.length,
+                        itemBuilder: (context, index) {
+                          return wid.MovieItem(
+                            movie: movies[index],
+                            withoutFooter: true,
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 1.5,
+                          mainAxisSpacing: 5,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
   }
 }
 
