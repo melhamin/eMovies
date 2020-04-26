@@ -11,9 +11,9 @@ enum MovieLoaderStatus {
   LOADING,
 }
 
-class UpcomingMoviesPage extends StatefulWidget {
+class TopRated extends StatefulWidget {
   static const routeName = '/upcoming-page';  
-  UpcomingMoviesPage({
+  TopRated({
     Key key,
   }) : super(key: key);
 
@@ -21,7 +21,7 @@ class UpcomingMoviesPage extends StatefulWidget {
   _AllMoviesState createState() => _AllMoviesState();
 }
 
-class _AllMoviesState extends State<UpcomingMoviesPage>
+class _AllMoviesState extends State<TopRated>
     with AutomaticKeepAliveClientMixin {
   bool _initLoaded = false;
   ScrollController scrollController;
@@ -46,7 +46,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<MoviesProvider>(context, listen: false).fetchUpcomingMovies(1);
+      Provider.of<MoviesProvider>(context, listen: false).fetchTopRated(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -55,14 +55,12 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
 
   bool onNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
-      if (scrollController.position.maxScrollExtent > scrollController.offset &&
-          scrollController.position.maxScrollExtent - scrollController.offset <=
-              50) {
+      if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           movieOperation = CancelableOperation.fromFuture(
             Provider.of<MoviesProvider>(context, listen: false)
-                .fetchUpcomingMovies(curPage + 1),
+                .fetchTopRated(curPage + 1),
           ).then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
@@ -79,7 +77,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh) {
-      await Provider.of<MoviesProvider>(context, listen: false).fetchUpcomingMovies(1);
+      await Provider.of<MoviesProvider>(context, listen: false).fetchTopRated(1);
       setState(() {
         curPage = 1;
       });
@@ -89,7 +87,7 @@ class _AllMoviesState extends State<UpcomingMoviesPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var movies = Provider.of<MoviesProvider>(context).upcomingMovies;
+    var movies = Provider.of<MoviesProvider>(context).topRated;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(

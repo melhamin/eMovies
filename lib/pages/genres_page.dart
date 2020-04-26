@@ -29,7 +29,7 @@ class _GenresPageState extends State<GenresPage>
     return Scaffold(
       body: GridView.builder(  
         controller: _scrollController,      
-        padding: const EdgeInsets.only(top: 56),
+        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT, bottom: APP_BAR_HEIGHT - 2),
         key: PageStorageKey('GenresPageGrid'),
         physics: BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,

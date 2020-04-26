@@ -202,9 +202,7 @@ class _GenreItemState extends State<GenreItem> {
 
   bool onNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
-      if (scrollController.position.maxScrollExtent > scrollController.offset &&
-          scrollController.position.maxScrollExtent - scrollController.offset <=
-              50) {
+      if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           setState(() {
@@ -224,16 +222,6 @@ class _GenreItemState extends State<GenreItem> {
       }
     }
     return true;
-  }
-
-  Future<void> _refreshMovies(bool refresh) async {
-    if (refresh) {
-      await Provider.of<MoviesProvider>(context, listen: false)
-          .fetchUpcomingMovies(1);
-      setState(() {
-        curPage = 1;
-      });
-    }
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -315,10 +303,11 @@ class _GenreItemState extends State<GenreItem> {
                   child: NotificationListener(
                     onNotification: onNotification,
                     child: RefreshIndicator(
-                      onRefresh: () => _refreshMovies(movies.length == 0),
+                      onRefresh: () {},
+                      // onRefresh: () => _refreshMovies(movies.length == 0),
                       backgroundColor: Theme.of(context).primaryColor,
                       child: GridView.builder(
-                        padding: const EdgeInsets.only(top: 56),
+                        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
                         physics: BouncingScrollPhysics(),
                         controller: scrollController,
                         // key: PageStorageKey('GenreItem'),
@@ -331,7 +320,7 @@ class _GenreItemState extends State<GenreItem> {
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 2 / 3,
+                          childAspectRatio: 2/3,
                           // crossAxisSpacing: 5,
                           // mainAxisSpacing: 5,
                         ),
@@ -339,11 +328,9 @@ class _GenreItemState extends State<GenreItem> {
                     ),
                   ),
                 ),
-                if(_isLoading)
-            _buildLoadingIndicator(context),
+                if (_isLoading) _buildLoadingIndicator(context),
               ],
             ),
-            
             TopBar(GENRES[genreId]),
           ],
         ),

@@ -16,7 +16,7 @@ class BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoTabBar(                        
         backgroundColor: Colors.black54,
-        inactiveColor: Colors.white54,
+        inactiveColor: Colors.white70,
         activeColor: Theme.of(context).accentColor,
         iconSize: 25,
         currentIndex: currentIndex,

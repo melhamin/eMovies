@@ -7,15 +7,16 @@ import 'package:e_movies/providers/cast_provider.dart' as prov;
 class CastItem extends StatelessWidget {
   final prov.CastItem item;
   final bool last;
+  final bool subtitle;
 
   CastItem({
     this.item,
     this.last = false,
+    this.subtitle = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    
     Route _buildRoute() {
       return PageRouteBuilder(
         settings: RouteSettings(
@@ -44,16 +45,15 @@ class CastItem extends StatelessWidget {
 
     // Get the name abbreviation for circle avatar in case image is not available
     String _getName(String str) {
-      if(str == null || str.length == 0)
-        return 'N/A';
+      if (str == null || str.length == 0) return 'N/A';
 
-      String res = '';      
+      String res = '';
       List<String> name = str.split(' ');
-      if(name.length >= 2)
+      if (name.length >= 2)
         res = res + name[0][0].toUpperCase() + name[1][0].toUpperCase();
-      else if(name.length == 1)
+      else if (name.length == 1)
         res = res + name[0][0].toUpperCase();
-      else 
+      else
         res = 'N/A';
 
       return res;
@@ -93,19 +93,20 @@ class CastItem extends StatelessWidget {
           item.name,
           style: Theme.of(context).textTheme.headline3,
         ),
-        subtitle: RichText(
-          text: TextSpan(
-              text: 'as ',
-              style: Theme.of(context).textTheme.subtitle2,
-              children: [
-                TextSpan(
-                    text: item.character, style: TextStyle(color: Colors.amber))
-              ]),
-        ),
-        // subtitle: Text(
-        //   'as ' + subtitle,
-        //   style: Theme.of(context).textTheme.subtitle2,
-        // ),
+        subtitle: !subtitle
+            ? Text('')
+            : RichText(
+                text: TextSpan(
+                    text: 'as ',
+                    style: Theme.of(context).textTheme.subtitle2,
+                    children: [
+                      TextSpan(
+                          text: item.character,
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                          ))
+                    ]),
+              ),
       ),
     );
   }

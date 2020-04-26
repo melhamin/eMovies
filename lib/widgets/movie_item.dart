@@ -20,7 +20,7 @@ class MovieItem extends StatelessWidget {
 
   Route _buildRoute(int id) {
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: id),
+      settings: RouteSettings(arguments: movie),
       pageBuilder: (context, animation, secondaryAnimation) => DetailsPage(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -52,7 +52,11 @@ class MovieItem extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return date == null ? 'Unk' : intl.DateFormat.yMMMd().format(date);
+    if (date == null) return 'N/A';
+    else {
+      return intl.DateFormat.yMMM().format(date);
+    }
+    // return date == null ? 'Unk' : ;
   }
 
   Widget _buildBackgroundImage(
@@ -72,18 +76,13 @@ class MovieItem extends StatelessWidget {
               );
             },
           );
-    // : FadeInImage.memoryNetwork(
-    //   placeholder: kTransparentImage,
-    //   fadeInCurve: Curves.easeInOutSine,
-    //   image: imageUrl,
-    // );
   }
 
   Widget _buildFooter(BuildContext context, double screenWidth, String title,
-      int genreId, DateTime date) {
+      int genreId, dynamic date) {
     return Positioned.directional(
       width: screenWidth / 2,
-      height: 75,
+      height: 65,
       bottom: 0,
       textDirection: TextDirection.ltr,
       child: Container(
@@ -93,8 +92,10 @@ class MovieItem extends StatelessWidget {
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
+                // Theme.of(context).accentColor.withOpacity(0.4),
+                // Theme.of(context).accentColor.withOpacity(0.9),
                 Color.fromRGBO(0, 0, 0, 1),
-                Color.fromRGBO(0, 0, 0, 0.1),
+                Color.fromRGBO(0, 0, 0, 0.2),
               ]),
           // backgroundBlendMode: BlendMode.colorBurn,
         ),
@@ -111,15 +112,15 @@ class MovieItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 5),
-              FittedBox(
-                child: Text(
-                  getGenreName(genreId),
-                  style: Theme.of(context).textTheme.subtitle1,
-                  softWrap: false,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(height: 5),
+              // FittedBox(
+              //   child: Text(
+              //     getGenreName(genreId),
+              //     style: Theme.of(context).textTheme.subtitle1,
+              //     softWrap: false,
+              //     overflow: TextOverflow.ellipsis,
+              //   ),
+              // ),
+              // SizedBox(height: 5),
               FittedBox(
                 child: Text(
                   _formatDate(date),
@@ -128,6 +129,7 @@ class MovieItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              SizedBox(height: 10,),
             ],
           ),
         ),
@@ -144,7 +146,7 @@ class MovieItem extends StatelessWidget {
       child: GridTile(
         child: Stack(
           children: <Widget>[
-            _buildBackgroundImage(context, movie.title, movie.imageUrl),
+            _buildBackgroundImage(context, movie.title, movie.posterUrl),
             if (!withoutFooter)
               _buildFooter(
                 context,

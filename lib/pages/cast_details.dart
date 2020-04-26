@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/details_page.dart';
 import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CastDetails extends StatefulWidget {
 }
 
 class _CastDetailsState extends State<CastDetails>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin {
   bool _isInitLoaded = true;
   bool _isFetching = true;
   TabController _tabController;
@@ -58,8 +59,8 @@ class _CastDetailsState extends State<CastDetails>
   }
 
   Widget _buildTabBar() {
-    return TabBar(
-      controller: _tabController,
+    return NavBar(
+      tabController: _tabController,
       tabs: [
         Tab(
             icon: Text(
@@ -88,7 +89,7 @@ class _CastDetailsState extends State<CastDetails>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
     final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
     return SafeArea(
       child: Scaffold(
@@ -97,7 +98,7 @@ class _CastDetailsState extends State<CastDetails>
             LayoutBuilder(
               builder: (context, constraints) {
                 return ListView(
-                  padding: EdgeInsets.only(top: 56),
+                  padding: EdgeInsets.only(top: APP_BAR_HEIGHT),
                   physics: BouncingScrollPhysics(),
                   children: [
                     Container(
@@ -132,10 +133,6 @@ class _CastDetailsState extends State<CastDetails>
       ),
     );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
 
 class Biography extends StatelessWidget {
@@ -211,10 +208,10 @@ class Movies extends StatelessWidget {
             visualDensity: VisualDensity.comfortable,
             leading: CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.amber,
-              backgroundImage: movies[i].imageUrl != null
+              backgroundColor: Theme.of(context).accentColor,
+              backgroundImage: movies[i].posterUrl != null
                   ? NetworkImage(
-                      movies[i].imageUrl,
+                      movies[i].posterUrl,
                     )
                   : null,
             ),

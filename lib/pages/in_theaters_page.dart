@@ -1,20 +1,20 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
 import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
-import 'package:e_movies/consts/consts.dart';
 
 enum MovieLoaderStatus {
   STABLE,
   LOADING,
 }
 
-class TrendingMoviesPage extends StatefulWidget {
-  static const routeName = '/trending-page';
-  
-  TrendingMoviesPage({
+class InTheaters extends StatefulWidget {
+  static const routeName = '/InTheathers-page';
+
+  InTheaters({
     Key key,
   }) : super(key: key);
 
@@ -22,7 +22,7 @@ class TrendingMoviesPage extends StatefulWidget {
   _AllMoviesState createState() => _AllMoviesState();
 }
 
-class _AllMoviesState extends State<TrendingMoviesPage>
+class _AllMoviesState extends State<InTheaters>
     with AutomaticKeepAliveClientMixin {
   bool _initLoaded = false;
   ScrollController scrollController;
@@ -30,6 +30,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
   CancelableOperation movieOperation;
 
   var movies;
+  int curPage = 1;
 
   @override
   // TODO: implement wantKeepAlive
@@ -46,7 +47,7 @@ class _AllMoviesState extends State<TrendingMoviesPage>
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<MoviesProvider>(context, listen: false).fetchTrendingMovies();
+      Provider.of<MoviesProvider>(context, listen: false).fetchInTheaters(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -55,22 +56,20 @@ class _AllMoviesState extends State<TrendingMoviesPage>
 
   bool onNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
-      if (scrollController.position.maxScrollExtent > scrollController.offset &&
-          scrollController.position.maxScrollExtent - scrollController.offset <=
-              50) {
+      if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
-          // // movieOperation = CancelableOperation.fromFuture(
-          // //         Provider.of<Movies>(context, listen: false)
-          // //             .fetchTrendingMovies())
-          // //     .then(
-          // //   (_) {
-          // //     loaderStatus = MovieLoaderStatus.STABLE;
-          // //     setState(() {
-          // //       curPage = curPage + 1;
-          // //     });
-          //   },
-          // );
+          movieOperation = CancelableOperation.fromFuture(
+                  Provider.of<MoviesProvider>(context, listen: false)
+                      .fetchInTheaters(curPage + 1))
+              .then(
+            (_) {
+              loaderStatus = MovieLoaderStatus.STABLE;
+              setState(() {
+                curPage = curPage + 1;
+              });
+            },
+          );
         }
       }
     }
@@ -79,13 +78,14 @@ class _AllMoviesState extends State<TrendingMoviesPage>
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
-      await Provider.of<MoviesProvider>(context, listen: false).fetchTrendingMovies();
+      await Provider.of<MoviesProvider>(context, listen: false)
+          .fetchInTheaters(1);
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var movies = Provider.of<MoviesProvider>(context).trendingMovies;
+    var movies = Provider.of<MoviesProvider>(context).inTheaters;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
@@ -95,16 +95,17 @@ class _AllMoviesState extends State<TrendingMoviesPage>
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
+              padding: EdgeInsets.only(bottom: APP_BAR_HEIGHT),
               physics: BouncingScrollPhysics(),
               controller: scrollController,
-              key: PageStorageKey('TrendingMoviesPage'),
+              key: PageStorageKey('InTheathersPage'),
               cacheExtent: 12,
               itemCount: movies.length,
               itemBuilder: (ctx, i) {
                 // print('--------------> id: ${movies[i].id}');
                 // print('--------------> i: $i    ${movies[i].title}');
                 return MovieItem(
-                  movie: movies[i],                  
+                  movie: movies[i],
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

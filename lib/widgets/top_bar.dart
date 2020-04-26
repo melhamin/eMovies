@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
+
 class TopBar extends StatelessWidget {
-  @required final String title;
+  @required
+  final String title;
 
   TopBar(this.title);
   @override
@@ -11,12 +16,10 @@ class TopBar extends StatelessWidget {
         height: kToolbarHeight,
         decoration: BoxDecoration(
           color: Colors.black54,
-          // color: BASELINE_COLOR_TRANSPARENT,
-          // backgroundBlendMode: BlendMode.dstIn,
         ),
         child: Row(
-          children: [
-            BackButton(color: Colors.white),
+          children: [                      
+            BackButton(color: Hexcolor('#DEDEDE')),
             Expanded(
               child: Align(
                 alignment: Alignment.center - Alignment(0.2, 0),
@@ -31,6 +34,7 @@ class TopBar extends StatelessWidget {
                 ),
               ),
             ),
+            
           ],
         ),
       ),

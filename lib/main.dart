@@ -1,7 +1,7 @@
 import 'package:e_movies/pages/cast_details.dart';
 import 'package:e_movies/pages/details_page.dart';
-import 'package:e_movies/pages/trending_movies_page.dart';
-import 'package:e_movies/pages/upcoming_movies_page.dart';
+import 'package:e_movies/pages/in_theaters_page.dart';
+import 'package:e_movies/pages/top_rated_page.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast_provider.dart';
 import 'package:e_movies/widgets/image_view.dart';
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
           // accentColor: Colors.amber,
           // splashColor: Colors.transparent,
           // highlightColor: Colors.transparent,
-          // accentColor: Color(0xff1C306D),
-          accentColor: Color(0xFFFFAD32),
+          accentColor: Colors.pink,
+          // accentColor: Color(0xFFFFAD32),
           scaffoldBackgroundColor: Colors.transparent,
           textTheme: TextTheme(
             subtitle1: TextStyle(
@@ -85,8 +85,8 @@ class MyApp extends StatelessWidget {
         routes: {
           MainPage.routeName: (ctx) => MainPage(),
           DetailsPage.routeName: (ctx) => DetailsPage(),
-          TrendingMoviesPage.routeName: (ctx) => TrendingMoviesPage(),
-          UpcomingMoviesPage.routeName: (ctx) => UpcomingMoviesPage(),
+          InTheaters.routeName: (ctx) => InTheaters(),
+          TopRated.routeName: (ctx) => TopRated(),
           VideoPage.routeName: (ctx) => VideoPage(),
           ImageView.routeName: (ctx) => ImageView(),
           CastDetails.routeName: (ctx) => CastDetails(),
