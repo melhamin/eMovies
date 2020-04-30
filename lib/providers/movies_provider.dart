@@ -35,6 +35,8 @@ class MovieItem {
   List<dynamic> recommendations;
   List<dynamic> similar;
 
+  String character; // for cast details page movies
+
   MovieItem({
     @required this.id,
     @required this.title,
@@ -61,7 +63,8 @@ class MovieItem {
     this.recommendations,
     this.similar,
     this.popularity,
-    this.reviews,    
+    this.reviews,
+    this.character,
   });
 
   static MovieItem fromJson(dynamic json) {
@@ -74,12 +77,14 @@ class MovieItem {
           ? null
           : '$IMAGE_URL/${json['poster_path']}',
       backdropUrl: json['backdrop_path'] == null
-          ? null
+          ? ''
           : '$IMAGE_URL/${json['backdrop_path']}',
-      overview: json['overview'],
-      releaseDate: json['release_date'] == null ? DateTime.parse(json['first_air_date']) :
-          DateTime.parse(json['release_date']),
-          // : json['release_date'],
+      overview: json['overview'],      
+      releaseDate: (json['release_date'] == null || json['release_date'] == '')
+          ? null
+          : DateTime.parse(json['release_date']),
+
+      // : json['release_date'],
       // ? DateTime.tryParse(json['release_date'])
       // : null,
       originalLanguage: json['original_language'],
@@ -106,6 +111,7 @@ class MovieItem {
           : json['recommendations']['results'],
       popularity: json['popularity'] == null ? 0 : json['popularity'] + 0.0,
       // popularity: 9.3
+      character: json['character'],
     );
   }
 
@@ -115,23 +121,45 @@ class MovieItem {
   }
 }
 
+class VideoItem {
+  final String id;
+  final String key;
+  final String name;
+  final String site;
+  final int size;
+  final String type;
+
+  VideoItem({
+    this.id,
+    this.key,
+    this.name,
+    this.site,
+    this.size,
+    this.type,
+  });
+
+  static VideoItem fromJson(dynamic json) {
+    return VideoItem(
+      id: json['id'],
+      name: json['name'],
+      key: json['key'],
+      site: json['site'],
+      size: json['size'],
+      type: json['type'],
+    );
+  }
+}
+
 class MoviesProvider with ChangeNotifier {
-  // List of trending and upcoming movies with less detail
-
-  // List<MovieItem> _upcoming = [];
-
-  List<MovieItem> _topRated = [];  
-
-
-  // List<MovieItem> _trending = [];
-  
-  List<MovieItem> _inTheaters = [];    
-
+  List<MovieItem> _topRated = [];
+  List<MovieItem> _inTheaters = [];
 
   // Movie all details, recommendation, similar etc
   MovieItem _detailedMovie;
   List<MovieItem> _recommendations = [];
   List<MovieItem> _similar = [];
+
+  List<VideoItem> _videos = [];
 
   // Genres
   List<MovieItem> _action = [];
@@ -159,7 +187,7 @@ class MoviesProvider with ChangeNotifier {
   }
 
   List<MovieItem> get inTheaters {
-    return _inTheaters;      
+    return _inTheaters;
   }
 
   MovieItem get movieDetails {
@@ -178,11 +206,19 @@ class MoviesProvider with ChangeNotifier {
   Future<void> fetchInTheaters(int page) async {
     //https://api.themoviedb.org/3/trending/all/day?api_key=0ce2331b7a1f2dd735ece9351d3fa34c
     // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
-    final url = '$BASE_URL/movie/now_playing?api_key=$API_KEY&language=en-US&page=$page';
+    final url =
+        '$BASE_URL/movie/now_playing?api_key=$API_KEY&language=en-US&page=$page';
     final response = await http.get(url);
     // print('pageno =---------------------> ${response.body}' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _inTheaters.clear();
+    }
+
     moviesData.forEach((element) {
       // print('element -----------> ${element.toString()}');
       _inTheaters.add(MovieItem.fromJson(element));
@@ -200,6 +236,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _topRated.clear();
+    }
+
     moviesData.forEach((element) {
       _topRated.add(MovieItem.fromJson(element));
     });
@@ -207,29 +250,10 @@ class MoviesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // int upcomingMoviesLength() {
-  //   return _upcomingMovies.length;
-  // }
-
-  // int trendingMoviesLength() {
-  //   return _trendingMovies.length;
-  // }
-
-  // MovieItem findByIdUpcoming(int id) {
-  //   return _upcomingMovies.firstWhere((element) => element.id == id);
-  // }
-
-  // MovieItem findByIdTrending(int id) {
-  //   return _trendingMovies.firstWhere((element) => element.id == id);
-  // }
-
-  Future<void> getMovieDetails(int id) async {
-    // final url =
-    //     'https://api.themoviedb.org/3/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews';
-
+  Future<void> getMovieDetails(int id) async {    
     try {
       final url =
-          '$BASE_URL/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,videos,recommendations,similar,reviews,images&include_image_language=en,null';
+          '$BASE_URL/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,recommendations,similar,reviews,images&include_image_language=en,null';
 
       final response = await http.get(url);
       // print('MovieDetails ----------->- ${response.body}');
@@ -251,9 +275,6 @@ class MoviesProvider with ChangeNotifier {
           _similar.add(MovieItem.fromJson(element));
         });
       }
-      // } catch(error) {
-      //   print('similarMovies fetch error --------------> $error');
-      // }
 
       // _detailedMovie.recommendations.forEach((element) {
       //   _recommendations.add(MovieItem.fromJson(element));
@@ -267,6 +288,30 @@ class MoviesProvider with ChangeNotifier {
     // print(response.body);
   }
 
+  Future<void> fetchVideos(int id) async {
+    final url = '$BASE_URL/movie/$id/videos?api_key=$API_KEY&language=en-US';
+
+    try {
+      final response = await http.get(url);
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final videoData = responseData['results'];
+
+      _videos.clear();
+
+      videoData.forEach((element) {
+        _videos.add(VideoItem.fromJson(element));
+      });
+      // print(_videos);
+    } catch (error) {
+      print('fetchVideos error ----------------------> $error');
+      throw error;
+    }
+  }
+
+  List<VideoItem> get videos {
+    return _videos;
+  }
+
   // Fetch genres
   Future<void> fetchActions(int page) async {
     final url =
@@ -275,6 +320,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _action.clear();
+    }
+
     moviesData.forEach((element) {
       _action.add(MovieItem.fromJson(element));
     });
@@ -293,6 +345,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _adventure.clear();
+    }
+
     moviesData.forEach((element) {
       _adventure.add(MovieItem.fromJson(element));
     });
@@ -311,6 +370,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _comedy.clear();
+    }
+
     moviesData.forEach((element) {
       _comedy.add(MovieItem.fromJson(element));
     });
@@ -329,6 +395,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _animation.clear();
+    }
+
     moviesData.forEach((element) {
       _animation.add(MovieItem.fromJson(element));
     });
@@ -347,6 +420,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _crime.clear();
+    }
+
     moviesData.forEach((element) {
       _crime.add(MovieItem.fromJson(element));
     });
@@ -365,6 +445,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _family.clear();
+    }
+
     moviesData.forEach((element) {
       _family.add(MovieItem.fromJson(element));
     });
@@ -383,6 +470,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+    
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _documentary.clear();
+    }
+
     moviesData.forEach((element) {
       _documentary.add(MovieItem.fromJson(element));
     });
@@ -401,6 +495,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _drama.clear();
+    }
+
     moviesData.forEach((element) {
       _drama.add(MovieItem.fromJson(element));
     });
@@ -419,6 +520,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _fantasy.clear();
+    }
+
     moviesData.forEach((element) {
       _fantasy.add(MovieItem.fromJson(element));
     });
@@ -437,6 +545,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _history.clear();
+    }
+
     moviesData.forEach((element) {
       _history.add(MovieItem.fromJson(element));
     });
@@ -455,6 +570,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _horror.clear();
+    }
+
     moviesData.forEach((element) {
       _horror.add(MovieItem.fromJson(element));
     });
@@ -473,6 +595,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _music.clear();
+    }
+
     moviesData.forEach((element) {
       _music.add(MovieItem.fromJson(element));
     });
@@ -491,6 +620,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _mystery.clear();
+    }
+
     moviesData.forEach((element) {
       _mystery.add(MovieItem.fromJson(element));
     });
@@ -509,6 +645,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _romance.clear();
+    }
+
     moviesData.forEach((element) {
       _romance.add(MovieItem.fromJson(element));
     });
@@ -527,6 +670,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _scifi.clear();
+    }
+
     moviesData.forEach((element) {
       _scifi.add(MovieItem.fromJson(element));
     });
@@ -545,6 +695,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _thriller.clear();
+    }
+
     moviesData.forEach((element) {
       _thriller.add(MovieItem.fromJson(element));
     });
@@ -563,6 +720,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _war.clear();
+    }
+
     moviesData.forEach((element) {
       _war.add(MovieItem.fromJson(element));
     });
@@ -581,6 +745,13 @@ class MoviesProvider with ChangeNotifier {
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _western.clear();
+    }
+
     moviesData.forEach((element) {
       _western.add(MovieItem.fromJson(element));
     });

@@ -1,4 +1,4 @@
-import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
@@ -12,7 +12,8 @@ enum MovieLoaderStatus {
 }
 
 class TopRated extends StatefulWidget {
-  static const routeName = '/upcoming-page';  
+  static const routeName = '/TopRated-page';
+
   TopRated({
     Key key,
   }) : super(key: key);
@@ -21,19 +22,14 @@ class TopRated extends StatefulWidget {
   _AllMoviesState createState() => _AllMoviesState();
 }
 
-class _AllMoviesState extends State<TopRated>
-    with AutomaticKeepAliveClientMixin {
+class _AllMoviesState extends State<TopRated>  {
   bool _initLoaded = false;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
   CancelableOperation movieOperation;
-  int curPage = 1;
 
   var movies;
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  int curPage = 1;
 
   @override
   void initState() {
@@ -41,6 +37,12 @@ class _AllMoviesState extends State<TopRated>
     // TODO: implement initState
     _initLoaded = true;
     super.initState();
+  }
+
+  @override
+  void dispose() {    
+    // TODO: implement dispose   
+    super.dispose();   
   }
 
   @override
@@ -56,16 +58,16 @@ class _AllMoviesState extends State<TopRated>
   bool onNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
       if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
-        if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
+        if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {          
           loaderStatus = MovieLoaderStatus.LOADING;
           movieOperation = CancelableOperation.fromFuture(
-            Provider.of<MoviesProvider>(context, listen: false)
-                .fetchTopRated(curPage + 1),
-          ).then(
+                  Provider.of<MoviesProvider>(context, listen: false)
+                      .fetchTopRated(curPage + 1))
+              .then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
-                curPage = curPage + 1;
+                curPage = curPage + 1;                
               });
             },
           );
@@ -73,45 +75,46 @@ class _AllMoviesState extends State<TopRated>
       }
     }
     return true;
-  }
+  }  
 
   Future<void> _refreshMovies(bool refresh) async {
-    if (refresh) {
-      await Provider.of<MoviesProvider>(context, listen: false).fetchTopRated(1);
-      setState(() {
-        curPage = 1;
-      });
-    }
+    if (refresh)
+      await Provider.of<MoviesProvider>(context, listen: false)
+          .fetchTopRated(1);
   }
 
   @override
-  Widget build(BuildContext context) {
-    super.build(context);
+  Widget build(BuildContext context) {    
     var movies = Provider.of<MoviesProvider>(context).topRated;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
+        appBar: PreferredSize(
+          child: TopBar(title: 'Top Rated'),
+          preferredSize: Size.fromHeight(kToolbarHeight),
+        ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
-              physics: BouncingScrollPhysics(),
+              // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+              physics: const BouncingScrollPhysics(),
               controller: scrollController,
-              key: PageStorageKey('UpcomingMoviesPage'),
-              cacheExtent: 12,
+              key: PageStorageKey('TopRated'),
+              // cacheExtent: 12,
               itemCount: movies.length,
               itemBuilder: (ctx, i) {
                 return MovieItem(
-                  movie: movies[i],                  
+                  movie: movies[i],
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 2 / 3,
-                // crossAxisSpacing: 5,
+                childAspectRatio: 1 / 2,
                 // mainAxisSpacing: 5,
+                // crossAxisSpacing: 5,
               ),
             ),
           ),

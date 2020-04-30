@@ -1,5 +1,7 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/providers/movies_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TVScreen extends StatelessWidget {
   @override
@@ -12,7 +14,13 @@ class TVScreen extends StatelessWidget {
               height: constraints.maxHeight,
               width: constraints.maxWidth,
               color: Colors.pink,
-              child: CustomPaint(painter: Painter()),
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  Provider.of<MoviesProvider>(context, listen: false).fetchVideos(181812);
+                },
+              ),
+              // child: CustomPaint(painter: Painter()),
             );
           },
         ),

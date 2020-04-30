@@ -62,7 +62,7 @@ class CastItem extends StatelessWidget {
     // print('Cast item ---------> URL ------- $')
 
     return Container(
-      margin: const EdgeInsets.only(left: PADDING),
+      margin: const EdgeInsets.only(left: LEFT_PADDING),
       decoration: BoxDecoration(
         border: Border(
           bottom: !last
@@ -91,14 +91,14 @@ class CastItem extends StatelessWidget {
         ),
         title: Text(
           item.name,
-          style: Theme.of(context).textTheme.headline3,
+          style: kBodyStyle,
         ),
         subtitle: !subtitle
             ? Text('')
             : RichText(
                 text: TextSpan(
                     text: 'as ',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: kSubtitle2,
                     children: [
                       TextSpan(
                           text: item.character,

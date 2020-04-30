@@ -1,6 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+// Theme and text styles
+
+TextStyle kTitleStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.bold,
+  fontSize: 21,
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),
+);
+TextStyle kTitleStyle2 = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.bold,
+  fontSize: 18,
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),
+);
+TextStyle kBodyStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),
+  height: 1.5,
+);
+TextStyle kSubtitle1 = TextStyle(
+  fontFamily: 'Helvatica',
+  // fontWeight: FontWeight.bold,
+  fontSize: 16,
+  color: Hexcolor('#FFFFFF').withOpacity(0.6),
+);
+TextStyle kSubtitle2 = TextStyle(
+  fontFamily: 'Helvatica',
+  // fontWeight: FontWeight.bold,
+  fontSize: 14,
+  color: Hexcolor('#FFFFFF').withOpacity(0.6),
+);
+
+TextStyle kItemTitle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.w600,
+  fontSize: 18,
+  color: Hexcolor('#DEDEDE')
+);
+TextStyle kInGridTitle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+  color: Hexcolor('#DEDEDE'),
+);
+
+TextStyle kSeeAll = TextStyle(
+  fontFamily: 'Helvatica',
+  // fontWeight: FontWeight.,
+  fontSize: 16,
+  color: Hexcolor('#DEDEDE'),
+);
+
 // MoviesProvider
 const API_KEY = '0ce2331b7a1f2dd735ece9351d3fa34c';
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -9,12 +63,14 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
 const PLACEHOLDER_IMAGE_URL =
     'blob:https://www.pngfuel.com/5e3dae69-7ade-4e65-b1ab-8a2cd4eedc6c';
 
+const THUMBNAIL_URL = '';
+
 const Color TRRANSPARENT_BACKGROUND_COLOR = Color(0x991C306D);
 const Color LINE_COLOR = Colors.white10;
 Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212');
 Color BASELINE_COLOR = Hexcolor('#121212');
 const double APP_BAR_HEIGHT = 56;
-const double PADDING = 15;
+const double LEFT_PADDING = 15;
 const AVATAR_RADIUS = 20;
 const LOADING_INDICATOR_SIZE = 21.0;
 

@@ -14,7 +14,7 @@ class DetailsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: PADDING),
+      margin: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       decoration: BoxDecoration(
         border: Border(
           bottom: !last ? BorderSide(width: 0.5, color: LINE_COLOR):
@@ -25,8 +25,8 @@ class DetailsItem extends StatelessWidget {
         dense: true,
         contentPadding: const EdgeInsets.all(0),
         visualDensity: VisualDensity.comfortable,
-        title: Text(left, style: Theme.of(context).textTheme.subtitle1),
-        trailing: Text(right, style: Theme.of(context).textTheme.headline3),
+        title: Text(left, style: kSubtitle1),
+        trailing: Text(right, style: kBodyStyle),
       ),
     );
   }

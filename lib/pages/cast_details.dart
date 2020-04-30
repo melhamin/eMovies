@@ -91,6 +91,7 @@ class _CastDetailsState extends State<CastDetails>
   Widget build(BuildContext context) {
     // super.build(context);
     final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
+    print('item -------> ${item.id}');
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -127,7 +128,7 @@ class _CastDetailsState extends State<CastDetails>
                 );
               },
             ),
-            TopBar(item.name),
+            TopBar(title: item.name),
           ],
         ),
       ),
@@ -141,7 +142,7 @@ class Biography extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: PADDING, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
       child: Text(
         biography,
         style: TextStyle(
@@ -201,7 +202,7 @@ class Movies extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, i) {
         return Padding(
-          padding: const EdgeInsets.only(left: PADDING),
+          padding: const EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
           child: ListTile(
             dense: true,
             contentPadding: const EdgeInsets.all(0),
@@ -217,9 +218,21 @@ class Movies extends StatelessWidget {
             ),
             title: Text(
               movies[i].title,
-              style: Theme.of(context).textTheme.headline3,
+              style: kBodyStyle,
             ),
-            subtitle: Text(
+            subtitle: RichText(
+                text: TextSpan(
+                    text: 'as ',
+                    style: kSubtitle2,
+                    children: [
+                      TextSpan(
+                          text: movies[i].character,
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                          ))
+                    ]),
+              ), 
+            trailing: Text(
               movies[i].releaseDate == null
                   ? 'N/A'
                   : DateFormat.y().format(movies[i].releaseDate),

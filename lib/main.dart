@@ -29,15 +29,16 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'eMovies',
-        theme: ThemeData(
+        theme: ThemeData(          
           // primaryColor: Color(0xff1C306D),
+          // primaryColor: Hexcolor('#2c3e50'),
           primaryColor: Colors.black,
           // accentColor: Colors.amber,
           // splashColor: Colors.transparent,
           // highlightColor: Colors.transparent,
           accentColor: Colors.pink,
           // accentColor: Color(0xFFFFAD32),
-          scaffoldBackgroundColor: Colors.transparent,
+          scaffoldBackgroundColor: Colors.black,                
           textTheme: TextTheme(
             subtitle1: TextStyle(
               fontSize: 14,
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
           InTheaters.routeName: (ctx) => InTheaters(),
           TopRated.routeName: (ctx) => TopRated(),
           VideoPage.routeName: (ctx) => VideoPage(),
+          // WebViewExample.routeName: (ctx) => WebViewExample(),
           ImageView.routeName: (ctx) => ImageView(),
           CastDetails.routeName: (ctx) => CastDetails(),
         },

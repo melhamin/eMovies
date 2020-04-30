@@ -1,10 +1,13 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
 import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
+
+import 'package:e_movies/temp/movie_item.dart' as tmp;
 
 enum MovieLoaderStatus {
   STABLE,
@@ -89,28 +92,30 @@ class _AllMoviesState extends State<InTheaters>
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
+        appBar: PreferredSize(
+          child: TopBar(title: 'In Theaters'),
+          preferredSize: Size.fromHeight(kToolbarHeight),
+        ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
-              padding: EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-              physics: BouncingScrollPhysics(),
+              // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+              physics: const BouncingScrollPhysics(),
               controller: scrollController,
               key: PageStorageKey('InTheathersPage'),
               cacheExtent: 12,
               itemCount: movies.length,
               itemBuilder: (ctx, i) {
-                // print('--------------> id: ${movies[i].id}');
-                // print('--------------> i: $i    ${movies[i].title}');
                 return MovieItem(
-                  movie: movies[i],
+                  movie: movies[i],                  
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 2 / 3,
+                childAspectRatio: 1/2,
                 // mainAxisSpacing: 5,
                 // crossAxisSpacing: 5,
               ),

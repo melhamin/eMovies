@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast_provider.dart';
@@ -11,6 +12,8 @@ import 'package:expand_widget/expand_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -18,7 +21,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:e_movies/widgets/movie_item.dart' as wid;
 import 'package:e_movies/providers/movies_provider.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/cast_item.dart' as wid;
+import 'package:e_movies/widgets/cast_item.dart' as castWid;
+import '../widgets/route_builder.dart';
 
 class DetailsPage extends StatefulWidget {
   static const routeName = '/details-page';
@@ -27,13 +31,15 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DetailsPageState extends State<DetailsPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool _isInitLoaded = true;
   bool _isFetching = true;
   MovieItem initData;
   MovieItem film;
   List<CastItem> cast = [];
   List<CastItem> crew = [];
+
+  bool _expanded = false;
 
   AnimationController _animationController;
   Animation<Offset> _animation;
@@ -61,8 +67,8 @@ class _DetailsPageState extends State<DetailsPage>
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -111,8 +117,13 @@ class _DetailsPageState extends State<DetailsPage>
 
   Widget _buildBottomIcons() {
     return Container(
-      color: BASELINE_COLOR,
       padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+          color: BASELINE_COLOR,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          )),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -154,7 +165,7 @@ class _DetailsPageState extends State<DetailsPage>
 
   Widget _buildRatings(double voteAverage) {
     return Container(
-      padding: const EdgeInsets.only(top: 10, left: PADDING),
+      padding: const EdgeInsets.only(top: 10, left: LEFT_PADDING),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(width: 0.5, color: LINE_COLOR),
@@ -183,24 +194,24 @@ class _DetailsPageState extends State<DetailsPage>
   /**
    * Build page route for image view
    */
-  Route _buildRoute() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => ImageView(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
+  // Route _buildRoute(Widget toPage) {
+  //   return PageRouteBuilder(
+  //     pageBuilder: (context, animation, secondaryAnimation) => toPage,
+  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+  //       var begin = const Offset(
+  //           1, 0); // if x > 0 and y = 0 transition is from right to left
+  //       var end =
+  //           Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+  //       var tween = Tween(begin: begin, end: end);
+  //       var offsetAnimation = animation.drive(tween);
 
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
+  //       return SlideTransition(
+  //         position: offsetAnimation,
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildImages(MovieItem film) {
     List<String> images = [];
@@ -213,13 +224,14 @@ class _DetailsPageState extends State<DetailsPage>
     return film.images.length > 0
         ? GridView.builder(
             physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: PADDING),
+            padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             // controller: _scrollController,
             itemCount: images.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(_buildRoute());
+                  Navigator.of(context)
+                      .push(BuildRoute.buildRoute(toPage: ImageView()));
                 },
                 child: CachedNetworkImage(
                   imageUrl: images[index],
@@ -243,38 +255,6 @@ class _DetailsPageState extends State<DetailsPage>
             scrollDirection: Axis.horizontal,
           )
         : null;
-  }
-
-  Widget _buildOverview(String overview) {
-    return overview == null
-        ? null
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // _buildSectionTitle('Overview'),
-              SizedBox(height: 5),
-              Container(
-                padding: EdgeInsets.only(left: PADDING, right: 10, top: 5),
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: LINE_COLOR, width: 0.5),
-                  ),
-                  color: BASELINE_COLOR,
-                ),
-                child: (overview == null || overview.length == 0)
-                    ? Text(
-                        'Overview not available',
-                        style: Theme.of(context).textTheme.headline3,
-                      )
-                    : ExpandText(
-                        overview,
-                        maxLength: 3,
-                        style: Theme.of(context).textTheme.headline3,
-                        arrowColor: Theme.of(context).accentColor,
-                      ),
-              ),
-            ],
-          );
   }
 
   String _getGenres(List<dynamic> ids) {
@@ -341,12 +321,11 @@ class _DetailsPageState extends State<DetailsPage>
 
   // Builds parts that needs detailed film to be fetched
   List<Widget> all(BoxConstraints constraints) {
+    // print('DetailsPage ---------------------> ${film.videos}');
     return [
       if (film.images != null && film.images.length > 0)
         Container(
             height: constraints.maxHeight * 0.2, child: _buildImages(film)),
-
-      _buildOverview(film.overview),
       SizedBox(height: 30),
       _buildDetails(film),
       SizedBox(height: 30),
@@ -358,56 +337,51 @@ class _DetailsPageState extends State<DetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    // print('DetailsPage ---------------------> build()');
     initData = ModalRoute.of(context).settings.arguments as MovieItem;
-    // print('genreIds-----------------> ${film.genreIDs}');
+    print('DetailsPage ------------------------> build() id: ${initData.id}');
     return SafeArea(
       child: Scaffold(
-        // body: _isFetching
-        //     ? Center(child: _showLoadingIndicator())
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Stack(
               children: [
                 ListView(
                   physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.only(top: APP_BAR_HEIGHT),
-                  addAutomaticKeepAlives: true,
-                  // cacheExtent: 20,
+                  padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
                   children: [
-                    Container(
-                      height: constraints.maxHeight * 0.9 - APP_BAR_HEIGHT - 1,
-                      child: InitialView(film: initData),
+                    BackgroundAndTitle(
+                      initData: initData,
+                      film: film,
+                      constraints: constraints,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: LEFT_PADDING,
+                      ),
+                      child: Text('Outline', style: kTitleStyle),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        // vertical: 10,
+                        horizontal: LEFT_PADDING,
+                      ),
+                      child: Overview(
+                          initData: initData, constraints: constraints),
                     ),
                     Container(
                       color: Colors.black,
                       height: constraints.maxHeight * 0.1,
                       child: _buildBottomIcons(),
                     ),
-                    Container(
-                      height: constraints.maxHeight * 0.1,
-                      child: _buildRatings(initData.voteAverage),
-                    ),
-
-                    // (() {
-                    //   if(_isFetching) {
-                    //     return _showLoadingIndicator();
-                    //   } else {
-                    //     if (film.images != null && film.images.length > 0) {
-                    //       return Container(
-                    //       height: constraints.maxHeight * 0.2,
-                    //       child: _buildImages(film));
-                    //     }
-                    //   }
-                    //   return Container(height: 0,);
-                    // } ()),
+                    SizedBox(height: 10),
                     if (!_isFetching)
                       ...all(constraints)
                     else
                       _showLoadingIndicator(),
                   ],
                 ),
-                TopBar(initData.title),
+                TopBar(title: initData.title),
               ],
             );
           },
@@ -417,141 +391,271 @@ class _DetailsPageState extends State<DetailsPage>
   }
 }
 
-class InitialView extends StatelessWidget {
-  final MovieItem film;
+class BackgroundAndTitle extends StatelessWidget {
+  const BackgroundAndTitle({
+    Key key,
+    @required this.initData,
+    @required this.film,
+    @required this.constraints,
+  }) : super(key: key);
 
-  InitialView({this.film});
+  final MovieItem initData;
+  final MovieItem film;
+  final BoxConstraints constraints;
+
   @override
   Widget build(BuildContext context) {
-    String _getDateAndDuration() {
-      String res = '';
-      if (film.releaseDate != null) {
-        res = res + film.releaseDate.year.toString() + ' | ';
-      } else {
-        res = res + 'Unk' + ' | ';
-      }
-
-      if (film.genreIDs != null) {
-        res += GENRES[film.genreIDs[0]];
-      } else {
-        res += 'Unk';
-      }
-
-      return res;
-    }
-
-    Widget _buildFooter() {
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          return Stack(
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.only(bottom: 110),
+          height: constraints.maxHeight * 0.55,
+          child: Stack(
             children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    color: BASELINE_COLOR,
-                  ),
-                  height: constraints.maxHeight * 0.15,
-                  // color: Colors.black54,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: (constraints.maxWidth * 0.25),
-                        top: 15,
-                      ),
-                      child: SizedBox(
-                        height: constraints.maxHeight * 0.15,
-                        width: constraints.maxWidth * 0.6,
-                                                child: Text(
-                          film.title,
-                          softWrap: true,
-                          style: Theme.of(context).textTheme.headline6,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
+              initData.backdropUrl == null
+                  ? PlaceHolderImage(film.title)
+                  : CachedNetworkImage(
+                      imageUrl: initData.backdropUrl,
+                      fadeInCurve: Curves.easeIn,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: imageProvider,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+              Container(
+                color: Colors.black26,
               ),
+              // Align(
+              //   alignment: Alignment.center,
+              //   child: BackdropFilter(
+              //     filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+              //     child: Container(
+              //       decoration: new BoxDecoration(
+              //           color: Colors.grey.shade200.withOpacity(0)),
+              //     ),
+              //   ),
               // ),
               Positioned(
-                bottom: constraints.maxHeight * 0.023,
-                // left: 10,
+                top: constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
+                // right: MediaQuery.of(context).size.width / 2,
+                right: constraints.maxWidth / 2 - 40,
+
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.play_circle_outline),
-                      iconSize: 80,
-                      color: Theme.of(context).accentColor,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(VideoPage.routeName);
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          settings: RouteSettings(arguments: initData.id),
+                          builder: (context) {
+                            return VideoPage();
+                          },
+                        ));
                       },
+                      // child: Image.asset('assets/icons/play.gif'),
+                      child: SvgPicture.asset(
+                        'assets/icons/play.svg',
+                        color: Theme.of(context).accentColor,
+                        height: 80,
+                      ),
                     ),
+                    SizedBox(height: 10),
                     Container(
-                      padding: EdgeInsets.only(left: PADDING),
-                      width: constraints.maxWidth * 0.4,
-                      child: Text(_getDateAndDuration(),
-                          style: Theme.of(context).textTheme.headline3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Theme.of(context).accentColor,
+                          width: 1,
+                        ),
+                      ),
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 5, right: 5),
+                        child: Text(
+                          'Trailer',
+                          style: kBodyStyle,
+                        ),
+                      ),
                     ),
+                    // OutlineButton(
+                    //   borderSide: BorderSide(color: Colors.white, width: 2),
+                    //   onPressed: () {},
+                    //   child: Text('Trailer', style: kSubtitle1,),
+                    // ),
                   ],
                 ),
+                // child: Icon(
+                //   Icons.play_circle_outline,
+                //   color: Hexcolor('#DEDEDE'),
+                //   size: 100,
+                // ),
               ),
             ],
-          );
-        },
-      );
-    }
-
-    Widget _buildBackgroundImage(MovieItem film) {
-      return film.backdropUrl == null
-          ? PlaceHolderImage(film.title)
-          : CachedNetworkImage(
-              imageUrl: film.posterUrl,
-              fadeInCurve: Curves.easeIn,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  // color: const Color(0xff000000),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: imageProvider,
-                  ),
-                ),
-                
-              ),
-            );
-    }
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Stack(
-          children: [
-            Column(
+          ),
+        ),
+        Positioned(
+          top: constraints.maxHeight * 0.55 - 180,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
               children: [
                 Container(
-                  height: constraints.maxHeight,
-                  child: _buildBackgroundImage(film),
+                  margin: const EdgeInsets.only(
+                      left: LEFT_PADDING -
+                          5, // TODO find source of the padding to the left
+                      right: LEFT_PADDING),
+                  width: 130,
+                  height: 180,
+                  child: wid.MovieItem(
+                    movie: initData,
+                    withFooter: false,
+                    tappable: false,
+                  ),
                 ),
-                // TODO *** find the source of the padding ****
-                // Without this container there would be a tiny padding between
-                // footer and bottom of the background image
-                // Container(
-                //   height: 30,
-                //   color: BASELINE_COLOR,
-                // ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        right: LEFT_PADDING,
+                        top:
+                            70), // part of the poster image that overlaps background image
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // AutoSizeText(
+                        //   initData.title,
+                        //   style: kTitleStyle,
+                        // ),
+                        Text(
+                          initData.title,
+                          style: kTitleStyle2,
+                          softWrap: true,
+                          // overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          '2020',
+                          style: kSubtitle1,
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(color: Colors.white30)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 1),
+                                child: Text(
+                                  'Action',
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white54),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 15),
+                            Row(
+                              children: [
+                                Text(
+                                  initData.voteAverage.toString(),
+                                  style: kSubtitle1,
+                                ),
+                                SizedBox(width: 5),
+                                Icon(Icons.favorite_border,
+                                    color: Theme.of(context).accentColor),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-            _buildFooter(),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class Overview extends StatefulWidget {
+  const Overview({
+    Key key,
+    @required this.initData,
+    @required this.constraints,
+  }) : super(key: key);
+
+  final MovieItem initData;
+  final BoxConstraints constraints;
+
+  @override
+  _OverviewState createState() => _OverviewState();
+}
+
+class _OverviewState extends State<Overview>
+    with SingleTickerProviderStateMixin {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+      vsync: this,
+      child: ConstrainedBox(
+        constraints: _expanded
+            ? BoxConstraints(
+                minHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
+              )
+            : BoxConstraints(
+                maxHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
+              ),
+        child: _expanded
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Text(
+                  widget.initData.overview,
+                  // initData.overview,
+                  style: kBodyStyle,
+                  // softWrap: true,
+
+                  // maxLines: _expanded ? 2 ^ 64 : null,
+                  // overflow: TextOverflow.ellipsis,
+                ),
+              )
+            : SizedBox.expand(
+                child: GestureDetector(
+                  onTap: widget.initData.overview.length > 200
+                      ? () {
+                          setState(() {
+                            _expanded = !_expanded;
+                          });
+                        }
+                      : null,
+                  child: RichText(
+                    text: TextSpan(
+                        text: widget.initData.overview.length < 200
+                            ? widget.initData.overview
+                            : widget.initData.overview.substring(0, 200) +
+                                '...',
+                        style: kBodyStyle,
+                        children: [
+                          if (widget.initData.overview.length > 200)
+                            TextSpan(
+                                text: ' Show more',
+                                style: TextStyle(
+                                  color: Theme.of(context).accentColor,
+                                ))
+                        ]),
+                  ),
+                ),
+              ),
+      ),
     );
   }
 }
@@ -601,7 +705,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print('Cast ------------------------> initState()');
+    // print('Cast ------------------------> initState()');
   }
 
   void _onTap() {
@@ -643,7 +747,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('Cast ----------------------> build()');
+    // print('Cast ----------------------> build()');
     CastItem director = widget.crew.firstWhere((element) {
       return element.job == 'Director';
     });
@@ -654,9 +758,9 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
         children: [
           if (director != null)
             Padding(
-              padding: const EdgeInsets.only(left: PADDING, bottom: 5),
+              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
               child: Text('Director',
-                  style: Theme.of(context).textTheme.subtitle1),
+                  style: kSubtitle1),
             ),
           Container(
             decoration: BoxDecoration(
@@ -666,7 +770,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
               ),
               color: BASELINE_COLOR,
             ),
-            child: wid.CastItem(
+            child: castWid.CastItem(
               item: director,
               last: false,
               subtitle: false,
@@ -676,8 +780,8 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
             SizedBox(height: 20),
           if (widget.cast != null && widget.cast.length > 0)
             Padding(
-              padding: const EdgeInsets.only(left: PADDING, bottom: 5),
-              child: Text('Cast', style: Theme.of(context).textTheme.subtitle1),
+              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
+              child: Text('Cast', style: kSubtitle1),
             ),
           if (widget.cast != null && widget.cast.length > 0)
             AnimatedContainer(
@@ -697,7 +801,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
                 itemCount: _calcualteItemCount(),
                 itemBuilder: (context, index) {
                   CastItem item = widget.cast[index];
-                  return wid.CastItem(
+                  return castWid.CastItem(
                     item: item,
                     // to add border to all except last one
                     last: _isLasItem(index),
@@ -727,36 +831,36 @@ class SimilarMovies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movies = Provider.of<MoviesProvider>(context, listen: false).similar;
-    return (movies == null || movies.length == 0)
+    return (movies.length == 0)
         ? Container()
         : LayoutBuilder(
             builder: (context, constraints) {
               return Container(
-                height: constraints.maxHeight * 0.3,
+                height: constraints.maxHeight * 0.5,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: PADDING),
+                      padding: EdgeInsets.only(left: LEFT_PADDING),
                       child: Text('Similar Movies',
-                          style: Theme.of(context).textTheme.subtitle1),
+                          style: kSubtitle1),
                     ),
                     SizedBox(height: 5),
                     Flexible(
                       child: GridView.builder(
                         physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: PADDING),
+                        padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
                         itemCount: movies.length,
                         itemBuilder: (context, index) {
                           return wid.MovieItem(
                             movie: movies[index],
-                            withoutFooter: true,
+                            withFooter: false,
                           );
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 1,
-                          childAspectRatio: 1.5,
-                          mainAxisSpacing: 5,
+                          childAspectRatio: 3 / 2,
+                          // mainAxisSpacing: 5,
                         ),
                         scrollDirection: Axis.horizontal,
                       ),
@@ -769,12 +873,12 @@ class SimilarMovies extends StatelessWidget {
   }
 }
 
-class Painter extends CustomPainter {
+class MyClipper extends CustomClipper<Path> {
   @override
-  void paint(Canvas canva, Size size) {
-    // TODO: implement paint
-  }
+  Path getClip(Size size) {}
 
   @override
-  bool shouldRepaint(Painter oldDelegate) => false;
+  bool shouldReclip(CustomClipper oldClipper) {
+    return false;
+  }
 }

@@ -1,24 +1,29 @@
-import 'dart:ui';
-
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class TopBar extends StatelessWidget {
   @required
-  final String title;
+  final String title;  
+  final bool opaque;
 
-  TopBar(this.title);
+  TopBar({this.title, this.opaque = false});
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {      
+    // return AppBar(
+    //       title: Text(title, style: kTitleStyle,),
+    //       centerTitle: true,
+    //       leading: BackButton(),
+    //     );
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
         height: kToolbarHeight,
         decoration: BoxDecoration(
-          color: Colors.black54,
+          color: opaque ? Colors.black : Colors.black54,
         ),
         child: Row(
-          children: [                      
+          children: [
             BackButton(color: Hexcolor('#DEDEDE')),
             Expanded(
               child: Align(
@@ -34,7 +39,6 @@ class TopBar extends StatelessWidget {
                 ),
               ),
             ),
-            
           ],
         ),
       ),

@@ -331,7 +331,7 @@ class _GenreItemState extends State<GenreItem> {
                 if (_isLoading) _buildLoadingIndicator(context),
               ],
             ),
-            TopBar(GENRES[genreId]),
+            TopBar(title: GENRES[genreId]),
           ],
         ),
       ),
