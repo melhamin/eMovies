@@ -1,3 +1,4 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 
 class PlaceHolderImage extends StatelessWidget {
@@ -7,17 +8,14 @@ class PlaceHolderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).accentColor,
+      color: Colors.black,
       // color: Colors.black,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Center(
           child: FittedBox(
-                      child: Text(title,
-                style: TextStyle(
-                  color: Colors.black,    
-                  fontSize: 21,          
-                )),
+            child: Text(title,
+                style: kTitleStyle),
           ),
         ),
       ),

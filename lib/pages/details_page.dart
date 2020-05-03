@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast_provider.dart';
@@ -8,12 +7,10 @@ import 'package:e_movies/widgets/details_item.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/top_bar.dart';
-import 'package:expand_widget/expand_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -79,12 +76,11 @@ class _DetailsPageState extends State<DetailsPage>
           .getMovieDetails(movie.id)
           .then((value) {
         setState(() {
-          _isFetching = false;
-          _isInitLoaded = false;
           // Get film item
           film =
               Provider.of<MoviesProvider>(context, listen: false).movieDetails;
-
+          _isFetching = false;
+          _isInitLoaded = false;
           // get Crew data
           if (film.crew != null) {
             film.crew.forEach((element) {
@@ -163,33 +159,33 @@ class _DetailsPageState extends State<DetailsPage>
     );
   }
 
-  Widget _buildRatings(double voteAverage) {
-    return Container(
-      padding: const EdgeInsets.only(top: 10, left: LEFT_PADDING),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(width: 0.5, color: LINE_COLOR),
-          bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-        ),
-      ),
-      child: SlideTransition(
-        position: _animation,
-        child: GridView(
-          children: [
-            RatingItem(title: 'My Rating', subtitle: '9.3'),
-            RatingItem(title: 'TMDB Rating', subtitle: voteAverage.toString()),
-            // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
-            // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
-          ],
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1,
-            childAspectRatio: 1 / 3,
-          ),
-          scrollDirection: Axis.horizontal,
-        ),
-      ),
-    );
-  }
+  // Widget _buildRatings(double voteAverage) {
+  //   return Container(
+  //     padding: const EdgeInsets.only(top: 10, left: LEFT_PADDING),
+  //     decoration: BoxDecoration(
+  //       border: Border(
+  //         top: BorderSide(width: 0.5, color: LINE_COLOR),
+  //         bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+  //       ),
+  //     ),
+  //     child: SlideTransition(
+  //       position: _animation,
+  //       child: GridView(
+  //         children: [
+  //           RatingItem(title: 'My Rating', subtitle: '9.3'),
+  //           RatingItem(title: 'TMDB Rating', subtitle: voteAverage.toString()),
+  //           // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
+  //           // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
+  //         ],
+  //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //           crossAxisCount: 1,
+  //           childAspectRatio: 1 / 3,
+  //         ),
+  //         scrollDirection: Axis.horizontal,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /**
    * Build page route for image view
@@ -231,7 +227,7 @@ class _DetailsPageState extends State<DetailsPage>
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context)
-                      .push(BuildRoute.buildRoute(toPage: ImageView()));
+                      .push(BuildRoute.buildRoute(toPage: ImageView(images)));
                 },
                 child: CachedNetworkImage(
                   imageUrl: images[index],
@@ -338,49 +334,56 @@ class _DetailsPageState extends State<DetailsPage>
   @override
   Widget build(BuildContext context) {
     initData = ModalRoute.of(context).settings.arguments as MovieItem;
-    print('DetailsPage ------------------------> build() id: ${initData.id}');
+    // print('DetailsPage ------------------------> build() id: ${initData.id}');
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(
           builder: (context, constraints) {
             return Stack(
               children: [
-                ListView(
-                  physics: BouncingScrollPhysics(),
-                  padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                  children: [
-                    BackgroundAndTitle(
-                      initData: initData,
-                      film: film,
-                      constraints: constraints,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: LEFT_PADDING,
+                _isFetching
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: SpinKitCircle(
+                          size: 21,
+                          color: Colors.pink,
+                        ),
+                      )
+                    : ListView(
+                        physics: BouncingScrollPhysics(),
+                        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                        children: [
+                          BackgroundAndTitle(
+                            film: film,
+                            constraints: constraints,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: LEFT_PADDING,
+                            ),
+                            child: Text('Outline', style: kTitleStyle),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              // vertical: 10,
+                              horizontal: LEFT_PADDING,
+                            ),
+                            child: Overview(
+                                initData: initData, constraints: constraints),
+                          ),
+                          Container(
+                            color: Colors.black,
+                            height: constraints.maxHeight * 0.1,
+                            child: _buildBottomIcons(),
+                          ),
+                          SizedBox(height: 10),
+                          if (!_isFetching)
+                            ...all(constraints)
+                          else
+                            _showLoadingIndicator(),
+                        ],
                       ),
-                      child: Text('Outline', style: kTitleStyle),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        // vertical: 10,
-                        horizontal: LEFT_PADDING,
-                      ),
-                      child: Overview(
-                          initData: initData, constraints: constraints),
-                    ),
-                    Container(
-                      color: Colors.black,
-                      height: constraints.maxHeight * 0.1,
-                      child: _buildBottomIcons(),
-                    ),
-                    SizedBox(height: 10),
-                    if (!_isFetching)
-                      ...all(constraints)
-                    else
-                      _showLoadingIndicator(),
-                  ],
-                ),
                 TopBar(title: initData.title),
               ],
             );
@@ -394,17 +397,43 @@ class _DetailsPageState extends State<DetailsPage>
 class BackgroundAndTitle extends StatelessWidget {
   const BackgroundAndTitle({
     Key key,
-    @required this.initData,
+    // @required this.initData,
     @required this.film,
     @required this.constraints,
   }) : super(key: key);
 
-  final MovieItem initData;
+  // final MovieItem initData;
   final MovieItem film;
   final BoxConstraints constraints;
 
+  String _getGenreAndDuration() {
+    return (film.genreIDs == null || film.genreIDs.length == 0)
+        ? 'N/A'
+        : GENRES[film.genreIDs[0]['id']];
+  }
+
+  String _getRating() {
+    return film.voteAverage == null ? 'N/A' : film.voteAverage.toString();
+  }
+
+  String _getYearAndDuration() {
+    String str = '';
+    if (film.releaseDate == null) {
+      str += 'N/A';
+    } else {
+      str += film.releaseDate.year.toString();
+    }
+    if (film.duration != null) {
+      str = str + ' | ' + film.duration.toString();
+    }
+    return str;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // print('film ---------> ${film.genreIDs}');
+    // print('initData -------> ${initData.genreIDs}');
+
     return Stack(
       children: [
         Container(
@@ -412,10 +441,10 @@ class BackgroundAndTitle extends StatelessWidget {
           height: constraints.maxHeight * 0.55,
           child: Stack(
             children: [
-              initData.backdropUrl == null
+              film.backdropUrl == null
                   ? PlaceHolderImage(film.title)
                   : CachedNetworkImage(
-                      imageUrl: initData.backdropUrl,
+                      imageUrl: film.backdropUrl,
                       fadeInCurve: Curves.easeIn,
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
@@ -449,7 +478,7 @@ class BackgroundAndTitle extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          settings: RouteSettings(arguments: initData.id),
+                          settings: RouteSettings(arguments: film.id),
                           builder: (context) {
                             return VideoPage();
                           },
@@ -472,8 +501,7 @@ class BackgroundAndTitle extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5, right: 5),
+                        padding: const EdgeInsets.only(left: 5, right: 5),
                         child: Text(
                           'Trailer',
                           style: kBodyStyle,
@@ -510,7 +538,7 @@ class BackgroundAndTitle extends StatelessWidget {
                   width: 130,
                   height: 180,
                   child: wid.MovieItem(
-                    movie: initData,
+                    movie: film,
                     withFooter: false,
                     tappable: false,
                   ),
@@ -529,14 +557,14 @@ class BackgroundAndTitle extends StatelessWidget {
                         //   style: kTitleStyle,
                         // ),
                         Text(
-                          initData.title,
+                          film.title,
                           style: kTitleStyle2,
                           softWrap: true,
                           // overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 10),
                         Text(
-                          '2020',
+                          _getYearAndDuration(),
                           style: kSubtitle1,
                         ),
                         SizedBox(height: 10),
@@ -550,7 +578,8 @@ class BackgroundAndTitle extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0, vertical: 1),
                                 child: Text(
-                                  'Action',
+                                  // 'Action',
+                                  _getGenreAndDuration(),
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white54),
                                 ),
@@ -560,7 +589,7 @@ class BackgroundAndTitle extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  initData.voteAverage.toString(),
+                                  _getRating(),
                                   style: kSubtitle1,
                                 ),
                                 SizedBox(width: 5),
@@ -613,7 +642,8 @@ class _OverviewState extends State<Overview>
                 minHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
               )
             : BoxConstraints(
-                maxHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
+                maxHeight:
+                    widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT - 5,
               ),
         child: _expanded
             ? Padding(
@@ -647,7 +677,7 @@ class _OverviewState extends State<Overview>
                         children: [
                           if (widget.initData.overview.length > 200)
                             TextSpan(
-                                text: ' Show more',
+                                text: 'More',
                                 style: TextStyle(
                                   color: Theme.of(context).accentColor,
                                 ))
@@ -759,8 +789,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
           if (director != null)
             Padding(
               padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-              child: Text('Director',
-                  style: kSubtitle1),
+              child: Text('Director', style: kSubtitle1),
             ),
           Container(
             decoration: BoxDecoration(
@@ -842,8 +871,7 @@ class SimilarMovies extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: LEFT_PADDING),
-                      child: Text('Similar Movies',
-                          style: kSubtitle1),
+                      child: Text('Similar Movies', style: kSubtitle1),
                     ),
                     SizedBox(height: 5),
                     Flexible(

@@ -6,6 +6,7 @@ import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast_provider.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,8 @@ import 'package:e_movies/pages/details_page.dart';
 
 import 'providers/movies_provider.dart';
 
-void main() {
+void main() async {
+  await DotEnv().load('.env');
   runApp(MyApp());
 }
 
@@ -90,7 +92,7 @@ class MyApp extends StatelessWidget {
           TopRated.routeName: (ctx) => TopRated(),
           VideoPage.routeName: (ctx) => VideoPage(),
           // WebViewExample.routeName: (ctx) => WebViewExample(),
-          ImageView.routeName: (ctx) => ImageView(),
+          // ImageView.routeName: (ctx) => ImageView(),
           CastDetails.routeName: (ctx) => CastDetails(),
         },
       ),

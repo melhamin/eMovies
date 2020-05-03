@@ -202,36 +202,34 @@ class Movies extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, i) {
         return Padding(
-          padding: const EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
+          padding:
+              const EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
           child: ListTile(
             dense: true,
             contentPadding: const EdgeInsets.all(0),
             visualDensity: VisualDensity.comfortable,
             leading: CircleAvatar(
               radius: 25,
-              backgroundColor: Theme.of(context).accentColor,
-              backgroundImage: movies[i].posterUrl != null
-                  ? NetworkImage(
-                      movies[i].posterUrl,
-                    )
-                  : null,
+              backgroundColor: Colors.black,
+              child: movies[i].posterUrl == null
+                  ? PlaceHolderImage(movies[i].title)
+                  : CachedNetworkImage(
+                      imageUrl: movies[i].posterUrl,
+                    ),
             ),
             title: Text(
               movies[i].title,
               style: kBodyStyle,
             ),
             subtitle: RichText(
-                text: TextSpan(
-                    text: 'as ',
-                    style: kSubtitle2,
-                    children: [
-                      TextSpan(
-                          text: movies[i].character,
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                          ))
-                    ]),
-              ), 
+              text: TextSpan(text: 'as ', style: kSubtitle2, children: [
+                TextSpan(
+                    text: movies[i].character,
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                    ))
+              ]),
+            ),
             trailing: Text(
               movies[i].releaseDate == null
                   ? 'N/A'

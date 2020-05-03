@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:e_movies/providers/movies_provider.dart';
@@ -39,6 +40,8 @@ class Person {
 }
 
 class CastProvider with ChangeNotifier {
+
+  final API_KEY = DotEnv().env['API_KEY'];
 
   Person person;
   List<MovieItem> _movies = [];

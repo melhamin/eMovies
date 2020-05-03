@@ -56,12 +56,11 @@ TextStyle kSeeAll = TextStyle(
 );
 
 // MoviesProvider
-const API_KEY = '0ce2331b7a1f2dd735ece9351d3fa34c';
+// const 
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_WEIGHT = 'w500';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
-const PLACEHOLDER_IMAGE_URL =
-    'blob:https://www.pngfuel.com/5e3dae69-7ade-4e65-b1ab-8a2cd4eedc6c';
+
 
 const THUMBNAIL_URL = '';
 

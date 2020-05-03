@@ -19,7 +19,7 @@ class MovieItem extends StatelessWidget {
   // Functions
   String getGenreName(List<dynamic> genreIds) {
     String str = 'N/A';
-    if (genreIds == null) return 'N/A';
+    if (genreIds == null || genreIds.length == 0) return 'N/A';
     if (GENRES.containsKey(genreIds[0])) {
       str = GENRES[genreIds[0]];
     }

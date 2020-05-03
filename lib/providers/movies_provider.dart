@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:e_movies/consts/consts.dart';
@@ -151,6 +152,10 @@ class VideoItem {
 }
 
 class MoviesProvider with ChangeNotifier {
+
+  // Environemnt Variables
+  // final API_KEY = DotEnv().env['API_KEYY'];
+
   List<MovieItem> _topRated = [];
   List<MovieItem> _inTheaters = [];
 
@@ -204,10 +209,10 @@ class MoviesProvider with ChangeNotifier {
 
   // functions
   Future<void> fetchInTheaters(int page) async {
-    //https://api.themoviedb.org/3/trending/all/day?api_key=0ce2331b7a1f2dd735ece9351d3fa34c
-    // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
     final url =
-        '$BASE_URL/movie/now_playing?api_key=$API_KEY&language=en-US&page=$page';
+        '$BASE_URL/movie/now_playing?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+
+    try {        
     final response = await http.get(url);
     // print('pageno =---------------------> ${response.body}' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -225,13 +230,19 @@ class MoviesProvider with ChangeNotifier {
     });
     // print('_trending size------------------> ${_trending.length}');
     // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
+    } catch (error) {
+      print('In Theaters error -----------> $error');
+      throw error;
+    }
     notifyListeners();
   }
 
   Future<void> fetchTopRated(int page) async {
     // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
     final url =
-        '$BASE_URL/movie/top_rated?api_key=$API_KEY&language=en-US&page=$page';
+        '$BASE_URL/movie/top_rated?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+    
+    try {
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -247,13 +258,16 @@ class MoviesProvider with ChangeNotifier {
       _topRated.add(MovieItem.fromJson(element));
     });
     // print('length movies(upcoming) -------------> ' + upcomingMoviesLength().toString());
+    } catch (error) {
+      print('Top Rated Error -------------> $error');
+    }
     notifyListeners();
   }
 
   Future<void> getMovieDetails(int id) async {    
-    try {
       final url =
-          '$BASE_URL/movie/$id?api_key=$API_KEY&language=en-US&append_to_response=credits,recommendations,similar,reviews,images&include_image_language=en,null';
+          '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,recommendations,similar,reviews,images&include_image_language=en,null';
+    try {
 
       final response = await http.get(url);
       // print('MovieDetails ----------->- ${response.body}');
@@ -289,7 +303,7 @@ class MoviesProvider with ChangeNotifier {
   }
 
   Future<void> fetchVideos(int id) async {
-    final url = '$BASE_URL/movie/$id/videos?api_key=$API_KEY&language=en-US';
+    final url = '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['API_KEY']}&language=en-US';
 
     try {
       final response = await http.get(url);
@@ -314,8 +328,10 @@ class MoviesProvider with ChangeNotifier {
 
   // Fetch genres
   Future<void> fetchActions(int page) async {
+    print('DotEnv API_KEY---------------> ${DotEnv().env['API_KEY']}');
+    // print('API_KEY---------------> $API_KEY');
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=28';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=28';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -340,7 +356,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchAdventure(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=12';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=12';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -365,7 +381,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchComedy(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=35';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=35';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -390,7 +406,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchAnimation(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=16';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=16';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -415,7 +431,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchCrime(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=80';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=80';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -440,7 +456,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchFamily(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10751';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10751';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -465,7 +481,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchDocumentary(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=99';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=99';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -490,7 +506,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchDrama(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=18';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=18';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -515,7 +531,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchFantasy(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=14';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=14';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -540,7 +556,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchHistory(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=36';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=36';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -565,7 +581,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchHorror(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=27';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=27';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -590,7 +606,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchMusic(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10402';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10402';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -615,7 +631,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchMystery(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=9648';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=9648';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -640,7 +656,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchRomance(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10749';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10749';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -665,7 +681,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchSciFi(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=878';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=878';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -690,7 +706,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchThriller(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=53';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=53';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -715,7 +731,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchWar(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10752';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10752';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -740,7 +756,7 @@ class MoviesProvider with ChangeNotifier {
 
   Future<void> fetchWestern(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=$API_KEY&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=37';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=37';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;

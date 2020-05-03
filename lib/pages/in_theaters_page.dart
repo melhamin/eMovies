@@ -1,13 +1,11 @@
-import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
 import '../providers/movies_provider.dart' show MoviesProvider;
 import '../widgets/movie_item.dart';
-
-import 'package:e_movies/temp/movie_item.dart' as tmp;
 
 enum MovieLoaderStatus {
   STABLE,
@@ -27,7 +25,8 @@ class InTheaters extends StatefulWidget {
 
 class _AllMoviesState extends State<InTheaters>
     with AutomaticKeepAliveClientMixin {
-  bool _initLoaded = false;
+  bool _initLoaded = true;
+  bool _isFetching = false;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
   CancelableOperation movieOperation;
@@ -43,7 +42,6 @@ class _AllMoviesState extends State<InTheaters>
   void initState() {
     scrollController = ScrollController();
     // TODO: implement initState
-    _initLoaded = true;
     super.initState();
   }
 
@@ -62,6 +60,9 @@ class _AllMoviesState extends State<InTheaters>
       if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
+          setState(() {
+            _isFetching = true;
+          });
           movieOperation = CancelableOperation.fromFuture(
                   Provider.of<MoviesProvider>(context, listen: false)
                       .fetchInTheaters(curPage + 1))
@@ -70,6 +71,7 @@ class _AllMoviesState extends State<InTheaters>
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
                 curPage = curPage + 1;
+                _isFetching = false;
               });
             },
           );
@@ -83,6 +85,15 @@ class _AllMoviesState extends State<InTheaters>
     if (refresh)
       await Provider.of<MoviesProvider>(context, listen: false)
           .fetchInTheaters(1);
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: SpinKitCircle(
+        size: 21,
+        color: Theme.of(context).accentColor,
+      ),
+    );
   }
 
   @override
@@ -101,24 +112,31 @@ class _AllMoviesState extends State<InTheaters>
           child: RefreshIndicator(
             onRefresh: () => _refreshMovies(movies.length == 0),
             backgroundColor: Theme.of(context).primaryColor,
-            child: GridView.builder(
-              // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-              physics: const BouncingScrollPhysics(),
-              controller: scrollController,
-              key: PageStorageKey('InTheathersPage'),
-              cacheExtent: 12,
-              itemCount: movies.length,
-              itemBuilder: (ctx, i) {
-                return MovieItem(
-                  movie: movies[i],                  
-                );
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1/2,
-                // mainAxisSpacing: 5,
-                // crossAxisSpacing: 5,
-              ),
+            child: Column(
+              children: [
+                Flexible(
+                  child: GridView.builder(
+                    // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                    physics: const BouncingScrollPhysics(),
+                    controller: scrollController,
+                    key: PageStorageKey('InTheathersPage'),
+                    cacheExtent: 12,
+                    itemCount: movies.length,
+                    itemBuilder: (ctx, i) {
+                      return MovieItem(
+                        movie: movies[i],
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1 / 2,
+                      // mainAxisSpacing: 5,
+                      // crossAxisSpacing: 5,
+                    ),
+                  ),
+                ),
+                if (_isFetching) _buildLoadingIndicator(context),
+              ],
             ),
           ),
         ),

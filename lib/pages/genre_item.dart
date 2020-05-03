@@ -295,43 +295,43 @@ class _GenreItemState extends State<GenreItem> {
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        body: Stack(
+        appBar: PreferredSize(
+          child: TopBar(
+            title: GENRES[genreId],            
+          ),
+          preferredSize: Size.fromHeight(kToolbarHeight),
+        ),
+        body: Column(
           children: [
-            Column(
-              children: [
-                Flexible(
-                  child: NotificationListener(
-                    onNotification: onNotification,
-                    child: RefreshIndicator(
-                      onRefresh: () {},
-                      // onRefresh: () => _refreshMovies(movies.length == 0),
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: GridView.builder(
-                        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                        physics: BouncingScrollPhysics(),
-                        controller: scrollController,
-                        // key: PageStorageKey('GenreItem'),
-                        cacheExtent: 12,
-                        itemCount: movies.length,
-                        itemBuilder: (ctx, i) {
-                          return wid.MovieItem(
-                            movie: movies[i],
-                          );
-                        },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 2/3,
-                          // crossAxisSpacing: 5,
-                          // mainAxisSpacing: 5,
-                        ),
-                      ),
+            Flexible(
+              child: NotificationListener(
+                onNotification: onNotification,
+                child: RefreshIndicator(
+                  onRefresh: () {},
+                  // onRefresh: () => _refreshMovies(movies.length == 0),
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: GridView.builder(                    
+                    physics: BouncingScrollPhysics(),
+                    controller: scrollController,
+                    // key: PageStorageKey('GenreItem'),
+                    cacheExtent: 12,
+                    itemCount: movies.length,
+                    itemBuilder: (ctx, i) {
+                      return wid.MovieItem(
+                        movie: movies[i],
+                      );
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1 / 2,
+                      // crossAxisSpacing: 5,
+                      // mainAxisSpacing: 5,
                     ),
                   ),
                 ),
-                if (_isLoading) _buildLoadingIndicator(context),
-              ],
+              ),
             ),
-            TopBar(title: GENRES[genreId]),
+            if (_isLoading) _buildLoadingIndicator(context),
           ],
         ),
       ),

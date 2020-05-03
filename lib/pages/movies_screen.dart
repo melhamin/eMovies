@@ -1,6 +1,7 @@
 import 'package:e_movies/pages/in_theaters_page.dart';
 import 'package:e_movies/pages/top_rated_page.dart';
 import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/widgets/genre_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -42,7 +43,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
     super.didChangeDependencies();
   }
 
-  Widget _buildSectionTitle(String title, Function onTap) {
+  Widget _buildSectionTitle(String title, Function onTap, [bool withSeeAll = true]) {
     return Padding(
       padding: const EdgeInsets.only(
         left: LEFT_PADDING,
@@ -54,7 +55,8 @@ class _MoviesScreenState extends State<MoviesScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: kTitleStyle),
-          GestureDetector(            
+          if(withSeeAll)
+          GestureDetector(
             onTap: onTap,
             child: Row(
               children: [
@@ -76,7 +78,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
   }
 
   Route _buildRoute(Widget child) {
-    return PageRouteBuilder(      
+    return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -94,6 +96,29 @@ class _MoviesScreenState extends State<MoviesScreen> {
     );
   }
 
+  Widget _buildGenres() {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),      
+      key: PageStorageKey('GenresPageGrid'),
+      physics: BouncingScrollPhysics(),
+      addAutomaticKeepAlives: true,
+      itemCount: GENRE_DETAILS.length,
+      itemBuilder: (context, i) {
+        return GenreTile(
+          imageUrl: GENRE_DETAILS[i]['imageUrl'],
+          genreId: GENRE_DETAILS[i]['genreId'],
+          title: GENRE_DETAILS[i]['title'],
+        );
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 2/3,
+        // mainAxisSpacing: 10,
+      ),
+      scrollDirection: Axis.horizontal,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // super.build(context);
@@ -107,6 +132,12 @@ class _MoviesScreenState extends State<MoviesScreen> {
               padding: EdgeInsets.only(bottom: kToolbarHeight),
               child: Column(
                 children: [
+                  _buildSectionTitle('Genres', null, false),
+                  Container(
+                    // color: Colors.red                    
+                    height: constraints.maxHeight * 0.25,
+                    child: _buildGenres(),
+                  ),                  
                   _buildSectionTitle('In Theaters', () {
                     Navigator.of(context).push(_buildRoute(InTheaters()));
                   }),
@@ -119,7 +150,7 @@ class _MoviesScreenState extends State<MoviesScreen> {
                             )
                           : Grid(movies: inTheater)),
                   _buildSectionTitle('Top Rated', () {
-                    Navigator.of(context).push(_buildRoute(TopRated()));                    
+                    Navigator.of(context).push(_buildRoute(TopRated()));
                   }),
                   Container(
                       height: constraints.maxHeight * 0.5,
