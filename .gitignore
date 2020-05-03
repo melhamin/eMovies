@@ -9,8 +9,6 @@
 .history
 .svn/
 
-.env
-
 # IntelliJ related
 *.iml
 *.ipr
@@ -32,7 +30,7 @@
 .pub/
 /build/
 
-
+.env/
 
 
 # Web related
