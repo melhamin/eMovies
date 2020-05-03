@@ -30,6 +30,8 @@
 .pub/
 /build/
 
+.env*
+
 
 
 # Web related
