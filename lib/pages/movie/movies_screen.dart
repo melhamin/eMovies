@@ -1,15 +1,16 @@
-import 'package:e_movies/pages/in_theaters_page.dart';
-import 'package:e_movies/pages/top_rated_page.dart';
-import 'package:e_movies/providers/movies_provider.dart';
-import 'package:e_movies/widgets/genre_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
+import 'package:e_movies/pages/movie/in_theaters_screen.dart';
+import 'package:e_movies/pages/movie/top_rated_screen.dart';
+import 'package:e_movies/pages/movie/upcoming_screen.dart';
+import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/widgets/genre_tile.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/movie_item.dart' as movieWid;
+import 'package:e_movies/widgets/movie/movie_item.dart' as movieWid;
 
 class MoviesScreen extends StatefulWidget {
   @override
@@ -29,9 +30,10 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<MoviesProvider>(context).fetchTopRated(1);
-      Provider.of<MoviesProvider>(context, listen: false)
-          .fetchInTheaters(1)
+      Provider.of<Movies>(context, listen: false).fetchInTheaters(1);
+      Provider.of<Movies>(context, listen: false).fetchUpcoming(1);
+      Provider.of<Movies>(context, listen: false)
+          .fetchTopRated(1)
           .then((value) {
         setState(() {
           _isFetching = false;
@@ -102,12 +104,12 @@ class _MoviesScreenState extends State<MoviesScreen> {
       key: PageStorageKey('GenresPageGrid'),
       physics: BouncingScrollPhysics(),
       addAutomaticKeepAlives: true,
-      itemCount: GENRE_DETAILS.length,
+      itemCount: MOVIE_GENRE_DETAILS.length,
       itemBuilder: (context, i) {
         return GenreTile(
-          imageUrl: GENRE_DETAILS[i]['imageUrl'],
-          genreId: GENRE_DETAILS[i]['genreId'],
-          title: GENRE_DETAILS[i]['title'],
+          imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+          genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+          title: MOVIE_GENRE_DETAILS[i]['title'],
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -122,8 +124,9 @@ class _MoviesScreenState extends State<MoviesScreen> {
   @override
   Widget build(BuildContext context) {
     // super.build(context);
-    final inTheater = Provider.of<MoviesProvider>(context).inTheaters;
-    final topRated = Provider.of<MoviesProvider>(context).topRated;
+    final inTheater = Provider.of<Movies>(context).inTheaters;
+    final upcoming = Provider.of<Movies>(context).upcoming;
+    final topRated = Provider.of<Movies>(context).topRated;
     return SafeArea(
       child: Scaffold(
         body: LayoutBuilder(
@@ -149,6 +152,17 @@ class _MoviesScreenState extends State<MoviesScreen> {
                               size: 21,
                             )
                           : Grid(movies: inTheater)),
+                  _buildSectionTitle('Upcoming', () {
+                    Navigator.of(context).push(_buildRoute(UpcomingScreen()));
+                  }),
+                  Container(
+                      height: constraints.maxHeight * 0.5,
+                      child: _isFetching
+                          ? SpinKitCircle(
+                              color: Theme.of(context).accentColor,
+                              size: 21,
+                            )
+                          : Grid(movies: upcoming)),
                   _buildSectionTitle('Top Rated', () {
                     Navigator.of(context).push(_buildRoute(TopRated()));
                   }),
@@ -199,68 +213,3 @@ class Grid extends StatelessWidget {
     );
   }
 }
-
-// import 'package:e_movies/pages/genres_page.dart';
-// import 'package:e_movies/pages/in_theaters_page.dart';
-// import 'package:e_movies/pages/top_rated_page.dart';
-// import 'package:e_movies/widgets/nav_bar.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-
-// class MoviesScreen extends StatefulWidget {
-//   @override
-//   _MoviesScreenState createState() => _MoviesScreenState();
-// }
-
-// class _MoviesScreenState extends State<MoviesScreen>
-//     with SingleTickerProviderStateMixin {
-//   TabController _tabController;
-
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     _tabController = TabController(length: 3, vsync: this, initialIndex: 1);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final navBar = Align(
-//       alignment: Alignment.topCenter,
-//       child: NavBar(
-//         // onTap: _onTap,
-//         tabController: _tabController,
-//         tabs: [
-//           Tab(
-//               child:
-//                   Text('Genres', style: Theme.of(context).textTheme.headline5)),
-//           Tab(
-//               child: Text('In Theaters',
-//                   style: Theme.of(context).textTheme.headline5)),
-//           Tab(
-//               child: Text('Top Rated',
-//                   style: Theme.of(context).textTheme.headline5)),
-//         ],
-//       ),
-//     );
-
-//     final content = TabBarView(
-//       controller: _tabController,
-//       children: [
-//         GenresPage(),
-//         InTheaters(),
-//         TopRated(),
-//       ],
-//     );
-
-//     return SafeArea(
-//       child: Stack(
-//         fit: StackFit.expand,
-//         children: [
-//           content,
-//           navBar,
-//         ],
-//       ),
-//     );
-//   }
-// }

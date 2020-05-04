@@ -68,7 +68,7 @@ class MovieItem {
     this.character,
   });
 
-  static MovieItem fromJson(dynamic json) {
+  static MovieItem fromJson(json) {
     return MovieItem(
       id: json['id'],
       title: json['title'] ??= json['name'],
@@ -151,13 +151,14 @@ class VideoItem {
   }
 }
 
-class MoviesProvider with ChangeNotifier {
+class Movies with ChangeNotifier {
 
   // Environemnt Variables
   // final API_KEY = DotEnv().env['API_KEYY'];
 
-  List<MovieItem> _topRated = [];
   List<MovieItem> _inTheaters = [];
+  List<MovieItem> _topRated = [];
+  List<MovieItem> _upcoming = [];
 
   // Movie all details, recommendation, similar etc
   MovieItem _detailedMovie;
@@ -193,6 +194,10 @@ class MoviesProvider with ChangeNotifier {
 
   List<MovieItem> get inTheaters {
     return _inTheaters;
+  }
+
+  List<MovieItem> get upcoming {
+    return _upcoming;
   }
 
   MovieItem get movieDetails {
@@ -232,6 +237,31 @@ class MoviesProvider with ChangeNotifier {
     // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
     } catch (error) {
       print('In Theaters error -----------> $error');
+      throw error;
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchUpcoming(int page) async {  
+    final url = '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+
+    try {        
+    final response = await http.get(url);
+    // print('pageno =---------------------> ${response.body}' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _upcoming.clear();
+    }
+
+    moviesData.forEach((element) {      
+      _upcoming.add(MovieItem.fromJson(element));
+    });
+    } catch (error) {
+      print('fetchUpcoming error -----------> $error');
       throw error;
     }
     notifyListeners();

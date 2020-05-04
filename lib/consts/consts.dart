@@ -36,11 +36,10 @@ TextStyle kSubtitle2 = TextStyle(
 );
 
 TextStyle kItemTitle = TextStyle(
-  fontFamily: 'Helvatica',
-  fontWeight: FontWeight.w600,
-  fontSize: 18,
-  color: Hexcolor('#DEDEDE')
-);
+    fontFamily: 'Helvatica',
+    fontWeight: FontWeight.w600,
+    fontSize: 18,
+    color: Hexcolor('#DEDEDE'));
 TextStyle kInGridTitle = TextStyle(
   fontFamily: 'Helvatica',
   fontWeight: FontWeight.w500,
@@ -55,12 +54,11 @@ TextStyle kSeeAll = TextStyle(
   color: Hexcolor('#DEDEDE'),
 );
 
-// MoviesProvider
-// const 
+// Movies
+// const
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_WEIGHT = 'w500';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/$IMAGE_WEIGHT';
-
 
 const THUMBNAIL_URL = '';
 
@@ -73,12 +71,8 @@ const double LEFT_PADDING = 15;
 const AVATAR_RADIUS = 20;
 const LOADING_INDICATOR_SIZE = 21.0;
 
-// Pages Tags
-const String TRENDING_TAG = 'trending';
-const String UPCOMING_TAG = 'upcoming';
-
 // Genres
-const Map<int, String> GENRES = {
+const Map<int, String> MOVIE_GENRES = {
   28: "Action",
   12: "Adventure",
   16: "Animation",
@@ -101,7 +95,27 @@ const Map<int, String> GENRES = {
   // -1: "Unk",
 };
 
-const GENRE_DETAILS = [
+const Map<int, String> TV_GENRES = {
+  10759: "Action & Adventure",
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  10762: "Kids",
+  9648: "Mystery",
+  10763: "News",
+  10764: "Reality",
+  10765: "Sci-Fi & Fantasy",
+  10766: "Soap",
+  10767: "Talk",
+  10768: "War & Politics",
+  37: "Western",
+};
+
+// currently, for simplicity, genre images are loaded from assets
+const MOVIE_GENRE_DETAILS = [
   {
     'imageUrl': 'assets/images/action.jpg',
     'title': 'Action',

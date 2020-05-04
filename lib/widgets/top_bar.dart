@@ -32,7 +32,7 @@ class TopBar extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 3.0),
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: kTitleStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

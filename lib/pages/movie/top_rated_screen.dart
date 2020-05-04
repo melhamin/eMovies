@@ -1,10 +1,11 @@
-import 'package:e_movies/widgets/top_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:async/async.dart';
 
-import '../providers/movies_provider.dart' show MoviesProvider;
-import '../widgets/movie_item.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:e_movies/providers/movies.dart' show Movies;
+import 'package:e_movies/widgets/movie/movie_item.dart';
+import 'package:e_movies/widgets/top_bar.dart';
 
 enum MovieLoaderStatus {
   STABLE,
@@ -48,7 +49,7 @@ class _AllMoviesState extends State<TopRated>  {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<MoviesProvider>(context, listen: false).fetchTopRated(1);
+      Provider.of<Movies>(context, listen: false).fetchTopRated(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -61,7 +62,7 @@ class _AllMoviesState extends State<TopRated>  {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {          
           loaderStatus = MovieLoaderStatus.LOADING;
           movieOperation = CancelableOperation.fromFuture(
-                  Provider.of<MoviesProvider>(context, listen: false)
+                  Provider.of<Movies>(context, listen: false)
                       .fetchTopRated(curPage + 1))
               .then(
             (_) {
@@ -79,13 +80,13 @@ class _AllMoviesState extends State<TopRated>  {
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
-      await Provider.of<MoviesProvider>(context, listen: false)
+      await Provider.of<Movies>(context, listen: false)
           .fetchTopRated(1);
   }
 
   @override
   Widget build(BuildContext context) {    
-    var movies = Provider.of<MoviesProvider>(context).topRated;
+    var movies = Provider.of<Movies>(context).topRated;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(

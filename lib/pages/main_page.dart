@@ -2,19 +2,19 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:e_movies/pages/movie/movies_screen.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/most_watched_page.dart';
-import 'package:e_movies/pages/movies_screen.dart';
-import 'package:e_movies/pages/tv_screen.dart';
+import 'package:e_movies/pages/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
 
-class MainPage extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   static const routeName = '/main-page';
   @override
-  _MainPageState createState() => _MainPageState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainPageState extends State<MainPage>
+class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   PageController _pageController;

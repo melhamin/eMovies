@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
-import 'package:e_movies/providers/cast_provider.dart';
-import 'package:e_movies/widgets/details_item.dart';
+import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/widgets/image_view.dart';
+import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/widgets/route_builder.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -15,19 +16,18 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:e_movies/widgets/movie_item.dart' as wid;
-import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/widgets/movie/movie_item.dart' as wid;
+import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/cast_item.dart' as castWid;
-import '../widgets/route_builder.dart';
+import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 
-class DetailsPage extends StatefulWidget {
-  static const routeName = '/details-page';
+class DetailsScreen extends StatefulWidget {
+  static const routeName = '/details-screen-movies';
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage>
+class _DetailsPageState extends State<DetailsScreen>
     with TickerProviderStateMixin {
   bool _isInitLoaded = true;
   bool _isFetching = true;
@@ -72,13 +72,13 @@ class _DetailsPageState extends State<DetailsPage>
   void didChangeDependencies() {
     if (_isInitLoaded) {
       final movie = ModalRoute.of(context).settings.arguments as MovieItem;
-      Provider.of<MoviesProvider>(context, listen: false)
+      Provider.of<Movies>(context, listen: false)
           .getMovieDetails(movie.id)
           .then((value) {
         setState(() {
           // Get film item
           film =
-              Provider.of<MoviesProvider>(context, listen: false).movieDetails;
+              Provider.of<Movies>(context, listen: false).movieDetails;
           _isFetching = false;
           _isInitLoaded = false;
           // get Crew data
@@ -258,7 +258,7 @@ class _DetailsPageState extends State<DetailsPage>
     int length = ids.length < 3 ? ids.length : 3;
     String res = '';
     for (int i = 0; i < length; i++) {
-      res = res + GENRES[ids[i]['id']] + ', ';
+      res = res + MOVIE_GENRES[ids[i]['id']] + ', ';
     }
     res = res.substring(0, res.lastIndexOf(','));
     return res;
@@ -303,8 +303,8 @@ class _DetailsPageState extends State<DetailsPage>
   }
 
   Widget _buildSimilarMovies(BoxConstraints constraints) {
-    bool hasItem = (Provider.of<MoviesProvider>(context).similar != null &&
-        Provider.of<MoviesProvider>(context).similar.length > 0);
+    bool hasItem = (Provider.of<Movies>(context).similar != null &&
+        Provider.of<Movies>(context).similar.length > 0);
     if (!hasItem) {
       return Container();
     } else {
@@ -346,7 +346,7 @@ class _DetailsPageState extends State<DetailsPage>
                         alignment: Alignment.center,
                         child: SpinKitCircle(
                           size: 21,
-                          color: Colors.pink,
+                          color: Theme.of(context).accentColor,
                         ),
                       )
                     : ListView(
@@ -358,9 +358,11 @@ class _DetailsPageState extends State<DetailsPage>
                             constraints: constraints,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: LEFT_PADDING,
+                            padding: const EdgeInsets.only(
+                              top: 10,
+                              bottom: 5,
+                              left: LEFT_PADDING,
+                              right: LEFT_PADDING,
                             ),
                             child: Text('Outline', style: kTitleStyle),
                           ),
@@ -409,7 +411,7 @@ class BackgroundAndTitle extends StatelessWidget {
   String _getGenreAndDuration() {
     return (film.genreIDs == null || film.genreIDs.length == 0)
         ? 'N/A'
-        : GENRES[film.genreIDs[0]['id']];
+        : MOVIE_GENRES[film.genreIDs[0]['id']];
   }
 
   String _getRating() {
@@ -424,7 +426,7 @@ class BackgroundAndTitle extends StatelessWidget {
       str += film.releaseDate.year.toString();
     }
     if (film.duration != null) {
-      str = str + ' | ' + film.duration.toString();
+      str = str + ' | ' + film.duration.toString() + ' min';
     }
     return str;
   }
@@ -859,7 +861,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
 class SimilarMovies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final movies = Provider.of<MoviesProvider>(context, listen: false).similar;
+    final movies = Provider.of<Movies>(context, listen: false).similar;
     return (movies.length == 0)
         ? Container()
         : LayoutBuilder(

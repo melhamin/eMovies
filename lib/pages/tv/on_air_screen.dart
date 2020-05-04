@@ -1,21 +1,22 @@
-import 'package:e_movies/widgets/top_bar.dart';
+import 'package:async/async.dart';
+import 'package:e_movies/providers/tv.dart' show TV;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:async/async.dart';
 
-import '../providers/movies_provider.dart' show MoviesProvider;
-import '../widgets/movie_item.dart';
+import 'package:e_movies/widgets/top_bar.dart';
+import 'package:e_movies/widgets/tv/tv_item.dart';
 
 enum MovieLoaderStatus {
   STABLE,
   LOADING,
 }
 
-class InTheaters extends StatefulWidget {
-  static const routeName = '/InTheathers-page';
+class OnAirScreen extends StatefulWidget {
+  static const routeName = '/onAirScreen';
 
-  InTheaters({
+  OnAirScreen({
     Key key,
   }) : super(key: key);
 
@@ -23,20 +24,13 @@ class InTheaters extends StatefulWidget {
   _AllMoviesState createState() => _AllMoviesState();
 }
 
-class _AllMoviesState extends State<InTheaters>
-    with AutomaticKeepAliveClientMixin {
+class _AllMoviesState extends State<OnAirScreen> {
   bool _initLoaded = true;
   bool _isFetching = false;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
-  CancelableOperation movieOperation;
-
-  var movies;
+  CancelableOperation movieOperation;  
   int curPage = 1;
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -48,7 +42,7 @@ class _AllMoviesState extends State<InTheaters>
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<MoviesProvider>(context, listen: false).fetchInTheaters(1);
+      Provider.of<TV>(context, listen: false).fetchOnAirToday(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -64,8 +58,8 @@ class _AllMoviesState extends State<InTheaters>
             _isFetching = true;
           });
           movieOperation = CancelableOperation.fromFuture(
-                  Provider.of<MoviesProvider>(context, listen: false)
-                      .fetchInTheaters(curPage + 1))
+                  Provider.of<TV>(context, listen: false)
+                      .fetchOnAirToday(curPage + 1))
               .then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
@@ -83,8 +77,8 @@ class _AllMoviesState extends State<InTheaters>
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
-      await Provider.of<MoviesProvider>(context, listen: false)
-          .fetchInTheaters(1);
+      await Provider.of<TV>(context, listen: false)
+          .fetchOnAirToday(1);
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -97,14 +91,13 @@ class _AllMoviesState extends State<InTheaters>
   }
 
   @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    var movies = Provider.of<MoviesProvider>(context).inTheaters;
+  Widget build(BuildContext context) {    
+    var movies = Provider.of<TV>(context).onAirToday;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          child: TopBar(title: 'In Theaters'),
+          child: TopBar(title: 'On Air Today'),
           preferredSize: Size.fromHeight(kToolbarHeight),
         ),
         body: NotificationListener(
@@ -119,12 +112,12 @@ class _AllMoviesState extends State<InTheaters>
                     // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
-                    key: PageStorageKey('InTheathersPage'),
+                    key: PageStorageKey('OnAirScreen'),
                     cacheExtent: 12,
                     itemCount: movies.length,
                     itemBuilder: (ctx, i) {
-                      return MovieItem(
-                        movie: movies[i],
+                      return TVItem(
+                        item: movies[i],
                       );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

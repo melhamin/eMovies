@@ -1,5 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -52,11 +52,11 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
     if (_initLoaded) {
       final id = ModalRoute.of(context).settings.arguments as int;
       print('id --------> $id');
-      Provider.of<MoviesProvider>(context, listen: false)
+      Provider.of<Movies>(context, listen: false)
           .fetchVideos(id)
           .then((value) {
         setState(() {
-          _videos = Provider.of<MoviesProvider>(context, listen: false).videos;
+          _videos = Provider.of<Movies>(context, listen: false).videos;
           // print('first video----------------> ${_videos[0].name}');
           _isFetching = false;
           _initLoaded = false;
@@ -161,13 +161,13 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                                     alignment: Alignment.topCenter,
                                     child: YoutubePlayer(
                                       controller: _controller,
-                                      progressIndicatorColor: Colors.pink,
+                                      progressIndicatorColor: Theme.of(context).accentColor,
                                     ),
                                   ),
                                 ),
                                 Divider(
                                   thickness: 2,
-                                  color: Colors.pink,
+                                  color: Theme.of(context).accentColor,
                                 ),
                               ],
                             ),

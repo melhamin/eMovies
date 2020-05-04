@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:e_movies/providers/movies_provider.dart' as prov;
+import 'package:e_movies/providers/movies.dart' as prov;
 
 class VideoItem extends StatelessWidget {
   final prov.VideoItem videoDetails;

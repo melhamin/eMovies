@@ -1,8 +1,8 @@
-import 'package:e_movies/pages/cast_details.dart';
 import 'package:flutter/material.dart';
 
+import 'package:e_movies/pages/movie/cast_details_screen.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/cast_provider.dart' as prov;
+import 'package:e_movies/providers/cast.dart' as prov;
 
 class CastItem extends StatelessWidget {
   final prov.CastItem item;

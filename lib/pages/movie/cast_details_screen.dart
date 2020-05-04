@@ -1,16 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/details_page.dart';
-import 'package:e_movies/providers/movies_provider.dart';
-import 'package:e_movies/widgets/nav_bar.dart';
-import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/providers/cast_provider.dart' as prov;
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/pages/movie/movie_details_screen.dart';
+import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/widgets/nav_bar.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/widgets/top_bar.dart';
+import 'package:e_movies/providers/cast.dart' as prov;
 
 class CastDetails extends StatefulWidget {
   static const routeName = '/cast-details';
@@ -44,14 +44,14 @@ class _CastDetailsState extends State<CastDetails>
     if (_isInitLoaded) {
       final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
       final id = item.id;
-      Provider.of<prov.CastProvider>(context, listen: false)
+      Provider.of<prov.Cast>(context, listen: false)
           .getPersonDetails(id)
           .then((value) {
         setState(() {
           _isFetching = false;
           _isInitLoaded = false;
           person =
-              Provider.of<prov.CastProvider>(context, listen: false).person;
+              Provider.of<prov.Cast>(context, listen: false).person;
         });
       });
     }
@@ -65,12 +65,12 @@ class _CastDetailsState extends State<CastDetails>
         Tab(
             icon: Text(
           'Biography',
-          style: Theme.of(context).textTheme.headline3,
+          style: kTitleStyle2,
         )),
         Tab(
             icon: Text(
           'Movies',
-          style: Theme.of(context).textTheme.headline3,
+          style: kTitleStyle2,
         )),
         // Tab(icon: Icon(Icons.edit)),
       ],
@@ -165,7 +165,7 @@ class Movies extends StatelessWidget {
       settings: RouteSettings(
         arguments: id,
       ),
-      pageBuilder: (context, animation, secondaryAnimation) => DetailsPage(),
+      pageBuilder: (context, animation, secondaryAnimation) => DetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

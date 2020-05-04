@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:e_movies/providers/movies_provider.dart';
+import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 
 class CastItem {
@@ -39,7 +39,7 @@ class Person {
   });
 }
 
-class CastProvider with ChangeNotifier {
+class Cast with ChangeNotifier {
 
   final API_KEY = DotEnv().env['API_KEY'];
 

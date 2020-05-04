@@ -33,12 +33,12 @@ class _GenresPageState extends State<GenresPage>
         key: PageStorageKey('GenresPageGrid'),
         physics: BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,
-        itemCount: GENRE_DETAILS.length,
+        itemCount: MOVIE_GENRE_DETAILS.length,
         itemBuilder: (context, i) {
           return GenreTile(
-            imageUrl: GENRE_DETAILS[i]['imageUrl'],
-            genreId: GENRE_DETAILS[i]['genreId'],
-            title: GENRE_DETAILS[i]['title'],
+            imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+            genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+            title: MOVIE_GENRE_DETAILS[i]['title'],
           );
         },        
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

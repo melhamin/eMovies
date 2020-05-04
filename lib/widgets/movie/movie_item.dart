@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/details_page.dart';
-import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/pages/movie/movie_details_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:e_movies/providers/movies_provider.dart' as prov;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'package:e_movies/providers/movies.dart' as prov;
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
 
 class MovieItem extends StatelessWidget {
   final prov.MovieItem movie;
@@ -20,8 +21,8 @@ class MovieItem extends StatelessWidget {
   String getGenreName(List<dynamic> genreIds) {
     String str = 'N/A';
     if (genreIds == null || genreIds.length == 0) return 'N/A';
-    if (GENRES.containsKey(genreIds[0])) {
-      str = GENRES[genreIds[0]];
+    if (MOVIE_GENRES.containsKey(genreIds[0])) {
+      str = MOVIE_GENRES[genreIds[0]];
     }
     if(str == 'Documentary') {
       str = 'Docu...';
@@ -37,7 +38,7 @@ class MovieItem extends StatelessWidget {
   Route _buildRoute() {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: movie),
-      pageBuilder: (context, animation, secondaryAnimation) => DetailsPage(),
+      pageBuilder: (context, animation, secondaryAnimation) => DetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -104,12 +105,12 @@ class MovieItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: kItemTitle,
           ),
-        SizedBox(height: 5),
+        SizedBox(height: 10),
         Text(
           _formatDate(movie.releaseDate),
           style: kSubtitle1,
         ),
-        SizedBox(height: 5),
+        SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -134,7 +135,7 @@ class MovieItem extends StatelessWidget {
                       style: kSubtitle1,
                     ),
                     SizedBox(width: 2),
-                    Icon(Icons.favorite_border, color: Colors.red),
+                    Icon(Icons.favorite_border, color: Theme.of(context).accentColor),
                   ],
                 )),
           ],
