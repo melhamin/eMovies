@@ -7,7 +7,6 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/widgets/genre_tile.dart';
-import 'package:e_movies/pages/movie/in_theaters_screen.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/tv/tv_item.dart' as tvWid;
 import 'package:e_movies/providers/tv.dart';

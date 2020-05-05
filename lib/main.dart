@@ -39,48 +39,7 @@ class MyApp extends StatelessWidget {
           // highlightColor: Colors.transparent,
           // accentColor: Colors.pink,
           accentColor: Color(0xFFFFAD32),
-          scaffoldBackgroundColor: Colors.black,                
-          // textTheme: TextTheme(
-          //   subtitle1: TextStyle(
-          //     fontSize: 14,
-          //     fontFamily: 'Helvatica',
-          //     // fontWeight: FontWeight.w500,
-          //     color: Colors.white54,
-          //   ),
-          //   subtitle2: TextStyle(
-          //     fontSize: 12,
-          //     fontFamily: 'Roboto',
-          //     color: Colors.white60,
-          //   ),
-            
-          //   headline3: TextStyle(
-          //     fontSize: 14,
-          //     fontFamily: 'Helvatica',                       
-          //     height: 1.5,
-          //     fontWeight: FontWeight.w600,
-
-          //     color: Hexcolor('#DEDEDE'),
-          //   ),
-          //   headline4: TextStyle(
-          //     fontSize: 28,
-          //     fontFamily: 'Helvatica',              
-          //     fontWeight: FontWeight.bold,
-          //     color: Hexcolor('#DEDEDE'),
-          //   ),
-          //   headline6: TextStyle(
-          //     fontSize: 21,
-          //     // height: 1.5,
-          //     fontFamily: 'Helvatica',              
-          //     fontWeight: FontWeight.bold,
-          //     color: Hexcolor('#DEDEDE')
-          //   ),            
-          //   headline5: TextStyle(
-          //     fontSize: 16,
-          //     fontFamily: 'Helvatica',              
-          //     fontWeight: FontWeight.bold,
-          //     color: Hexcolor('#DEDEDE'),
-          //   ),            
-          // ),          
+          scaffoldBackgroundColor: Colors.black,                        
         ),
         home: MainScreen(),
         debugShowCheckedModeBanner: false,

@@ -54,6 +54,8 @@ TextStyle kSeeAll = TextStyle(
   color: Hexcolor('#DEDEDE'),
 );
 
+Color kTextBorderColor = Colors.white24;
+
 // Movies
 // const
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -112,6 +114,7 @@ const Map<int, String> TV_GENRES = {
   10767: "Talk",
   10768: "War & Politics",
   37: "Western",
+  878: "Sci-Fi",
 };
 
 // currently, for simplicity, genre images are loaded from assets

@@ -107,7 +107,7 @@ class TVItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: kItemTitle,
           ),
-        SizedBox(height: 5),
+        SizedBox(height: 10),
         // Text(
         //   _formatDate(movie.firstAirDate),
         //   style: kSubtitle1,
@@ -137,7 +137,7 @@ class TVItem extends StatelessWidget {
                       style: kSubtitle1,
                     ),
                     SizedBox(width: 2),
-                    Icon(Icons.favorite_border, color: Colors.red),
+                    Icon(Icons.favorite_border, color: Theme.of(context).accentColor),
                   ],
                 )),
           ],
@@ -153,12 +153,11 @@ class TVItem extends StatelessWidget {
         
         return Column(
           children: [
-            Container(
-              // width: double.infinity,
+            Container(              
               height: withFooter ? constraints.maxHeight * 0.75 : constraints.maxHeight,
               width: constraints.maxWidth,
               child: _buildBackgroundImage(context, constraints),
-            ),
+            ),            
             if (withFooter)
               Container(                
                 height: constraints.maxHeight * 0.25,

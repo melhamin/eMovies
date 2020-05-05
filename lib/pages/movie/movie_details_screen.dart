@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
+import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
@@ -364,7 +365,7 @@ class _DetailsPageState extends State<DetailsScreen>
                               left: LEFT_PADDING,
                               right: LEFT_PADDING,
                             ),
-                            child: Text('Outline', style: kTitleStyle),
+                            child: Text('Storyline', style: kTitleStyle),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
@@ -426,7 +427,7 @@ class BackgroundAndTitle extends StatelessWidget {
       str += film.releaseDate.year.toString();
     }
     if (film.duration != null) {
-      str = str + ' | ' + film.duration.toString() + ' min';
+      str = str + ' \u2022 ' + film.duration.toString() + ' min';
     }
     return str;
   }
@@ -439,11 +440,13 @@ class BackgroundAndTitle extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.only(bottom: 110),
+          padding: EdgeInsets.only(bottom: 80),
           height: constraints.maxHeight * 0.55,
           child: Stack(
             children: [
-              film.backdropUrl == null
+              ClipPath(
+                clipper: ImageClipper(),
+                child: film.backdropUrl == null
                   ? PlaceHolderImage(film.title)
                   : CachedNetworkImage(
                       imageUrl: film.backdropUrl,
@@ -457,6 +460,7 @@ class BackgroundAndTitle extends StatelessWidget {
                         ),
                       ),
                     ),
+              ),
               Container(
                 color: Colors.black26,
               ),
@@ -496,10 +500,10 @@ class BackgroundAndTitle extends StatelessWidget {
                     SizedBox(height: 10),
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: Theme.of(context).accentColor,
-                          width: 1,
+                          width: 2,
                         ),
                       ),
                       child: Padding(
@@ -574,8 +578,8 @@ class BackgroundAndTitle extends StatelessWidget {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(color: Colors.white30)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: kTextBorderColor, width: 2)),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0, vertical: 1),
@@ -634,19 +638,19 @@ class _OverviewState extends State<Overview>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeIn,
-      vsync: this,
-      child: ConstrainedBox(
-        constraints: _expanded
-            ? BoxConstraints(
-                minHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
-              )
-            : BoxConstraints(
-                maxHeight:
-                    widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT - 5,
-              ),
+    return ConstrainedBox(
+      constraints: _expanded
+          ? BoxConstraints(
+              minHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
+            )
+          : BoxConstraints(
+              maxHeight:
+                  widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT - 5,
+            ),
+      child: AnimatedSize(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+        vsync: this,
         child: _expanded
             ? Padding(
                 padding: const EdgeInsets.only(bottom: 5),
@@ -677,7 +681,7 @@ class _OverviewState extends State<Overview>
                                 '...',
                         style: kBodyStyle,
                         children: [
-                          if (widget.initData.overview.length > 200)
+                          if (!_expanded && widget.initData.overview.length > 200)
                             TextSpan(
                                 text: 'More',
                                 style: TextStyle(

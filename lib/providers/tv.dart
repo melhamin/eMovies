@@ -15,7 +15,7 @@ class TVItem {
   final DateTime firstAirDate;
   final List<dynamic> genreIDs;
   final String originalLanguage;
-  final bool status;
+  final String status;
   final double voteAverage;
   final int voteCount;
 
@@ -24,7 +24,7 @@ class TVItem {
   DateTime lastAirDate;
   List<dynamic> networks;
   String homepage;
-  double popularity;
+  double popularity;  
 
   List<dynamic> images;
   List<dynamic> videos;
@@ -46,8 +46,7 @@ class TVItem {
     @required this.genreIDs,
     @required this.overview,
     @required this.firstAirDate,
-    @required this.originalLanguage,
-    @required this.status,
+    @required this.originalLanguage,    
     @required this.voteAverage,
     @required this.voteCount,
     this.crew,
@@ -58,6 +57,7 @@ class TVItem {
     this.homepage,
     this.lastAirDate,
     this.cast,
+    this.status,
     // this.productionCompanies,
     // this.productionContries,
     this.networks,
@@ -90,7 +90,7 @@ class TVItem {
       // ? DateTime.tryParse(json['release_date'])
       // : null,
       originalLanguage: json['original_language'],
-      status: json['release_date'] != null,
+      status: json['status'],
       voteAverage:
           json['vote_average'] == null ? 0 : json['vote_average'] + 0.0,
       videos: json['videos'] == null ? null : json['videos']['results'],
