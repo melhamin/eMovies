@@ -2,16 +2,16 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/genre_tile.dart';
 import 'package:flutter/material.dart';
 
-class GenresPage extends StatefulWidget {
-  GenresPage({
+class GenresScreen extends StatefulWidget {
+  GenresScreen({
     Key key,
   }) : super(key: PageStorageKey('GenresPage'));
 
   @override
-  _GenresPageState createState() => _GenresPageState();
+  _GenresScreenState createState() => _GenresScreenState();
 }
 
-class _GenresPageState extends State<GenresPage>
+class _GenresScreenState extends State<GenresScreen>
     with AutomaticKeepAliveClientMixin {
 
       ScrollController _scrollController;
@@ -29,7 +29,7 @@ class _GenresPageState extends State<GenresPage>
     return Scaffold(
       body: GridView.builder(  
         controller: _scrollController,      
-        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT, bottom: APP_BAR_HEIGHT - 2),
+        padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT - 2),
         key: PageStorageKey('GenresPageGrid'),
         physics: BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,

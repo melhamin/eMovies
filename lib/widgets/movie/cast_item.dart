@@ -73,8 +73,7 @@ class CastItem extends StatelessWidget {
       child: ListTile(
         onTap: _onTap,
         dense: true,
-        contentPadding: const EdgeInsets.all(0),
-        visualDensity: VisualDensity.comfortable,
+        contentPadding: const EdgeInsets.all(0),        
         leading: CircleAvatar(
           backgroundColor: item.imageUrl == null
               ? Theme.of(context).accentColor

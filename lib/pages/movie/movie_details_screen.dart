@@ -31,11 +31,9 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsPageState extends State<DetailsScreen>
     with TickerProviderStateMixin {
   bool _isInitLoaded = true;
-  bool _isFetching = true;
+  bool _isLoading = true;
   MovieItem initData;
   MovieItem film;
-  List<CastItem> cast = [];
-  List<CastItem> crew = [];
 
   bool _expanded = false;
 
@@ -78,33 +76,10 @@ class _DetailsPageState extends State<DetailsScreen>
           .then((value) {
         setState(() {
           // Get film item
-          film =
-              Provider.of<Movies>(context, listen: false).movieDetails;
-          _isFetching = false;
+          film = Provider.of<Movies>(context, listen: false).movieDetails;
+          _isLoading = false;
           _isInitLoaded = false;
-          // get Crew data
-          if (film.crew != null) {
-            film.crew.forEach((element) {
-              crew.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                job: element['job'],
-              ));
-            });
-          }
-          // Get cast data
-          if (film.cast != null) {
-            film.cast.forEach((element) {
-              // print('name/ ---------> ${element['character']} ');
-              cast.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                character: element['character'],
-              ));
-            });
-          }
+         
         });
       });
     }
@@ -326,9 +301,10 @@ class _DetailsPageState extends State<DetailsScreen>
       SizedBox(height: 30),
       _buildDetails(film),
       SizedBox(height: 30),
-      Cast(cast: cast, crew: crew),
+      Cast(details: film),
       // SizedBox(height: 30),
       _buildSimilarMovies(constraints),
+      SizedBox(height: 5),
     ];
   }
 
@@ -342,51 +318,52 @@ class _DetailsPageState extends State<DetailsScreen>
           builder: (context, constraints) {
             return Stack(
               children: [
-                _isFetching
-                    ? Align(
-                        alignment: Alignment.center,
-                        child: SpinKitCircle(
-                          size: 21,
-                          color: Theme.of(context).accentColor,
+                ListView(
+                  physics: BouncingScrollPhysics(),
+                  padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                  children: [
+                    BackgroundAndTitle(
+                      initData: initData,
+                      film: film,
+                      constraints: constraints,
+                      isLoading: _isLoading,
+                    ),
+                    if (!_isLoading)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 5,
+                          left: LEFT_PADDING,
+                          right: LEFT_PADDING,
                         ),
-                      )
-                    : ListView(
-                        physics: BouncingScrollPhysics(),
-                        padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                        children: [
-                          BackgroundAndTitle(
-                            film: film,
-                            constraints: constraints,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 10,
-                              bottom: 5,
-                              left: LEFT_PADDING,
-                              right: LEFT_PADDING,
-                            ),
-                            child: Text('Storyline', style: kTitleStyle),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              // vertical: 10,
-                              horizontal: LEFT_PADDING,
-                            ),
-                            child: Overview(
-                                initData: initData, constraints: constraints),
-                          ),
-                          Container(
-                            color: Colors.black,
-                            height: constraints.maxHeight * 0.1,
-                            child: _buildBottomIcons(),
-                          ),
-                          SizedBox(height: 10),
-                          if (!_isFetching)
-                            ...all(constraints)
-                          else
-                            _showLoadingIndicator(),
-                        ],
+                        child: Text('Storyline', style: kTitleStyle),
                       ),
+                    if (!_isLoading)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          // vertical: 10,
+                          horizontal: LEFT_PADDING,
+                        ),
+                        child: Overview(
+                            initData: initData, constraints: constraints),
+                      ),
+                    if (!_isLoading)
+                      Container(
+                        color: Colors.black,
+                        height: constraints.maxHeight * 0.1,
+                        child: _buildBottomIcons(),
+                      ),
+                    SizedBox(height: 10),
+                    if (!_isLoading)
+                      ...all(constraints)
+                    else
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              top:
+                                  50), // so the loading indicator is at overview place
+                          child: _showLoadingIndicator()),
+                  ],
+                ),
                 TopBar(title: initData.title),
               ],
             );
@@ -400,23 +377,27 @@ class _DetailsPageState extends State<DetailsScreen>
 class BackgroundAndTitle extends StatelessWidget {
   const BackgroundAndTitle({
     Key key,
-    // @required this.initData,
+    @required this.initData,
     @required this.film,
     @required this.constraints,
+    @required this.isLoading,
   }) : super(key: key);
 
-  // final MovieItem initData;
+  final MovieItem initData;
   final MovieItem film;
   final BoxConstraints constraints;
+  final bool isLoading;
 
-  String _getGenreAndDuration() {
-    return (film.genreIDs == null || film.genreIDs.length == 0)
+  String _getGenre() {
+    return (initData.genreIDs == null || initData.genreIDs.length == 0)
         ? 'N/A'
-        : MOVIE_GENRES[film.genreIDs[0]['id']];
+        : MOVIE_GENRES[initData.genreIDs[0]];
   }
 
   String _getRating() {
-    return film.voteAverage == null ? 'N/A' : film.voteAverage.toString();
+    return initData.voteAverage == null
+        ? 'N/A'
+        : initData.voteAverage.toString();
   }
 
   String _getYearAndDuration() {
@@ -446,20 +427,20 @@ class BackgroundAndTitle extends StatelessWidget {
             children: [
               ClipPath(
                 clipper: ImageClipper(),
-                child: film.backdropUrl == null
-                  ? PlaceHolderImage(film.title)
-                  : CachedNetworkImage(
-                      imageUrl: film.backdropUrl,
-                      fadeInCurve: Curves.easeIn,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: imageProvider,
+                child: initData.backdropUrl == null
+                    ? PlaceHolderImage(film.title)
+                    : CachedNetworkImage(
+                        imageUrl: initData.backdropUrl,
+                        fadeInCurve: Curves.easeIn,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: imageProvider,
+                            ),
                           ),
                         ),
                       ),
-                    ),
               ),
               Container(
                 color: Colors.black26,
@@ -531,20 +512,22 @@ class BackgroundAndTitle extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: constraints.maxHeight * 0.55 - 180,
+          top: constraints.maxHeight * 0.55 -
+              180, // (180 calculated from small poster height and padding given to the background image so the overlaps the background image)
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: Row(
               children: [
                 Container(
                   margin: const EdgeInsets.only(
-                      left: LEFT_PADDING -
-                          5, // TODO find source of the padding to the left
-                      right: LEFT_PADDING),
+                    left: LEFT_PADDING -
+                        5, // TODO find source of the padding at the left
+                    right: LEFT_PADDING,
+                  ),
                   width: 130,
                   height: 180,
                   child: wid.MovieItem(
-                    movie: film,
+                    movie: initData,
                     withFooter: false,
                     tappable: false,
                   ),
@@ -554,7 +537,7 @@ class BackgroundAndTitle extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         right: LEFT_PADDING,
                         top:
-                            70), // part of the poster image that overlaps background image
+                            75), // part of the poster image that overlaps background image
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -563,15 +546,10 @@ class BackgroundAndTitle extends StatelessWidget {
                         //   style: kTitleStyle,
                         // ),
                         Text(
-                          film.title,
+                          initData.title,
                           style: kTitleStyle2,
                           softWrap: true,
                           // overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          _getYearAndDuration(),
-                          style: kSubtitle1,
                         ),
                         SizedBox(height: 10),
                         Row(
@@ -579,32 +557,35 @@ class BackgroundAndTitle extends StatelessWidget {
                             Container(
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: kTextBorderColor, width: 2)),
+                                  border: Border.all(
+                                      color: kTextBorderColor, width: 2)),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8.0, vertical: 1),
                                 child: Text(
                                   // 'Action',
-                                  _getGenreAndDuration(),
+                                  _getGenre(),
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white54),
                                 ),
                               ),
                             ),
-                            SizedBox(width: 15),
-                            Row(
-                              children: [
-                                Text(
-                                  _getRating(),
-                                  style: kSubtitle1,
-                                ),
-                                SizedBox(width: 5),
-                                Icon(Icons.favorite_border,
-                                    color: Theme.of(context).accentColor),
-                              ],
+                            SizedBox(width: 10),
+                            Text(
+                              _getRating(),
+                              style: kSubtitle1,
                             ),
+                            SizedBox(width: 5),
+                            Icon(Icons.favorite_border,
+                                color: Theme.of(context).accentColor),
                           ],
                         ),
+                        if (!isLoading) SizedBox(height: 10),
+                        if (!isLoading)
+                          Text(
+                            _getYearAndDuration(),
+                            style: kSubtitle1,
+                          ),
                       ],
                     ),
                   ),
@@ -681,7 +662,8 @@ class _OverviewState extends State<Overview>
                                 '...',
                         style: kBodyStyle,
                         children: [
-                          if (!_expanded && widget.initData.overview.length > 200)
+                          if (!_expanded &&
+                              widget.initData.overview.length > 200)
                             TextSpan(
                                 text: 'More',
                                 style: TextStyle(
@@ -719,15 +701,17 @@ class RatingItem extends StatelessWidget {
 }
 
 class Cast extends StatefulWidget {
-  final List<CastItem> crew;
-  final List<CastItem> cast;
-  Cast({this.crew, this.cast});
+  final MovieItem details;
+  Cast({this.details});
   @override
   _CastState createState() => _CastState();
 }
 
 class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   bool _expanded = false;
+
+  List<CastItem> crew = [];
+  List<CastItem> cast = [];
 
   // Get the name abbreviation for circle avatar in case image is not available
   String _getName(String str) {
@@ -741,6 +725,29 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
+     // get Crew data
+          if (widget.details.crew != null) {
+            widget.details.crew.forEach((element) {
+              crew.add(CastItem(
+                id: element['id'],
+                name: element['name'],
+                imageUrl: element['profile_path'],
+                job: element['job'],
+              ));
+            });
+          }
+          // Get cast data
+          if (widget.details.cast != null) {
+            widget.details.cast.forEach((element) {
+              // print('name/ ---------> ${element['character']} ');
+              cast.add(CastItem(
+                id: element['id'],
+                name: element['name'],
+                imageUrl: element['profile_path'],
+                character: element['character'],
+              ));
+            });
+          }
     // print('Cast ------------------------> initState()');
   }
 
@@ -760,31 +767,31 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
 
   // Calculate number of items in different situations
   int _calcualteItemCount() {
-    return widget.cast.length > 5
-        ? (_expanded ? (widget.cast.length > 10 ? 10 : widget.cast.length) : 5)
-        : widget.cast.length;
+    return cast.length > 5
+        ? (_expanded ? (cast.length > 10 ? 10 : cast.length) : 5)
+        : cast.length;
 
     /**
-     * More clear implemention of above statement
+     * More clear implemention of statement above
      */
-    // if (widget.cast.length > 5) {
+    // if (cast.length > 5) {
     //   if (_expanded) {
-    //     if (widget.cast.length > 10) {
+    //     if (cast.length > 10) {
     //       return 10;
     //     } else {
-    //       return widget.cast.length;
+    //       return cast.length;
     //     }
     //   } else
     //     return 5;
     // }
-    // return widget.cast.length;
+    // return cast.length;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     // print('Cast ----------------------> build()');
-    CastItem director = widget.crew.firstWhere((element) {
+    CastItem director = crew.firstWhere((element) {
       return element.job == 'Director';
     });
     return SingleChildScrollView(
@@ -811,14 +818,14 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
               subtitle: false,
             ),
           ),
-          if (widget.cast != null && widget.cast.length > 0)
+          if (cast != null && cast.length > 0)
             SizedBox(height: 20),
-          if (widget.cast != null && widget.cast.length > 0)
+          if (cast != null && cast.length > 0)
             Padding(
               padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
               child: Text('Cast', style: kSubtitle1),
             ),
-          if (widget.cast != null && widget.cast.length > 0)
+          if (cast != null && cast.length > 0)
             AnimatedContainer(
               duration: Duration(milliseconds: 300),
               height: _calcualteItemCount() * 60.0, // ListTile height
@@ -830,21 +837,19 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
                 color: BASELINE_COLOR,
               ),
               child: ListView.builder(
-                // addAutomaticKeepAlives: true,
-                // shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: _calcualteItemCount(),
                 itemBuilder: (context, index) {
-                  CastItem item = widget.cast[index];
+                  CastItem item = cast[index];
                   return castWid.CastItem(
                     item: item,
-                    // to add border to all except last one
+                    // add border to all except last one
                     last: _isLasItem(index),
                   );
                 },
               ),
             ),
-          if ((widget.cast.length > 5))
+          if ((cast.length > 5))
             ListTile(
               leading: Text(
                 (!_expanded) ? 'Show More...' : '',

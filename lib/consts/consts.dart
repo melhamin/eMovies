@@ -22,6 +22,12 @@ TextStyle kBodyStyle = TextStyle(
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
   height: 1.5,
 );
+TextStyle kBodyStyle2 = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),  
+);
 TextStyle kSubtitle1 = TextStyle(
   fontFamily: 'Helvatica',
   // fontWeight: FontWeight.bold,
@@ -98,7 +104,7 @@ const Map<int, String> MOVIE_GENRES = {
 };
 
 const Map<int, String> TV_GENRES = {
-  10759: "Action & Adventure",
+  10759: "Action & Adventure",  
   16: "Animation",
   35: "Comedy",
   80: "Crime",

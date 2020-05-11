@@ -23,8 +23,7 @@ class DetailsItem extends StatelessWidget {
       ),
       child: ListTile(
         dense: true,
-        contentPadding: const EdgeInsets.all(0),
-        visualDensity: VisualDensity.comfortable,
+        contentPadding: const EdgeInsets.all(0),        
         title: Text(left, style: kSubtitle1),
         trailing: Text(right, style: kBodyStyle),
       ),

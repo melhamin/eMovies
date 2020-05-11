@@ -1,5 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/genre_item.dart';
+import 'package:e_movies/pages/genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
 class GenreTile extends StatelessWidget {
@@ -12,7 +12,7 @@ class GenreTile extends StatelessWidget {
   Route _buildRoute() {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: genreId),
-      pageBuilder: (context, animation, secondaryAnimation) => GenreItem(),
+      pageBuilder: (context, animation, secondaryAnimation) => GenreItemScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

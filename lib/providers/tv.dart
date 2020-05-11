@@ -20,11 +20,14 @@ class TVItem {
   final int voteCount;
 
   List<dynamic> createdBy;
+  List<dynamic> seasons;
   bool inProduction;
   DateTime lastAirDate;
   List<dynamic> networks;
+  List<dynamic> episodRuntime;
   String homepage;
-  double popularity;  
+  double popularity;
+
 
   List<dynamic> images;
   List<dynamic> videos;
@@ -46,10 +49,12 @@ class TVItem {
     @required this.genreIDs,
     @required this.overview,
     @required this.firstAirDate,
-    @required this.originalLanguage,    
+    @required this.originalLanguage,
     @required this.voteAverage,
     @required this.voteCount,
     this.crew,
+    this.seasons,
+    this.episodRuntime,
     this.images,
     this.videos,
     this.createdBy,
@@ -63,7 +68,7 @@ class TVItem {
     this.networks,
     this.popularity,
     this.recommendations,
-    this.similar,    
+    this.similar,
     this.reviews,
     this.character,
   });
@@ -86,9 +91,15 @@ class TVItem {
               ? null
               : DateTime.parse(json['first_air_date']),
 
+      lastAirDate:
+          (json['last_air_date'] == null || json['last_air_date'] == '')
+              ? null
+              : DateTime.parse(json['last_air_date']),
       // : json['release_date'],
       // ? DateTime.tryParse(json['release_date'])
       // : null,
+      episodRuntime: json['episode_run_time'],
+      seasons: json['seasons'],
       originalLanguage: json['original_language'],
       status: json['status'],
       voteAverage:
@@ -103,7 +114,6 @@ class TVItem {
       inProduction: json['in_production'],
       networks: json['networks'],
       createdBy: json['created_by'],
-      lastAirDate: json['last_air_date'],
       // productionCompanies: json['production_companies'],
       // productionContries: json['production_countries'],
       similar: json['similar'] == null ? [] : json['similar']['results'],
@@ -125,6 +135,11 @@ class TV with ChangeNotifier {
   TVItem _details;
 
   // Getters
+
+  TVItem get details {
+    return _details;
+  }
+
   List<TVItem> get popular {
     return _popular;
   }
@@ -147,7 +162,7 @@ class TV with ChangeNotifier {
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       final data = responseData['results'];
 
-      if(page == 1) {
+      if (page == 1) {
         _popular.clear();
       }
 
@@ -155,7 +170,7 @@ class TV with ChangeNotifier {
         _popular.add(TVItem.fromJson(element));
       });
 
-      print(_popular);
+      // print(_popular);
 
       // print(showData);
     } catch (error) {
@@ -173,7 +188,7 @@ class TV with ChangeNotifier {
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       final data = responseData['results'];
 
-      if(page == 1) {
+      if (page == 1) {
         _onAirToday.clear();
       }
 
@@ -198,9 +213,9 @@ class TV with ChangeNotifier {
       final response = await http.get(url);
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       final data = responseData['results'];
-      print('toprated ------------> $data');
+      // print('toprated ------------> $data');
 
-      if(page == 1) {
+      if (page == 1) {
         _topRated.clear();
       }
 
@@ -214,7 +229,22 @@ class TV with ChangeNotifier {
     } catch (error) {
       print('TV - fetchTopRated error -----------> $error ');
     }
+    notifyListeners();
   }
 
-  notifyListeners();
+  Future<void> getDetails(int id) async {
+    final url =
+        '$BASE_URL/tv/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,Csimilar,images&include_image_language=en,null';
+    try {
+      final response = await http.get(url);
+      // print('response ---------> ${response.body}');
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      // final data = responseData['results'];
+      // print('details --------------->  ${data}');
+      _details = TVItem.fromJson(responseData);
+    } catch (error) {
+      print('TV - getDetails error -----------> $error ');
+    }
+    notifyListeners();
+  }
 }

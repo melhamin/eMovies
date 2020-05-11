@@ -164,11 +164,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                                       progressIndicatorColor: Theme.of(context).accentColor,
                                     ),
                                   ),
-                                ),
-                                Divider(
-                                  thickness: 2,
-                                  color: Theme.of(context).accentColor,
-                                ),
+                                ),                               
                               ],
                             ),
                             SizedBox(),

@@ -206,8 +206,7 @@ class Movies extends StatelessWidget {
               const EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
           child: ListTile(
             dense: true,
-            contentPadding: const EdgeInsets.all(0),
-            visualDensity: VisualDensity.comfortable,
+            contentPadding: const EdgeInsets.all(0),            
             leading: CircleAvatar(
               radius: 25,
               backgroundColor: Colors.black,

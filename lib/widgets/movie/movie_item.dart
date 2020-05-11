@@ -119,7 +119,7 @@ class MovieItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: Colors.white38)),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2),
                 child: Text(
                   getGenreName(movie.genreIDs),
                   style: kSubtitle1,

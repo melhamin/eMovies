@@ -13,16 +13,17 @@ class VideoItem extends StatelessWidget {
       color: BASELINE_COLOR,
       child: ListTile(        
         leading: CachedNetworkImage(
+          // youtube thumbnails url
           imageUrl: 'https://img.youtube.com/vi/${videoDetails.key}/0.jpg',
           fit: BoxFit.cover,
         ),
         title: Text(
           videoDetails.name,
-          style: Theme.of(context).textTheme.headline3,
+          style: kBodyStyle2,
         ),
         subtitle: Text(
           videoDetails.type,
-          style: Theme.of(context).textTheme.subtitle2,
+          style: kSubtitle1,
         ),        
         onTap: () => onTap(videoDetails.key),
       ),
