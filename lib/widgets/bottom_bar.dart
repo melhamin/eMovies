@@ -18,7 +18,7 @@ class BottomBar extends StatelessWidget {
         backgroundColor: Colors.black54,
         inactiveColor: Colors.white70,
         activeColor: Theme.of(context).accentColor,
-        iconSize: 25,
+        iconSize: 35,
         currentIndex: currentIndex,
         onTap: onTap,
         items: items,

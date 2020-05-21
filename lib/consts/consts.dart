@@ -26,7 +26,7 @@ TextStyle kBodyStyle2 = TextStyle(
   fontFamily: 'Helvatica',
   fontWeight: FontWeight.w500,
   fontSize: 16,
-  color: Hexcolor('#FFFFFF').withOpacity(0.87),  
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kSubtitle1 = TextStyle(
   fontFamily: 'Helvatica',
@@ -55,8 +55,42 @@ TextStyle kInGridTitle = TextStyle(
 
 TextStyle kSeeAll = TextStyle(
   fontFamily: 'Helvatica',
-  // fontWeight: FontWeight.,
+  fontWeight: FontWeight.bold,
   fontSize: 16,
+  color: Hexcolor('#DEDEDE'),
+);
+TextStyle kAppBarTextStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  // fontWeight: FontWeight.bold,
+  fontSize: 16,
+  color: Colors.pink,
+);
+
+TextStyle kBottomBarTextStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.bold,
+  fontSize: 14,
+  
+);
+
+TextStyle kTBStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.bold,
+  fontSize: 16,
+  color: Colors.pink,
+);
+
+TextStyle kBTStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+  color: Colors.pink,
+);
+
+TextStyle kListTitleStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),
 );
 
@@ -103,8 +137,97 @@ const Map<int, String> MOVIE_GENRES = {
   // -1: "Unk",
 };
 
+// currently, for simplicity, genre images are loaded from assets
+const MOVIE_GENRE_DETAILS = [
+  {
+    'imageUrl': 'assets/images/movies/action.jpg',
+    'title': 'Action',
+    'genreId': 28,
+  },
+  {
+    'imageUrl': 'assets/images/movies/adventure.jpg',
+    'title': 'Adventure',
+    'genreId': 12,
+  },
+  {
+    'imageUrl': 'assets/images/movies/animation.jpg',
+    'title': 'Animation',
+    'genreId': 16,
+  },
+  {
+    'imageUrl': 'assets/images/movies/comedy.jpg',
+    'title': 'Comedy',
+    'genreId': 35,
+  },
+  {
+    'imageUrl': 'assets/images/movies/crime.jpeg',
+    'title': 'Crime',
+    'genreId': 80,
+  },
+  {
+    'imageUrl': "assets/images/movies/documentary.jpg",
+    'title': 'Documentary',
+    'genreId': 99,
+  },
+  {
+    'imageUrl': 'assets/images/movies/drama.jpg',
+    'title': 'Drama',
+    'genreId': 18,
+  },
+  {
+    'imageUrl': 'assets/images/movies/family.jpg',
+    'title': 'Family',
+    'genreId': 10751,
+  },
+  {
+    'imageUrl': 'assets/images/movies/history.jpg',
+    'title': 'History',
+    'genreId': 36,
+  },
+  {
+    'imageUrl': 'assets/images/movies/horror.jpg',
+    'title': 'Horror',
+    'genreId': 14,
+  },
+  {
+    'imageUrl': 'assets/images/movies/music.jpg',
+    'title': 'Music',
+    'genreId': 10402,
+  },
+  {
+    'imageUrl': 'assets/images/movies/mystery.jpg',
+    'title': 'Mystery',
+    'genreId': 9648,
+  },
+  {
+    'imageUrl': 'assets/images/movies/romance.jpg',
+    'title': 'Romance',
+    'genreId': 10749,
+  },
+  {
+    'imageUrl': 'assets/images/movies/sci-fi.jpg',
+    'title': 'Sci-Fi',
+    'genreId': 878,
+  },
+  {
+    'imageUrl': 'assets/images/movies/thriller.jpg',
+    'title': 'Thriller',
+    'genreId': 53,
+  },
+  {
+    'imageUrl': 'assets/images/movies/war.jpg',
+    'title': 'War',
+    'genreId': 10752,
+  },
+  {
+    'imageUrl': 'assets/images/movies/western.jpg',
+    'title': 'Western',
+    'genreId': 37,
+  }
+];
+
 const Map<int, String> TV_GENRES = {
-  10759: "Action & Adventure",  
+  10759: "Action & Adventure",
   16: "Animation",
   35: "Comedy",
   80: "Crime",
@@ -112,102 +235,101 @@ const Map<int, String> TV_GENRES = {
   18: "Drama",
   10751: "Family",
   10762: "Kids",
+  878: "Sci-Fi",
   9648: "Mystery",
   10763: "News",
   10764: "Reality",
   10765: "Sci-Fi & Fantasy",
-  10766: "Soap",
   10767: "Talk",
+  10766: "Soap",
   10768: "War & Politics",
   37: "Western",
-  878: "Sci-Fi",
 };
 
-// currently, for simplicity, genre images are loaded from assets
-const MOVIE_GENRE_DETAILS = [
+const TV_GENRE_DETAILS = [
   {
-    'imageUrl': 'assets/images/action.jpg',
-    'title': 'Action',
-    'genreId': 28,
+    'imageUrl': 'assets/images/tv/action_adventure.jpg',
+    'title': 'Action & Adventure',
+    'genreId': 10759,
   },
   {
-    'imageUrl': 'assets/images/adventure.jpg',
-    'title': 'Adventure',
-    'genreId': 12,
-  },
-  {
-    'imageUrl': 'assets/images/animation.jpg',
+    'imageUrl': 'assets/images/tv/animation.jpg',
     'title': 'Animation',
     'genreId': 16,
   },
   {
-    'imageUrl': 'assets/images/comedy.jpg',
+    'imageUrl': 'assets/images/tv/comedy.jpg',
     'title': 'Comedy',
     'genreId': 35,
   },
   {
-    'imageUrl': 'assets/images/crime.jpeg',
+    'imageUrl': 'assets/images/tv/crime.jpg',
     'title': 'Crime',
     'genreId': 80,
   },
   {
-    'imageUrl': "assets/images/documentary.jpg",
+    'imageUrl': "assets/images/tv/documentary.jpg",
     'title': 'Documentary',
     'genreId': 99,
   },
   {
-    'imageUrl': 'assets/images/drama.jpg',
+    'imageUrl': 'assets/images/tv/drama.jpg',
     'title': 'Drama',
     'genreId': 18,
   },
   {
-    'imageUrl': 'assets/images/family.jpg',
+    'imageUrl': 'assets/images/tv/family.jpg',
     'title': 'Family',
     'genreId': 10751,
   },
   {
-    'imageUrl': 'assets/images/history.jpg',
-    'title': 'History',
-    'genreId': 36,
+    'imageUrl': 'assets/images/tv/kids.jpg',
+    'title': 'Kids',
+    'genreId': 10762,
   },
   {
-    'imageUrl': 'assets/images/horror.jpg',
-    'title': 'Horror',
-    'genreId': 14,
-  },
-  {
-    'imageUrl': 'assets/images/music.jpg',
-    'title': 'Music',
-    'genreId': 10402,
-  },
-  {
-    'imageUrl': 'assets/images/mystery.jpg',
-    'title': 'Mystery',
-    'genreId': 9648,
-  },
-  {
-    'imageUrl': 'assets/images/romance.jpg',
-    'title': 'Romance',
-    'genreId': 10749,
-  },
-  {
-    'imageUrl': 'assets/images/sci-fi.jpg',
+    'imageUrl': 'assets/images/tv/sci-fi.jpg',
     'title': 'Sci-Fi',
     'genreId': 878,
   },
   {
-    'imageUrl': 'assets/images/thriller.jpg',
-    'title': 'Thriller',
-    'genreId': 53,
+    'imageUrl': 'assets/images/tv/reality.jpg',
+    'title': 'Reality',
+    'genreId': 10764,
   },
   {
-    'imageUrl': 'assets/images/war.jpg',
-    'title': 'War',
-    'genreId': 10752,
+    'imageUrl': 'assets/images/tv/mystery.jpg',
+    'title': 'Mystery',
+    'genreId': 9648,
   },
   {
-    'imageUrl': 'assets/images/western.jpg',
+    'imageUrl': 'assets/images/tv/sci-fi_fantasy.jpg',
+    'title': 'Sci-Fi & Fantasy',
+    'genreId': 10765,
+  },
+  {
+    'imageUrl': 'assets/images/tv/news.jpg',
+    'title': 'News',
+    'genreId': 10763,
+  },
+  {
+    'imageUrl': 'assets/images/tv/soap.jpg',
+    'title': 'Soap',
+    'genreId': 10766,
+  },
+  {
+    'imageUrl': 'assets/images/tv/war_politics.jpg',
+    'title': 'War & Politics',
+    'genreId': 10767,
+  },
+  {
+    'imageUrl': 'assets/images/tv/talk.jpg',
+    'title': 'Talk',
+    'genreId': 10767,
+  },
+  {
+    'imageUrl': 'assets/images/tv/western.jpg',
     'title': 'Western',
     'genreId': 37,
-  }
+  },
 ];

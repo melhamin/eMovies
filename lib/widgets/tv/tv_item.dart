@@ -76,7 +76,7 @@ class TVItem extends StatelessWidget {
           //   borderRadius: BorderRadius.circular(10),
           // ),
           child: item.posterUrl == null
-      ? PlaceHolderImage(item.name)
+      ? PlaceHolderImage(item.title)
       : CachedNetworkImage(
           imageUrl: item.posterUrl,
           fit: BoxFit.cover,
@@ -102,7 +102,7 @@ class TVItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-            item.name,
+            item.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: kItemTitle,

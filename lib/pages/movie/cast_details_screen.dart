@@ -24,9 +24,7 @@ class _CastDetailsState extends State<CastDetails>
   bool _isInitLoaded = true;
   bool _isFetching = true;
   TabController _tabController;
-  int _selectedIndex;
-
-  prov.Person person;
+  int _selectedIndex;  
 
   @override
   void initState() {
@@ -50,8 +48,7 @@ class _CastDetailsState extends State<CastDetails>
         setState(() {
           _isFetching = false;
           _isInitLoaded = false;
-          person =
-              Provider.of<prov.Cast>(context, listen: false).person;
+          
         });
       });
     }
@@ -91,7 +88,11 @@ class _CastDetailsState extends State<CastDetails>
   Widget build(BuildContext context) {
     // super.build(context);
     final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
-    print('item -------> ${item.id}');
+    prov.Person person;
+    if(!_isFetching)
+    person =
+              Provider.of<prov.Cast>(context).person;
+    // print('item -------> ${item.id}');
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -160,12 +161,12 @@ class Movies extends StatelessWidget {
   final List<MovieItem> movies;
   Movies(this.movies);
 
-  Route _buildRoute(int id) {
+  Route _buildRoute(MovieItem item) {
     return PageRouteBuilder(
       settings: RouteSettings(
-        arguments: id,
+        arguments: item,
       ),
-      pageBuilder: (context, animation, secondaryAnimation) => DetailsScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -182,8 +183,8 @@ class Movies extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, int id) {
-    Navigator.of(context).push(_buildRoute(id));
+  void _onTap(BuildContext context, MovieItem item) {
+    Navigator.of(context).push(_buildRoute(item));
   }
 
   @override
@@ -233,9 +234,9 @@ class Movies extends StatelessWidget {
               movies[i].releaseDate == null
                   ? 'N/A'
                   : DateFormat.y().format(movies[i].releaseDate),
-              style: Theme.of(context).textTheme.subtitle2,
+              style: kSubtitle1,
             ),
-            onTap: () => _onTap(context, movies[i].id),
+            onTap: () => _onTap(context, movies[i]),
           ),
         );
       },

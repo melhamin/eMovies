@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
+import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
@@ -22,13 +23,13 @@ import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 
-class DetailsScreen extends StatefulWidget {
+class MovieDetailsScreen extends StatefulWidget {
   static const routeName = '/details-screen-movies';
   @override
-  _DetailsPageState createState() => _DetailsPageState();
+  _MovieDetailsPageState createState() => _MovieDetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsScreen>
+class _MovieDetailsPageState extends State<MovieDetailsScreen>
     with TickerProviderStateMixin {
   bool _isInitLoaded = true;
   bool _isLoading = true;
@@ -79,7 +80,6 @@ class _DetailsPageState extends State<DetailsScreen>
           film = Provider.of<Movies>(context, listen: false).movieDetails;
           _isLoading = false;
           _isInitLoaded = false;
-         
         });
       });
     }
@@ -113,7 +113,9 @@ class _DetailsPageState extends State<DetailsScreen>
               color: Theme.of(context).accentColor,
               size: 30,
             ),
-            onPressed: () {},
+            onPressed: () {
+              _showAddToList(context, initData);
+            },
           ),
           IconButton(
             icon: Icon(
@@ -292,7 +294,7 @@ class _DetailsPageState extends State<DetailsScreen>
   }
 
   // Builds parts that needs detailed film to be fetched
-  List<Widget> all(BoxConstraints constraints) {
+  List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
     // print('DetailsPage ---------------------> ${film.videos}');
     return [
       if (film.images != null && film.images.length > 0)
@@ -304,8 +306,166 @@ class _DetailsPageState extends State<DetailsScreen>
       Cast(details: film),
       // SizedBox(height: 30),
       _buildSimilarMovies(constraints),
+      // Container(
+      //   height: constraints.maxHeight * 0.3,
+      //   child: SimilarMovies(id),
+      // ),
       SizedBox(height: 5),
     ];
+  }
+
+  void _showAddToList(BuildContext context, MovieItem item) {
+    final lists = Provider.of<Lists>(context, listen: false).moviesLists;
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.only(left: 8, right: 8),
+        decoration: BoxDecoration(
+          color: Colors.black54,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: ListView(
+          children: <Widget>[
+            Container(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      width: 82,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            CupertinoIcons.back,
+                            color: Theme.of(context).accentColor,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              'Cancel',
+                              style: kBTStyle,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Text('Add To', style: kTitleStyle),
+                  IconButton(
+                    // iconSize: 10,
+                    icon: Icon(
+                      Icons.add,
+                      color: Theme.of(context).accentColor,
+                      size: 30,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            // SizedBox(height: 10),
+            Divider(
+              thickness: 0.5,
+              color: Theme.of(context).accentColor,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: ListView.separated(
+                separatorBuilder: (context, i) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider(
+                      thickness: 0.5,
+                      color: kTextBorderColor,
+                    ),
+                  );
+                },
+                itemCount: lists.length,
+                itemBuilder: (context, i) {
+                  return ListTile(
+                    onTap: () {
+                      Provider.of<Lists>(context, listen: false)
+                          .addNewItem(i, initData);
+                      Navigator.of(context).pop();
+                    },
+                    dense: true,
+                    title: Text(
+                      lists[i]['title'],
+                      style: kBodyStyle,
+                    ),
+                    trailing: Text(
+                      '${lists[i]['data'].length}',
+                      style: kSubtitle1,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    // showBottomSheet(
+    //   context: context,
+    //   builder: (context) => ListView.separated(
+    //     separatorBuilder: (context, i) {
+    //       return Divider(
+    //         thickness: 0.5,
+    //         color: kTextBorderColor,
+    //       );
+    //     },
+    //     itemCount: lists.length,
+    //     itemBuilder: (context, i) {
+    //       return ListTile(
+    //         title: Text(
+    //           lists[i]['title'],
+    //           style: kBodyStyle,
+    //         ),
+    //         trailing: Text(
+    //           lists[i]['data'].length,
+    //           style: kSubtitle1,
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => AlertDialog(
+    //     title: Text('Add To'),
+    //     content: ListView.separated(
+    //       separatorBuilder: (context, i) {
+    //         return Divider(
+    //           thickness: 0.5,
+    //           color: kTextBorderColor,
+    //         );
+    //       },
+    //       itemCount: lists.length,
+    //       itemBuilder: (context, i) {
+    //         return ListTile(
+    //           title: Text(
+    //             lists[i]['title'],
+    //             style: kBodyStyle,
+    //           ),
+    //           trailing: Text(
+    //             lists[i]['data'].length,
+    //             style: kSubtitle1,
+    //           ),
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -355,7 +515,7 @@ class _DetailsPageState extends State<DetailsScreen>
                       ),
                     SizedBox(height: 10),
                     if (!_isLoading)
-                      ...all(constraints)
+                      ..._buildOtherDetails(constraints, initData.id)
                     else
                       Padding(
                           padding: const EdgeInsets.only(
@@ -580,7 +740,8 @@ class BackgroundAndTitle extends StatelessWidget {
                                 color: Theme.of(context).accentColor),
                           ],
                         ),
-                        if (!isLoading) SizedBox(height: 10),
+                        if (!isLoading)
+                          SizedBox(height: 10),
                         if (!isLoading)
                           Text(
                             _getYearAndDuration(),
@@ -725,29 +886,29 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-     // get Crew data
-          if (widget.details.crew != null) {
-            widget.details.crew.forEach((element) {
-              crew.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                job: element['job'],
-              ));
-            });
-          }
-          // Get cast data
-          if (widget.details.cast != null) {
-            widget.details.cast.forEach((element) {
-              // print('name/ ---------> ${element['character']} ');
-              cast.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                character: element['character'],
-              ));
-            });
-          }
+    // get Crew data
+    if (widget.details.crew != null) {
+      widget.details.crew.forEach((element) {
+        crew.add(CastItem(
+          id: element['id'],
+          name: element['name'],
+          imageUrl: element['profile_path'],
+          job: element['job'],
+        ));
+      });
+    }
+    // Get cast data
+    if (widget.details.cast != null) {
+      widget.details.cast.forEach((element) {
+        // print('name/ ---------> ${element['character']} ');
+        cast.add(CastItem(
+          id: element['id'],
+          name: element['name'],
+          imageUrl: element['profile_path'],
+          character: element['character'],
+        ));
+      });
+    }
     // print('Cast ------------------------> initState()');
   }
 
@@ -765,26 +926,11 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
         : (index == _calcualteItemCount() - 1 ? true : false));
   }
 
-  // Calculate number of items in different situations
+  // Calculate number of items depending on whether list is expanded or not
   int _calcualteItemCount() {
     return cast.length > 5
         ? (_expanded ? (cast.length > 10 ? 10 : cast.length) : 5)
         : cast.length;
-
-    /**
-     * More clear implemention of statement above
-     */
-    // if (cast.length > 5) {
-    //   if (_expanded) {
-    //     if (cast.length > 10) {
-    //       return 10;
-    //     } else {
-    //       return cast.length;
-    //     }
-    //   } else
-    //     return 5;
-    // }
-    // return cast.length;
   }
 
   @override
@@ -818,8 +964,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
               subtitle: false,
             ),
           ),
-          if (cast != null && cast.length > 0)
-            SizedBox(height: 20),
+          if (cast != null && cast.length > 0) SizedBox(height: 20),
           if (cast != null && cast.length > 0)
             Padding(
               padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
@@ -828,7 +973,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
           if (cast != null && cast.length > 0)
             AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              height: _calcualteItemCount() * 60.0, // ListTile height
+              height: _calcualteItemCount() * 60.0 + _calcualteItemCount() * 5,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(width: 0.5, color: LINE_COLOR),
@@ -852,7 +997,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
           if ((cast.length > 5))
             ListTile(
               leading: Text(
-                (!_expanded) ? 'Show More...' : '',
+                (!_expanded) ? 'More...' : '',
                 style: TextStyle(color: Theme.of(context).accentColor),
               ),
               onTap: !_expanded ? _onTap : null,
@@ -866,6 +1011,94 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
+
+// class SimilarMovies extends StatefulWidget {
+//   final id;
+//   SimilarMovies(this.id);
+//   @override
+//   _SimilarMoviesState createState() => _SimilarMoviesState();
+// }
+
+// class _SimilarMoviesState extends State<SimilarMovies> {
+//   bool _initLoaded = true;
+//   bool _isLoading = true;
+
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//   }
+
+//   @override
+//   void didChangeDependencies() {
+//     if(_initLoaded) {
+//       Provider.of<Movies>(context, listen: false).getSimilar(widget.id).then((value) {
+//         // print('similar movies ------------------------');
+//         setState(() {
+//           _isLoading = false;
+//           _initLoaded = false;
+//         });
+//       });
+//     }
+//     // TODO: implement didChangeDependencies
+//     super.didChangeDependencies();
+//   }
+
+//   Widget _buildLoadingIndicator(BuildContext context) {
+//     return Center(
+//       child: SpinKitCircle(
+//         size: 21,
+//         color: Theme.of(context).accentColor,
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final items = Provider.of<Movies>(context, listen: false).similar;
+//     print('Movie simialr size ----------------------> ${items.length}');
+//     return _isLoading ? _buildLoadingIndicator(context) :
+//     (items.length == 0)
+//         ? Container()
+//         : LayoutBuilder(
+//             builder: (context, constraints) {
+//               return Container(
+//                 height: constraints.maxHeight * 0.5,
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Padding(
+//                       padding: EdgeInsets.only(left: LEFT_PADDING),
+//                       child: Text('Similar', style: kSubtitle1),
+//                     ),
+//                     SizedBox(height: 5),
+//                     Flexible(
+//                       child: GridView.builder(
+//                         physics: BouncingScrollPhysics(),
+//                         padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+//                         itemCount: items.length,
+//                         itemBuilder: (context, index) {
+//                           return wid.MovieItem(
+//                             movie: items[index],
+//                             withFooter: false,
+//                             tappable: true,
+//                           );
+//                         },
+//                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                           crossAxisCount: 1,
+//                           childAspectRatio: 3 / 2,
+//                           // mainAxisSpacing: 5,
+//                         ),
+//                         scrollDirection: Axis.horizontal,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               );
+//             },
+//           );
+//   }
+// }
 
 class SimilarMovies extends StatelessWidget {
   @override
@@ -912,12 +1145,12 @@ class SimilarMovies extends StatelessWidget {
   }
 }
 
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {}
+// class MyClipper extends CustomClipper<Path> {
+//   @override
+//   Path getClip(Size size) {}
 
-  @override
-  bool shouldReclip(CustomClipper oldClipper) {
-    return false;
-  }
-}
+//   @override
+//   bool shouldReclip(CustomClipper oldClipper) {
+//     return false;
+//   }
+// }

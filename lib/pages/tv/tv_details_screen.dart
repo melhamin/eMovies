@@ -8,7 +8,7 @@ import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/route_builder.dart';
 import 'package:e_movies/widgets/top_bar.dart';
-import 'package:e_movies/widgets/tv/tv_item.dart';
+import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -47,7 +47,6 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
           details = Provider.of<prov.TV>(context, listen: false).details;
           _isLoading = false;
           _initLoaded = false;
-          
         });
       });
     }
@@ -142,7 +141,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
 
   String _getGenres(List<dynamic> ids) {
     if (ids == null || ids.length == 0) return 'N/A';
-    int length = ids.length < 3 ? ids.length : 3;
+    int length = ids.length <= 2 ? ids.length : 2;
     String res = '';
     for (int i = 0; i < length; i++) {
       res = res + TV_GENRES[ids[i]['id']] + ', ';
@@ -193,8 +192,21 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
-  List<Widget> all(BoxConstraints constraints) {
-    print('all ---------------------> ${details.genreIDs}');
+  // Widget _buildSimilar(BoxConstraints constraints) {
+  //   bool hasItem = (Provider.of<prov.TV>(context).similar != null &&
+  //       Provider.of<prov.TV>(context).similar.length > 0);
+  //   if (!hasItem) {
+  //     return Container();
+  //   } else {
+  //     return Container(
+  //       height: constraints.maxHeight * 0.3,
+  //       child: SimilarMovies(),
+  //     );
+  //   }
+  // }
+
+  List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
+    // print('all ---------------------> ${details.genreIDs}');
     return [
       if (details.images != null && details.images.length > 0)
         Container(
@@ -203,8 +215,12 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
       _buildDetails(details),
       SizedBox(height: 30),
       Cast(details: details),
-      // SizedBox(height: 30),
-      // _buildSimilarMovies(constraints),
+      SizedBox(height: 20),
+      // _buildSimilar(constraints),
+      Container(
+        height: constraints.maxHeight * 0.3,
+        child: SimilarTV(id),
+      ),
       SizedBox(height: 5),
     ];
   }
@@ -212,7 +228,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final item = ModalRoute.of(context).settings.arguments as prov.TVItem;
-    print('id ---------> ${item.id}');
+    // print('id ---------> ${item.id}');
     // print('id ---------> ${item.id}');
 
     return SafeArea(
@@ -243,13 +259,13 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
                     //   height: 200,
                     //   child: _buildImages(details),
                     // ),
-                    if(!_isLoading)
-                    ...all(constraints),
+                    if (!_isLoading)
+                      ..._buildOtherDetails(constraints, item.id),
                   ],
                 );
               },
             ),
-            TopBar(title: item.name),
+            TopBar(title: item.title),
           ],
         ),
       ),
@@ -307,7 +323,7 @@ class TitleAndDetails extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: item.name,
+              text: item.title,
               style: kTitleStyle,
               children: [
                 TextSpan(
@@ -470,39 +486,38 @@ class Cast extends StatefulWidget {
 }
 
 class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
-  
   bool _expanded = false;
-   List<CastItem> crew = [];
- List<CastItem> cast = [];
+  List<CastItem> crew = [];
+  List<CastItem> cast = [];
 
   @override
   void initState() {
-    super.initState();    
-          // get Crew data
-              print('details crew/ ---------> ${widget.details.crew} ');
-          if (widget.details.crew != null) {
-            widget.details.crew.forEach((element) {
-              print('crew/ ---------> ${element['character']} ');
-              crew.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                job: element['job'],
-              ));
-            });
-          }          
-          // Get cast data
-          if (widget.details.cast != null) {
-            widget.details.cast.forEach((element) {
-              print('cast/ ---------> ${element['character']} ');
-              cast.add(CastItem(
-                id: element['id'],
-                name: element['name'],
-                imageUrl: element['profile_path'],
-                character: element['character'],
-              ));
-            });
-          }
+    super.initState();
+    // get Crew data
+    print('details crew/ ---------> ${widget.details.crew} ');
+    if (widget.details.crew != null) {
+      widget.details.crew.forEach((element) {
+        print('crew/ ---------> ${element['character']} ');
+        crew.add(CastItem(
+          id: element['id'],
+          name: element['name'],
+          imageUrl: element['profile_path'],
+          job: element['job'],
+        ));
+      });
+    }
+    // Get cast data
+    if (widget.details.cast != null) {
+      widget.details.cast.forEach((element) {
+        print('cast/ ---------> ${element['character']} ');
+        cast.add(CastItem(
+          id: element['id'],
+          name: element['name'],
+          imageUrl: element['profile_path'],
+          character: element['character'],
+        ));
+      });
+    }
   }
 
   // Get the name abbreviation for circle avatar in case image is not available
@@ -512,7 +527,6 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
     res = res + name[0][0].toUpperCase() + name[1][0].toUpperCase();
     return res;
   }
-
 
   void _onTap() {
     setState(() {
@@ -534,9 +548,6 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
         ? (_expanded ? (cast.length > 10 ? 10 : cast.length) : 5)
         : cast.length;
 
-    /**
-     * More clear implemention of above statement
-     */
     // if (widget.cast.length > 5) {
     //   if (_expanded) {
     //     if (widget.cast.length > 10) {
@@ -553,11 +564,14 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('Cast ----------------------> ${crew}');
-    CastItem   
-    director = crew.firstWhere((element) {
-      return element.job == 'Executive Producer';
-    });
+    // print('Cast ----------------------> ${cast}');
+    // print('crew ----------------------> ${crew}');
+
+    CastItem director;
+    if (crew.length != 0)
+      director = crew.firstWhere((element) {
+        return element.job == 'Executive Producer';
+      });
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -568,23 +582,22 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
               padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
               child: Text('Directed By', style: kSubtitle1),
             ),
-            if(director != null)
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                top: BorderSide(width: 0.5, color: LINE_COLOR),
+          if (director != null)
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+                  top: BorderSide(width: 0.5, color: LINE_COLOR),
+                ),
+                color: BASELINE_COLOR,
               ),
-              color: BASELINE_COLOR,
+              child: castWid.CastItem(
+                item: director,
+                last: false,
+                subtitle: false,
+              ),
             ),
-            child: castWid.CastItem(
-              item: director,
-              last: false,
-              subtitle: false,
-            ),
-          ),
-          if (cast != null && cast.length > 0)
-            SizedBox(height: 20),
+          if (cast != null && cast.length > 0) SizedBox(height: 20),
           if (cast != null && cast.length > 0)
             Padding(
               padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
@@ -593,7 +606,8 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
           if (cast != null && cast.length > 0)
             AnimatedContainer(
               duration: Duration(milliseconds: 300),
-              height: _calcualteItemCount() * 60.0, // ListTile height
+              height: _calcualteItemCount() * 60.0 +
+                  _calcualteItemCount() * 5, // ListTile height
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(width: 0.5, color: LINE_COLOR),
@@ -617,7 +631,7 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
           if ((cast.length > 5))
             ListTile(
               leading: Text(
-                (!_expanded) ? 'Show More...' : '',
+                (!_expanded) ? 'More...' : '',
                 style: TextStyle(color: Theme.of(context).accentColor),
               ),
               onTap: !_expanded ? _onTap : null,
@@ -630,4 +644,91 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+}
+
+class SimilarTV extends StatefulWidget {
+  final id;
+  SimilarTV(this.id);
+  @override
+  _SimilarTVState createState() => _SimilarTVState();
+}
+
+class _SimilarTVState extends State<SimilarTV> {
+  bool _initLoaded = true;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if(_initLoaded) {
+      Provider.of<prov.TV>(context, listen: false).getSimilar(widget.id).then((value) {
+        setState(() {
+          _isLoading = false;
+          _initLoaded = false;
+        });
+      });
+    }
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: SpinKitCircle(
+        size: 21,
+        color: Theme.of(context).accentColor,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = Provider.of<prov.TV>(context, listen: false).similar;
+    print('TV simialr size ----------------------> ${items.length}');
+    return _isLoading ? _buildLoadingIndicator(context) :
+    (items.length == 0)
+        ? Container()
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: constraints.maxHeight * 0.5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: LEFT_PADDING),
+                      child: Text('Similar', style: kSubtitle1),
+                    ),
+                    SizedBox(height: 5),
+                    Flexible(
+                      child: GridView.builder(
+                        physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return wid.TVItem(
+                            item: items[index],
+                            withFooter: false,
+                            tappable: true,
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 3 / 2,
+                          // mainAxisSpacing: 5,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+  }
 }

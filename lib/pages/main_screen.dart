@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/pages/movie/movies_screen.dart';
+import 'package:e_movies/pages/my_lists_screen.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/most_watched_page.dart';
+import 'package:e_movies/pages/search_screen.dart';
 import 'package:e_movies/pages/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
+
 
 class MainScreen extends StatefulWidget {
   static const routeName = '/main-page';
@@ -29,10 +31,16 @@ class _MainScreenState extends State<MainScreen>
     // });
     _tabController = TabController(
       vsync: this,
-      length: 3,
+      length: 4,
       initialIndex: _selectedIndex,
     );
     _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
+  
+    // _tabController.addListener(() { 
+    //   if(_tabController.indexIsChanging) {
+    //     FocusScope.of(context).nextFocus();
+    //   }
+    // });
   }
 
   Widget _buildTabContent() {
@@ -44,7 +52,8 @@ class _MainScreenState extends State<MainScreen>
         children: <Widget>[
           MoviesScreen(),
           TVScreen(),
-          MostWatchedPage(),
+          SearchScreen(),
+          MyListsScreen(),
         ],
       ),
     );
@@ -74,7 +83,7 @@ class _MainScreenState extends State<MainScreen>
       onTap: _onTap,      
     );
 
-    final _content = Scaffold(
+    final _content = Scaffold(      
       body: Stack(
         children: <Widget>[
           _buildTabContent(),

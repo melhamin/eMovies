@@ -1,36 +1,44 @@
 import 'package:async/async.dart';
-import 'package:e_movies/providers/tv.dart' show TV;
+import 'package:e_movies/consts/consts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/widgets/top_bar.dart';
-import 'package:e_movies/widgets/tv/tv_item.dart';
+import 'package:e_movies/providers/movies.dart' show Movies;
+import 'package:e_movies/widgets/movie/movie_item.dart';
 
 enum MovieLoaderStatus {
   STABLE,
   LOADING,
 }
 
-class TrendingTVScreen extends StatefulWidget {
-  static const routeName = '/TrendingTVScreen';
+class TrendingMoviesScreen extends StatefulWidget {
+  static const routeName = '/TrendingMoviesScreen';
 
-  TrendingTVScreen({
+  TrendingMoviesScreen({
     Key key,
   }) : super(key: key);
 
   @override
-  _TrendingTVScreenState createState() => _TrendingTVScreenState();
+  _TrendingMoviesScreenState createState() => _TrendingMoviesScreenState();
 }
 
-class _TrendingTVScreenState extends State<TrendingTVScreen> {
+class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
+    with AutomaticKeepAliveClientMixin {
   bool _initLoaded = true;
   bool _isFetching = false;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
-  CancelableOperation movieOperation;  
+  CancelableOperation movieOperation;
+
+  var movies;
   int curPage = 1;
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -42,7 +50,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<TV>(context, listen: false).fetchPopular(1);
+      Provider.of<Movies>(context, listen: false).fetchTrending(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -58,8 +66,8 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
             _isFetching = true;
           });
           movieOperation = CancelableOperation.fromFuture(
-                  Provider.of<TV>(context, listen: false)
-                      .fetchPopular(curPage + 1))
+                  Provider.of<Movies>(context, listen: false)
+                      .fetchTrending(curPage + 1))
               .then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
@@ -77,8 +85,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
 
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
-      await Provider.of<TV>(context, listen: false)
-          .fetchPopular(1);
+      await Provider.of<Movies>(context, listen: false).fetchTrending(1);
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -91,15 +98,25 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {    
-    var movies = Provider.of<TV>(context).trending;
+  Widget build(BuildContext context) {
+    super.build(context);
+    var movies = Provider.of<Movies>(context).trending;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          child: TopBar(title: 'Trending'),
-          preferredSize: Size.fromHeight(kToolbarHeight),
+        appBar: AppBar(
+          backgroundColor: BASELINE_COLOR,
+          centerTitle: true,
+          title: Text(
+            'Trending',
+            style: kTitleStyle,
+          ),
         ),
+        // appBar: PreferredSize(
+
+        //   child: TopBar(title: 'Trending'),
+        //   preferredSize: Size.fromHeight(kToolbarHeight),
+        // ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(
@@ -112,12 +129,12 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
                     // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
-                    key: PageStorageKey('PopularScreen'),
+                    key: PageStorageKey('TrendingMoviesScreen'),
                     cacheExtent: 12,
                     itemCount: movies.length,
                     itemBuilder: (ctx, i) {
-                      return TVItem(
-                        item: movies[i],
+                      return MovieItem(
+                        movie: movies[i],
                       );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

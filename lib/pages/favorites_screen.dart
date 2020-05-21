@@ -6,6 +6,8 @@ class FavoritesPage extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Center(child: Icon(Icons.search, color: Colors.white,),),
+    );
   }
 }

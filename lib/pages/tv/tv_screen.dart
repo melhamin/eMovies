@@ -1,4 +1,4 @@
-import 'package:e_movies/pages/genres_screen.dart';
+import 'package:e_movies/pages/tv/tv_genres_screen.dart';
 import 'package:e_movies/pages/tv/on_air_screen.dart';
 import 'package:e_movies/pages/tv/popular_screen.dart';
 import 'package:e_movies/pages/tv/top_rated_screen.dart';
@@ -8,7 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/widgets/genre_tile.dart';
+// import 'package:e_movies/widgets/genre_tile.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/tv/tv_item.dart' as tvWid;
 import 'package:e_movies/providers/tv.dart';
@@ -19,7 +19,7 @@ class TVScreen extends StatefulWidget {
 }
 
 class _MoviesScreenState extends State<TVScreen>
-    with SingleTickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   bool _initLoaded = true;
   bool _isFetching = true;
 
@@ -117,28 +117,28 @@ class _MoviesScreenState extends State<TVScreen>
   //   );
   // }
 
-  Widget _buildGenres() {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-      key: PageStorageKey('GenresGrid'),
-      physics: BouncingScrollPhysics(),
-      addAutomaticKeepAlives: true,
-      itemCount: MOVIE_GENRE_DETAILS.length,
-      itemBuilder: (context, i) {
-        return GenreTile(
-          imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
-          genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
-          title: MOVIE_GENRE_DETAILS[i]['title'],
-        );
-      },
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 2 / 3,
-        // mainAxisSpacing: 10,
-      ),
-      scrollDirection: Axis.horizontal,
-    );
-  }
+  // Widget _buildGenres() {
+  //   return GridView.builder(
+  //     padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+  //     key: PageStorageKey('GenresGrid'),
+  //     physics: BouncingScrollPhysics(),
+  //     addAutomaticKeepAlives: true,
+  //     itemCount: MOVIE_GENRE_DETAILS.length,
+  //     itemBuilder: (context, i) {
+  //       return GenreTile(
+  //         imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+  //         genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+  //         title: MOVIE_GENRE_DETAILS[i]['title'],
+  //       );
+  //     },
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 1,
+  //       childAspectRatio: 2 / 3,
+  //       // mainAxisSpacing: 10,
+  //     ),
+  //     scrollDirection: Axis.horizontal,
+  //   );
+  // }
 
   Widget _buildNavBar() {
     return NavBar(
@@ -146,7 +146,7 @@ class _MoviesScreenState extends State<TVScreen>
       tabs: [
         Tab(
             icon: Text(
-          'discover',
+          'Discover',
           style: kTitleStyle2,
         )),
         Tab(
@@ -165,7 +165,7 @@ class _MoviesScreenState extends State<TVScreen>
   @override
   Widget build(BuildContext context) {
     // super.build(context);
-    final popular = Provider.of<TV>(context).popular;
+    final trending = Provider.of<TV>(context).trending;
     final onAirToday = Provider.of<TV>(context).onAirToday;
     final topRated = Provider.of<TV>(context).topRated;
 
@@ -175,7 +175,7 @@ class _MoviesScreenState extends State<TVScreen>
         DiscoverTab(
           SECTION_HEIGHT: SECTION_HEIGHT,
           isFetching: _isFetching,
-          popular: popular,
+          trending: trending,
           onAirToday: onAirToday,
           topRated: topRated,          
         ),
@@ -194,9 +194,10 @@ class _MoviesScreenState extends State<TVScreen>
     );
   }
 
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
 }
 
 class DiscoverTab extends StatelessWidget {
@@ -204,7 +205,7 @@ class DiscoverTab extends StatelessWidget {
     Key key,
     @required this.SECTION_HEIGHT,
     @required bool isFetching,
-    @required this.popular,
+    @required this.trending,
     @required this.onAirToday,
     @required this.topRated,
   })  : _isFetching = isFetching,
@@ -212,7 +213,7 @@ class DiscoverTab extends StatelessWidget {
 
   final double SECTION_HEIGHT;
   final bool _isFetching;
-  final List<TVItem> popular;
+  final List<TVItem> trending;
   final List<TVItem> onAirToday;
   final List<TVItem> topRated;
 
@@ -288,8 +289,8 @@ class DiscoverTab extends StatelessWidget {
               //   height: constraints.maxHeight * 0.25,
               //   child: _buildGenres(),
               // ),
-              _buildSectionTitle('Popular', () {
-                Navigator.of(context).push(_buildRoute(PopularScreen()));
+              _buildSectionTitle('Trending', () {
+                Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
               }),
               Container(
                   height: constraints.maxHeight * SECTION_HEIGHT,
@@ -298,7 +299,7 @@ class DiscoverTab extends StatelessWidget {
                           color: Theme.of(context).accentColor,
                           size: 21,
                         )
-                      : Grid(tv: popular)),
+                      : Grid(tv: trending)),
               _buildSectionTitle('On Air', () {
                 Navigator.of(context).push(_buildRoute(OnAirScreen()));
               }),

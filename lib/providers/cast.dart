@@ -61,17 +61,17 @@ class Cast with ChangeNotifier {
     try {
       final personResponse = await http.get(personUrl);
       final personData = json.decode(personResponse.body) as Map<String, dynamic>;
-      print('person data ----------> ${personData}');
+      // print('person data ----------> ${personData}');
 
       final moviesResponse = await http.get(moviesUrl);
       final moviesData = json.decode(moviesResponse.body) as Map<String, dynamic>;
       final fetchedMovies = moviesData['cast'];
-      print('movies data ----------> ${fetchedMovies}');
+      // print('movies data ----------> ${fetchedMovies}');
 
+      _movies.clear();
       fetchedMovies.forEach((element) {
-
         _movies.add(MovieItem.fromJson(element));
-        print('added element id ------------------> ${element['id']}');
+        // print('added element id ------------------> ${element['id']}');
       });
       
       

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 
 import './bottom_bar.dart';
@@ -23,8 +24,8 @@ class BottomTabs extends StatelessWidget {
           items: [
         BottomNavigationBarItem(
           title: Text(
-            'Films',
-            style: TextStyle(fontSize: 14),
+            'Movies',
+            style: kBottomBarTextStyle,
           ),
           icon: Icon(Icons.theaters),
           backgroundColor: Theme.of(context).primaryColor,
@@ -32,7 +33,7 @@ class BottomTabs extends StatelessWidget {
         BottomNavigationBarItem(
           title: Text(
             'TV',
-            style: TextStyle(fontSize:14),
+            style: kBottomBarTextStyle,
           ),
           icon: Icon(Icons.tv),
           backgroundColor: Theme.of(context).primaryColor,
@@ -40,9 +41,17 @@ class BottomTabs extends StatelessWidget {
         BottomNavigationBarItem(
           title: Text(
             'Search',
-            style: TextStyle(fontSize: 14),
+            style: kBottomBarTextStyle,
           ),
           icon: Icon(Icons.search),
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
+        BottomNavigationBarItem(
+          title: Text(
+            'Lists',
+            style: kBottomBarTextStyle,
+          ),
+          icon: Icon(Icons.list),
           backgroundColor: Theme.of(context).primaryColor,
         ),
           ],

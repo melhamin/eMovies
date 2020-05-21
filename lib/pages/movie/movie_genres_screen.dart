@@ -1,17 +1,19 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/genre_tile.dart';
+import 'package:e_movies/pages/movie/movie_genre_item_screen.dart';
+import 'package:e_movies/widgets/movie/movie_genre_tile.dart';
+import 'package:e_movies/widgets/movie/movie_genre_tile.dart';
 import 'package:flutter/material.dart';
 
-class GenresScreen extends StatefulWidget {
-  GenresScreen({
+class MovieGenresScreen extends StatefulWidget {
+  MovieGenresScreen({
     Key key,
   }) : super(key: PageStorageKey('GenresPage'));
 
   @override
-  _GenresScreenState createState() => _GenresScreenState();
+  _MovieGenresScreenState createState() => _MovieGenresScreenState();
 }
 
-class _GenresScreenState extends State<GenresScreen>
+class _MovieGenresScreenState extends State<MovieGenresScreen>
     with AutomaticKeepAliveClientMixin {
 
       ScrollController _scrollController;
@@ -35,7 +37,7 @@ class _GenresScreenState extends State<GenresScreen>
         addAutomaticKeepAlives: true,
         itemCount: MOVIE_GENRE_DETAILS.length,
         itemBuilder: (context, i) {
-          return GenreTile(
+          return MovieGenreTile(
             imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
             genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
             title: MOVIE_GENRE_DETAILS[i]['title'],

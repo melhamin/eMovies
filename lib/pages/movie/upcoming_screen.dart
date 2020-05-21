@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:e_movies/consts/consts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -104,10 +105,15 @@ class _AllMoviesState extends State<UpcomingScreen>
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          child: TopBar(title: 'Upcoming'),
-          preferredSize: Size.fromHeight(kToolbarHeight),
+        appBar: AppBar(
+          backgroundColor: BASELINE_COLOR,
+          centerTitle: true,
+          title: Text('Upcoming', style: kTitleStyle,),
         ),
+        // appBar: PreferredSize(
+        //   child: TopBar(title: 'Upcoming'),
+        //   preferredSize: Size.fromHeight(kToolbarHeight),
+        // ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(

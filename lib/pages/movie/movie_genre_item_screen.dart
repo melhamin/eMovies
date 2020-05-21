@@ -1,57 +1,63 @@
 import 'package:async/async.dart';
-
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/widgets/top_bar.dart';
-import 'package:e_movies/providers/movies.dart' show Movies;
-import 'package:e_movies/widgets/movie/movie_item.dart';
+import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/widgets/movie/movie_item.dart' as wid;
+
+class MovieGenreItem extends StatefulWidget {
+  final int id;
+  MovieGenreItem(this.id);
+  @override
+  _MovieGenreItemState createState() => _MovieGenreItemState();
+}
 
 enum MovieLoaderStatus {
   STABLE,
   LOADING,
 }
 
-class InTheaters extends StatefulWidget {
-  static const routeName = '/InTheathers-page';
-
-  InTheaters({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _AllMoviesState createState() => _AllMoviesState();
-}
-
-class _AllMoviesState extends State<InTheaters>
-    with AutomaticKeepAliveClientMixin {
+class _MovieGenreItemState extends State<MovieGenreItem> {
   bool _initLoaded = true;
-  bool _isFetching = false;
+  bool _isLoading = false;
+  bool _isFetching = true;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
   CancelableOperation movieOperation;
-
-  var movies;
   int curPage = 1;
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  var movies = [];
+  int genreId;
 
   @override
   void initState() {
-    scrollController = ScrollController();
     // TODO: implement initState
     super.initState();
+    scrollController = ScrollController();            
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<Movies>(context, listen: false).fetchInTheaters(1);
-    }
-    _initLoaded = false;
+      Provider.of<Movies>(context, listen: false)
+          .getGenre(widget.id, 1)
+          .then((value) {
+        setState(() {
+          _initLoaded = false;
+          _isFetching = false;
+        });
+      });      
+    }    
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
@@ -62,17 +68,18 @@ class _AllMoviesState extends State<InTheaters>
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           setState(() {
-            _isFetching = true;
+            _isLoading = true;
           });
           movieOperation = CancelableOperation.fromFuture(
                   Provider.of<Movies>(context, listen: false)
-                      .fetchInTheaters(curPage + 1))
+                      .getGenre(widget.id, curPage + 1))
               .then(
             (_) {
+              // print('future is ---------> $getFuture()');
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
                 curPage = curPage + 1;
-                _isFetching = false;
+                _isLoading = false;
               });
             },
           );
@@ -80,12 +87,6 @@ class _AllMoviesState extends State<InTheaters>
       }
     }
     return true;
-  }
-
-  Future<void> _refreshMovies(bool refresh) async {
-    if (refresh)
-      await Provider.of<Movies>(context, listen: false)
-          .fetchInTheaters(1);
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -99,47 +100,48 @@ class _AllMoviesState extends State<InTheaters>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    var movies = Provider.of<Movies>(context).inTheaters;
-    // print('------------> length: ${movies.length}');
+    final movies = Provider.of<Movies>(context).genre;    
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          child: TopBar(title: 'In Theaters'),
+          child: TopBar(
+            title: MOVIE_GENRES[widget.id],
+          ),
           preferredSize: Size.fromHeight(kToolbarHeight),
         ),
-        body: NotificationListener(
-          onNotification: onNotification,
-          child: RefreshIndicator(
-            onRefresh: () => _refreshMovies(movies.length == 0),
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                Flexible(
+        body: _isFetching ? _buildLoadingIndicator(context) :
+        Column(
+          children: [
+            Flexible(
+              child: NotificationListener(
+                onNotification: onNotification,
+                child: RefreshIndicator(
+                  onRefresh: () {},
+                  // onRefresh: () => _refreshMovies(movies.length == 0),
+                  backgroundColor: Theme.of(context).primaryColor,
                   child: GridView.builder(
-                    // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                    physics: const BouncingScrollPhysics(),
+                    physics: BouncingScrollPhysics(),
                     controller: scrollController,
-                    key: PageStorageKey('InTheathersPage'),
+                    // key: PageStorageKey('GenreItem'),
                     cacheExtent: 12,
                     itemCount: movies.length,
                     itemBuilder: (ctx, i) {
-                      return MovieItem(
+                      return wid.MovieItem(
                         movie: movies[i],
                       );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       childAspectRatio: 1 / 2,
-                      // mainAxisSpacing: 5,
                       // crossAxisSpacing: 5,
+                      // mainAxisSpacing: 5,
                     ),
                   ),
                 ),
-                if (_isFetching) _buildLoadingIndicator(context),
-              ],
+              ),
             ),
-          ),
+            if (_isLoading) _buildLoadingIndicator(context),
+          ],
         ),
       ),
     );

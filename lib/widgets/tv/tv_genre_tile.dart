@@ -1,18 +1,20 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/genre_item_screen.dart';
+// import 'package:e_movies/pages/genre_item_screen.dart';
+import 'package:e_movies/pages/movie/movie_genres_screen.dart';
+import 'package:e_movies/pages/tv/tv_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
-class GenreTile extends StatelessWidget {
+class TVGenreTile extends StatelessWidget {
   final String title;
   final String imageUrl;
   final int genreId;
 
-  GenreTile({this.title, this.imageUrl, this.genreId});
+  TVGenreTile({this.title, this.imageUrl, this.genreId});
 
   Route _buildRoute() {
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: genreId),
-      pageBuilder: (context, animation, secondaryAnimation) => GenreItemScreen(),
+      // settings: RouteSettings(arguments: genreId),
+      pageBuilder: (context, animation, secondaryAnimation) => TVGenreItemScreen(genreId),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

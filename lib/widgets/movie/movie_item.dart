@@ -38,7 +38,7 @@ class MovieItem extends StatelessWidget {
   Route _buildRoute() {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: movie),
-      pageBuilder: (context, animation, secondaryAnimation) => DetailsScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

@@ -90,7 +90,7 @@ class MovieItem {
       // : null,
       originalLanguage: json['original_language'],
       status: json['release_date'] != null,
-      mediaType: json['media_type'],
+      mediaType: 'movie',
       voteAverage:
           json['vote_average'] == null ? 0 : json['vote_average'] + 0.0,
       videos: json['videos'] == null ? null : json['videos']['results'],
@@ -112,7 +112,7 @@ class MovieItem {
           : json['recommendations']['results'],
       popularity: json['popularity'] == null ? 0 : json['popularity'] + 0.0,
       // popularity: 9.3
-      character: json['character'],
+      character: json['character'],      
     );
   }
 
@@ -156,7 +156,7 @@ class Movies with ChangeNotifier {
   // Environemnt Variables
   // final API_KEY = DotEnv().env['API_KEYY'];
 
-  List<MovieItem> _inTheaters = [];
+  List<MovieItem> _trending = [];
   List<MovieItem> _topRated = [];
   List<MovieItem> _upcoming = [];
 
@@ -168,32 +168,18 @@ class Movies with ChangeNotifier {
   List<VideoItem> _videos = [];
 
   // Genres
-  List<MovieItem> _action = [];
-  List<MovieItem> _adventure = [];
-  List<MovieItem> _animation = [];
-  List<MovieItem> _comedy = [];
-  List<MovieItem> _crime = [];
-  List<MovieItem> _drama = [];
-  List<MovieItem> _family = [];
-  List<MovieItem> _fantasy = [];
-  List<MovieItem> _history = [];
-  List<MovieItem> _documentary = [];
-  List<MovieItem> _horror = [];
-  List<MovieItem> _music = [];
-  List<MovieItem> _mystery = [];
-  List<MovieItem> _romance = [];
-  List<MovieItem> _scifi = [];
-  List<MovieItem> _thriller = [];
-  List<MovieItem> _war = [];
-  List<MovieItem> _western = [];
+  List<MovieItem> _genre = [];    
 
   // getters
+  List<MovieItem> get genre {
+    return _genre;
+  }
   List<MovieItem> get topRated {
     return _topRated;
   }
 
-  List<MovieItem> get inTheaters {
-    return _inTheaters;
+  List<MovieItem> get trending {
+    return _trending;
   }
 
   List<MovieItem> get upcoming {
@@ -213,9 +199,11 @@ class Movies with ChangeNotifier {
   }
 
   // functions
-  Future<void> fetchInTheaters(int page) async {
-    final url =
-        '$BASE_URL/movie/now_playing?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+  Future<void> fetchTrending(int page) async {
+    // print('${DotEnv().env['API_KEY']}');
+    // final url =
+    //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+    final url = 'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}';
 
     try {        
     final response = await http.get(url);
@@ -226,12 +214,12 @@ class Movies with ChangeNotifier {
     // When page reopened it will fetch page 1 
     // so delete previous data to avoid duplicates
     if(page == 1) {
-      _inTheaters.clear();
+      _trending.clear();
     }
 
     moviesData.forEach((element) {
       // print('element -----------> ${element.toString()}');
-      _inTheaters.add(MovieItem.fromJson(element));
+      _trending.add(MovieItem.fromJson(element));
     });
     // print('_trending size------------------> ${_trending.length}');
     // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
@@ -296,7 +284,7 @@ class Movies with ChangeNotifier {
 
   Future<void> getMovieDetails(int id) async {    
       final url =
-          '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,recommendations,similar,reviews,images&include_image_language=en,null';
+          '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,similar,reviews,images&include_image_language=en,null';
     try {
 
       final response = await http.get(url);
@@ -332,6 +320,28 @@ class Movies with ChangeNotifier {
     // print(response.body);
   }
 
+  // Future<void> getSimilar(int id) async {    
+  //   final url = 'https://api.themoviedb.org/3/movie/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
+  //   try {
+  //     final response = await http.get(url);
+  //     print(response.body);      
+
+  //     final responseData = json.decode(response.body) as Map<String, dynamic>;
+  //     final data = responseData['results'];
+  //     // print('toprated ------------> $data');
+
+     
+  //       _similar.clear();     
+
+  //     data.forEach((element) {
+  //       _similar.add(MovieItem.fromJson(element));
+  //     });        
+
+  //   } catch (error) {
+  //     print('Movies - getSimilar error -------------> $error');
+  //   }
+  // }
+
   Future<void> fetchVideos(int id) async {
     final url = '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['API_KEY']}&language=en-US';
 
@@ -357,11 +367,11 @@ class Movies with ChangeNotifier {
   }
 
   // Fetch genres
-  Future<void> fetchActions(int page) async {
+  Future<void> getGenre(int id, int page) async {
     print('DotEnv API_KEY---------------> ${DotEnv().env['API_KEY']}');
     // print('API_KEY---------------> $API_KEY');
     final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=28';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
     final response = await http.get(url);
     // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -370,462 +380,15 @@ class Movies with ChangeNotifier {
     // When page reopened it will fetch page 1 
     // so delete previous data to avoid duplicates
     if(page == 1) {
-      _action.clear();
+      _genre.clear();
     }
 
     moviesData.forEach((element) {
-      _action.add(MovieItem.fromJson(element));
+      _genre.add(MovieItem.fromJson(element));
     });
     // print('Action  -------------> ${response.body}');
     notifyListeners();
   }
 
-  List<MovieItem> get action {
-    return _action;
-  }
-
-  Future<void> fetchAdventure(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=12';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _adventure.clear();
-    }
-
-    moviesData.forEach((element) {
-      _adventure.add(MovieItem.fromJson(element));
-    });
-    // print('adventure  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get adventrue {
-    return _adventure;
-  }
-
-  Future<void> fetchComedy(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=35';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _comedy.clear();
-    }
-
-    moviesData.forEach((element) {
-      _comedy.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get comedy {
-    return _comedy;
-  }
-
-  Future<void> fetchAnimation(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=16';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _animation.clear();
-    }
-
-    moviesData.forEach((element) {
-      _animation.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get animation {
-    return _animation;
-  }
-
-  Future<void> fetchCrime(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=80';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _crime.clear();
-    }
-
-    moviesData.forEach((element) {
-      _crime.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get crime {
-    return _crime;
-  }
-
-  Future<void> fetchFamily(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10751';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _family.clear();
-    }
-
-    moviesData.forEach((element) {
-      _family.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get family {
-    return _family;
-  }
-
-  Future<void> fetchDocumentary(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=99';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-    
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _documentary.clear();
-    }
-
-    moviesData.forEach((element) {
-      _documentary.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get documentary {
-    return _documentary;
-  }
-
-  Future<void> fetchDrama(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=18';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _drama.clear();
-    }
-
-    moviesData.forEach((element) {
-      _drama.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get drama {
-    return _drama;
-  }
-
-  Future<void> fetchFantasy(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=14';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _fantasy.clear();
-    }
-
-    moviesData.forEach((element) {
-      _fantasy.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get fantasy {
-    return _fantasy;
-  }
-
-  Future<void> fetchHistory(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=36';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _history.clear();
-    }
-
-    moviesData.forEach((element) {
-      _history.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get history {
-    return _history;
-  }
-
-  Future<void> fetchHorror(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=27';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _horror.clear();
-    }
-
-    moviesData.forEach((element) {
-      _horror.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get horror {
-    return _horror;
-  }
-
-  Future<void> fetchMusic(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10402';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _music.clear();
-    }
-
-    moviesData.forEach((element) {
-      _music.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get music {
-    return _music;
-  }
-
-  Future<void> fetchMystery(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=9648';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _mystery.clear();
-    }
-
-    moviesData.forEach((element) {
-      _mystery.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get mystery {
-    return _mystery;
-  }
-
-  Future<void> fetchRomance(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10749';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _romance.clear();
-    }
-
-    moviesData.forEach((element) {
-      _romance.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get romance {
-    return _romance;
-  }
-
-  Future<void> fetchSciFi(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=878';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _scifi.clear();
-    }
-
-    moviesData.forEach((element) {
-      _scifi.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get scifi {
-    return _scifi;
-  }
-
-  Future<void> fetchThriller(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=53';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _thriller.clear();
-    }
-
-    moviesData.forEach((element) {
-      _thriller.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get thriller {
-    return _thriller;
-  }
-
-  Future<void> fetchWar(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=10752';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _war.clear();
-    }
-
-    moviesData.forEach((element) {
-      _war.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get war {
-    return _war;
-  }
-
-  Future<void> fetchWestern(int page) async {
-    final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=37';
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
-
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _western.clear();
-    }
-
-    moviesData.forEach((element) {
-      _western.add(MovieItem.fromJson(element));
-    });
-    // print('Comedy  -------------> ${response.body}');
-    notifyListeners();
-  }
-
-  List<MovieItem> get western {
-    return _western;
-  }
-
-  Future<void> fetchGenres() async {
-    await fetchActions(1);
-    await fetchAdventure(1);
-    await fetchComedy(1);
-    await fetchAnimation(1);
-    await fetchCrime(1);
-    await fetchDocumentary(1);
-    await fetchDrama(1);
-    await fetchFamily(1);
-    await fetchHistory(1);
-    await fetchHorror(1);
-    await fetchMusic(1);
-    await fetchMystery(1);
-    await fetchRomance(1);
-    await fetchSciFi(1);
-    await fetchThriller(1);
-    await fetchWar(1);
-    await fetchWestern(1);
-  }
+  
 }

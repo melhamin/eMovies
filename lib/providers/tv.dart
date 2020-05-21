@@ -8,7 +8,7 @@ import 'package:e_movies/consts/consts.dart';
 
 class TVItem {
   final int id;
-  final String name;
+  final String title;
   final String posterUrl;
   final String backdropUrl;
   final String overview;
@@ -18,6 +18,7 @@ class TVItem {
   final String status;
   final double voteAverage;
   final int voteCount;
+  final String mediaType;
 
   List<dynamic> createdBy;
   List<dynamic> seasons;
@@ -43,7 +44,7 @@ class TVItem {
 
   TVItem({
     @required this.id,
-    @required this.name,
+    @required this.title,
     @required this.posterUrl,
     this.backdropUrl,
     @required this.genreIDs,
@@ -63,6 +64,7 @@ class TVItem {
     this.lastAirDate,
     this.cast,
     this.status,
+    this.mediaType,
     // this.productionCompanies,
     // this.productionContries,
     this.networks,
@@ -76,7 +78,7 @@ class TVItem {
   static TVItem fromJson(json) {
     return TVItem(
       id: json['id'],
-      name: json['name'] ??= json['name'],
+      title: json['name'] ??= json['name'],
       genreIDs: json['genre_ids'] ??= json['genres'],
       // genreIDs: null,
       posterUrl: json['backdrop_path'] == null
@@ -123,14 +125,17 @@ class TVItem {
       popularity: json['popularity'] == null ? 0 : json['popularity'] + 0.0,
       // popularity: 9.3
       character: json['character'],
+      mediaType: 'tv',
     );
   }
 }
 
 class TV with ChangeNotifier {
-  List<TVItem> _popular = [];
+  List<TVItem> _trending = [];
   List<TVItem> _onAirToday = [];
   List<TVItem> _topRated = [];
+  List<TVItem> _genre = [];
+  List<TVItem> _similar = [];
 
   TVItem _details;
 
@@ -140,8 +145,8 @@ class TV with ChangeNotifier {
     return _details;
   }
 
-  List<TVItem> get popular {
-    return _popular;
+  List<TVItem> get trending {
+    return _trending;
   }
 
   List<TVItem> get onAirToday {
@@ -150,6 +155,14 @@ class TV with ChangeNotifier {
 
   List<TVItem> get topRated {
     return _topRated;
+  }
+
+  List<TVItem> get genre {
+    return _genre;
+  }
+
+  List<TVItem> get similar {
+    return _similar;
   }
 
   // Functions
@@ -163,11 +176,11 @@ class TV with ChangeNotifier {
       final data = responseData['results'];
 
       if (page == 1) {
-        _popular.clear();
+        _trending.clear();
       }
 
       data.forEach((element) {
-        _popular.add(TVItem.fromJson(element));
+        _trending.add(TVItem.fromJson(element));
       });
 
       // print(_popular);
@@ -234,17 +247,67 @@ class TV with ChangeNotifier {
 
   Future<void> getDetails(int id) async {
     final url =
-        '$BASE_URL/tv/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,Csimilar,images&include_image_language=en,null';
+        '$BASE_URL/tv/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,images&include_image_language=en,null';
     try {
       final response = await http.get(url);
+      // print('getDetails credits ------------------------->');
       // print('response ---------> ${response.body}');
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       // final data = responseData['results'];
       // print('details --------------->  ${data}');
+      // print('getDetails credits -------------------------> ${responseData['credits']['crew']}');
       _details = TVItem.fromJson(responseData);
     } catch (error) {
       print('TV - getDetails error -----------> $error ');
     }
     notifyListeners();
   }
+
+
+
+  Future<void> getGenre(int id, int page) async {
+    final url = 'https://api.themoviedb.org/3/discover/tv?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=$id';
+    try {
+      final response = await http.get(url);
+      print(response.body);      
+
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'];
+      // print('toprated ------------> $data');
+
+      if (page == 1) {
+        _genre.clear();
+      }
+
+      data.forEach((element) {
+        _genre.add(TVItem.fromJson(element));
+      });        
+
+    } catch (error) {
+      print('TV - getGenre error -------------> $error');
+    }
+  }
+
+  Future<void> getSimilar(int id) async {    
+    final url = 'https://api.themoviedb.org/3/tv/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
+    try {
+      final response = await http.get(url);
+      // print(response.body);      
+
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'];
+      // print('toprated ------------> $data');
+
+     
+        _similar.clear();     
+
+      data.forEach((element) {
+        _similar.add(TVItem.fromJson(element));
+      });        
+
+    } catch (error) {
+      print('TV - getGenre error -------------> $error');
+    }
+  }
+  
 }

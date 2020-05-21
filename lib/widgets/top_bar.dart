@@ -17,10 +17,10 @@ class TopBar extends StatelessWidget {
     //     );
     return Align(
       alignment: Alignment.topCenter,
-      child: Container(
+      child: Container(        
         height: kToolbarHeight,
         decoration: BoxDecoration(
-          color: opaque ? Colors.black : Colors.black54,
+          color: opaque ? BASELINE_COLOR : Colors.black54,
         ),
         child: Row(
           children: [
