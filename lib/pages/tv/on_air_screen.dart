@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart' show TV;
 
 import 'package:flutter/material.dart';
@@ -96,9 +97,9 @@ class _AllMoviesState extends State<OnAirScreen> {
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          child: TopBar(title: 'On Air Today'),
-          preferredSize: Size.fromHeight(kToolbarHeight),
+        appBar: AppBar(                  
+          centerTitle: true,
+          title: Text('Upcoming', style: kTitleStyle,),          
         ),
         body: NotificationListener(
           onNotification: onNotification,

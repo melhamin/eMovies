@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/providers/tv.dart' as tv;
 

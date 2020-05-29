@@ -6,12 +6,10 @@ import 'package:e_movies/providers/cast.dart' as prov;
 
 class CastItem extends StatelessWidget {
   final prov.CastItem item;
-  final bool last;
   final bool subtitle;
 
   CastItem({
     this.item,
-    this.last = false,
     this.subtitle = true,
   });
 
@@ -65,15 +63,13 @@ class CastItem extends StatelessWidget {
       margin: const EdgeInsets.only(left: LEFT_PADDING),
       decoration: BoxDecoration(
         border: Border(
-          bottom: !last
-              ? BorderSide(width: 0.5, color: LINE_COLOR)
-              : BorderSide(color: Colors.transparent, width: 0),
+          bottom: BorderSide(width: 0.5, color: LINE_COLOR),
         ),
       ),
       child: ListTile(
         onTap: _onTap,
         dense: true,
-        contentPadding: const EdgeInsets.all(0),        
+        contentPadding: const EdgeInsets.all(0),
         leading: CircleAvatar(
           backgroundColor: item.imageUrl == null
               ? Theme.of(context).accentColor
@@ -95,16 +91,13 @@ class CastItem extends StatelessWidget {
         subtitle: !subtitle
             ? Text('')
             : RichText(
-                text: TextSpan(
-                    text: 'as ',
-                    style: kSubtitle2,
-                    children: [
-                      TextSpan(
-                          text: item.character,
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                          ))
-                    ]),
+                text: TextSpan(text: 'as ', style: kSubtitle2, children: [
+                  TextSpan(
+                      text: item.character,
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                      ))
+                ]),
               ),
       ),
     );

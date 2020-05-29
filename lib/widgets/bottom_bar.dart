@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class BottomBar extends StatelessWidget {
   final int currentIndex;
@@ -15,7 +17,7 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoTabBar(                        
-        backgroundColor: Colors.black54,
+        backgroundColor:Hexcolor('#BF303030'),
         inactiveColor: Colors.white70,
         activeColor: Theme.of(context).accentColor,
         iconSize: 35,

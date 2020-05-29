@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/widgets/top_bar.dart';
 import 'package:e_movies/providers/movies.dart' show Movies;
 import 'package:e_movies/widgets/movie/movie_item.dart';
 
@@ -104,19 +103,10 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: BASELINE_COLOR,
+        appBar: AppBar(          
           centerTitle: true,
-          title: Text(
-            'Trending',
-            style: kTitleStyle,
-          ),
+          title: Text('Trending', style: kTitleStyle),          
         ),
-        // appBar: PreferredSize(
-
-        //   child: TopBar(title: 'Trending'),
-        //   preferredSize: Size.fromHeight(kToolbarHeight),
-        // ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(

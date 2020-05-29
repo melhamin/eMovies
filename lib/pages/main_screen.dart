@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:e_movies/providers/lists.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/pages/movie/movies_screen.dart';
@@ -8,6 +9,7 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/search_screen.dart';
 import 'package:e_movies/pages/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
+import 'package:provider/provider.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -26,9 +28,11 @@ class _MainScreenState extends State<MainScreen>
   @override
   initState() {
     super.initState();
-    // Future.delayed(Duration.zero).then((value) => {
-    //   Provider.of<Movies>(context, listen: false).fetch(),
-    // });
+
+    // load lists    
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Lists>(context, listen: false).loadLists();
+    });
     _tabController = TabController(
       vsync: this,
       length: 4,
@@ -48,7 +52,7 @@ class _MainScreenState extends State<MainScreen>
       child: PageView(
         controller: _pageController,
         physics: NeverScrollableScrollPhysics(),
-        pageSnapping: false,
+        pageSnapping: false,        
         children: <Widget>[
           MoviesScreen(),
           TVScreen(),
@@ -62,21 +66,21 @@ class _MainScreenState extends State<MainScreen>
   void _onTap(int newIndex) {
     setState(() {
       _selectedIndex = newIndex;
-      _tabController.index = newIndex;
+      // _tabController.index = newIndex;
       _pageController.jumpToPage(newIndex);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final _background_image = Image.asset(
-      'assets/images/background_image_1.jpg',
-      fit: BoxFit.cover,
-    );
+    // final _background_image = Image.asset(
+    //   'assets/images/background_image_1.jpg',
+    //   fit: BoxFit.cover,
+    // );
 
-    final transparentBackground = Container(
-      color: TRRANSPARENT_BACKGROUND_COLOR,
-    );
+    // final transparentBackground = Container(
+    //   color: TRRANSPARENT_BACKGROUND_COLOR,
+    // );
 
     final currentPage = BottomTabs(
       currentIndex: _selectedIndex,
@@ -91,23 +95,17 @@ class _MainScreenState extends State<MainScreen>
           // bottom,
         ],
       ),
-    );
-
-    // return Stack(
-    //   children: [
-    //     _background_image,
-    //     _content,
-    //   ],
-    // );    
+    );  
     return SafeArea(
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          // _background_image,
-          // transparentBackground,
-          _content,
-        ],
-      ),
+      child: _content,
+      // Stack(
+      //   fit: StackFit.expand,
+      //   children: <Widget>[
+      //     // _background_image,
+      //     // transparentBackground,
+      //     _content,
+      //   ],
+      // ),
     );
   }
 }

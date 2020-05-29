@@ -26,8 +26,8 @@ class _ImageViewState extends State<ImageView>
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
-          centerTitle: true,
-          title: Text('Gallery', style: kTitleStyle),
+          centerTitle: true,          
+          title: Text('Gallery', style: kTitleStyle),          
         ),
         body: Center(
           child: Container(

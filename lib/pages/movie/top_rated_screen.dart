@@ -1,4 +1,5 @@
 import 'package:async/async.dart';
+import 'package:e_movies/consts/consts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -90,9 +91,9 @@ class _AllMoviesState extends State<TopRated>  {
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          child: TopBar(title: 'Top Rated'),
-          preferredSize: Size.fromHeight(kToolbarHeight),
+        appBar: AppBar(
+          title: Text('Top Rated', style: kTitleStyle),          
+          centerTitle: true,
         ),
         body: NotificationListener(
           onNotification: onNotification,

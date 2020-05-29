@@ -1,12 +1,10 @@
 import 'package:async/async.dart';
-import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
 
 class Genre extends StatefulWidget {

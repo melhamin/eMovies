@@ -1,11 +1,10 @@
+import 'package:e_movies/widgets/genre_grid.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/widgets/nav_bar.dart';
-import 'package:e_movies/pages/movie/movie_genres_screen.dart';
 import 'package:e_movies/pages/movie/trending_movies_screen.dart';
 import 'package:e_movies/pages/movie/top_rated_screen.dart';
 import 'package:e_movies/pages/movie/upcoming_screen.dart';
@@ -48,77 +47,9 @@ class _MoviesScreenState extends State<MoviesScreen>
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
+  
 
-  Widget _buildNavBar() {
-    return NavBar(
-      tabController: _tabController,
-      tabs: [
-        Tab(
-            icon: Text(
-          'Discover',
-          style: kTitleStyle2,
-        )),
-        Tab(
-            icon: Text(
-          'Genres',
-          style: kTitleStyle2,
-        )),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // super.build(context);
-    final trending = Provider.of<Movies>(context).trending;
-    final upcoming = Provider.of<Movies>(context).upcoming;
-    final topRated = Provider.of<Movies>(context).topRated;
-
-    final content = TabBarView(
-      controller: _tabController,
-      children: [
-        DiscoverTab(
-          trending: trending,
-          isFetching: _isFetching,
-          topRated: topRated,
-          upcoming: upcoming,
-        ),
-        MovieGenresScreen(),
-      ],
-    );
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: _buildNavBar(),
-        ),
-        body: content,
-      ),
-    );
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-}
-
-class DiscoverTab extends StatelessWidget {
-  const DiscoverTab({
-    Key key,
-    @required bool isFetching,
-    @required this.trending,
-    @required this.upcoming,
-    @required this.topRated,
-  })  : _isFetching = isFetching,
-        super(key: key);
-
-  final bool _isFetching;
-  final List<MovieItem> trending;
-  final List<MovieItem> upcoming;
-  final List<MovieItem> topRated;
-
-  Widget _buildSectionTitle(String title, Function onTap,
+   Widget _buildSectionTitle(String title, Function onTap,
       [bool withSeeAll = true]) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -170,78 +101,81 @@ class DiscoverTab extends StatelessWidget {
         );
       },
     );
-  }
-
-  // Widget _buildGenres() {
-  //   return GridView.builder(
-  //     padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-  //     key: PageStorageKey('GenresPageGrid'),
-  //     physics: BouncingScrollPhysics(),
-  //     addAutomaticKeepAlives: true,
-  //     itemCount: MOVIE_GENRE_DETAILS.length,
-  //     itemBuilder: (context, i) {
-  //       return TVGenreTile(
-  //         imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
-  //         genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
-  //         title: MOVIE_GENRE_DETAILS[i]['title'],
-  //       );
-  //     },
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: 1,
-  //       childAspectRatio: 2 / 3,
-  //       // mainAxisSpacing: 10,
-  //     ),
-  //     scrollDirection: Axis.horizontal,
-  //   );
-  // }
+  }  
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
+    super.build(context);
+    final trending = Provider.of<Movies>(context).trending;
+    final upcoming = Provider.of<Movies>(context).upcoming;
+    final topRated = Provider.of<Movies>(context).topRated;
+
+    return SafeArea(
+      child: Scaffold(
+       body: LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: kToolbarHeight),
-          child: Column(
-            children: [
-              _buildSectionTitle('Trending', () {
-                Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));
-              }),
-              Container(
-                  height: constraints.maxHeight * 0.5,
-                  child: _isFetching
-                      ? SpinKitCircle(
-                          color: Theme.of(context).accentColor,
-                          size: 21,
-                        )
-                      : Grid(movies: trending)),
-              _buildSectionTitle('Upcoming', () {
-                Navigator.of(context).push(_buildRoute(UpcomingScreen()));
-              }),
-              Container(
-                  height: constraints.maxHeight * 0.5,
-                  child: _isFetching
-                      ? SpinKitCircle(
-                          color: Theme.of(context).accentColor,
-                          size: 21,
-                        )
-                      : Grid(movies: upcoming)),
-              _buildSectionTitle('Top Rated', () {
-                Navigator.of(context).push(_buildRoute(TopRated()));
-              }),
-              Container(
-                  height: constraints.maxHeight * 0.5,
-                  child: _isFetching
-                      ? SpinKitCircle(
-                          color: Theme.of(context).accentColor,
-                          size: 21,
-                        )
-                      : Grid(movies: topRated)),
-            ],
-          ),
+        return ListView(
+          padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+          physics: BouncingScrollPhysics(),
+          children: [
+            _buildSectionTitle('Genres', () {
+              Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));
+            }, false),
+            Container(
+                height: constraints.maxHeight * 0.25,
+                child: _isFetching
+                    ? SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                        size: 21,
+                      )
+                    : GenreGrid(
+                        itemsList: MOVIE_GENRE_DETAILS,
+                        mediaType: 0,
+                      )),
+            _buildSectionTitle('Trending', () {
+              Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));
+            }),
+            Container(
+                height: constraints.maxHeight * 0.5,
+                child: _isFetching
+                    ? SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                        size: 21,
+                      )
+                    : Grid(movies: trending)),
+            _buildSectionTitle('Upcoming', () {
+              Navigator.of(context).push(_buildRoute(UpcomingScreen()));
+            }),
+            Container(
+                height: constraints.maxHeight * 0.5,
+                child: _isFetching
+                    ? SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                        size: 21,
+                      )
+                    : Grid(movies: upcoming)),
+            _buildSectionTitle('Top Rated', () {
+              Navigator.of(context).push(_buildRoute(TopRated()));
+            }),
+            Container(
+                height: constraints.maxHeight * 0.5,
+                child: _isFetching
+                    ? SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                        size: 21,
+                      )
+                    : Grid(movies: topRated)),
+          ],
         );
       },
+    ),
+      ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class Grid extends StatelessWidget {

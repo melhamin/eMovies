@@ -36,8 +36,18 @@ class MovieItem extends StatelessWidget {
   }
 
   Route _buildRoute() {
+    final initData = {
+      'id': movie.id,
+      'title': movie.title,
+      'genre': (movie.genreIDs.length == 0 || movie.genreIDs[0] == null) ? 'N/A' : movie.genreIDs[0],
+      'posterUrl': movie.posterUrl,
+      'backdropUrl': movie.backdropUrl,
+      'mediaType': movie.mediaType,
+      'releaseDate': movie.releaseDate.year.toString() ?? 'N/A',
+      'voteAverage': movie.voteAverage,
+    };
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: movie),
+      settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -152,6 +162,7 @@ class MovieItem extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
+              // whether to include footer details or not (used for similar movies list)
               height: withFooter ? constraints.maxHeight * 0.7 : constraints.maxHeight,
               child: _buildBackgroundImage(context, constraints),
             ),

@@ -10,7 +10,7 @@ class VideoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: BASELINE_COLOR,
+      color: ONE_LEVEL_ELEVATION,
       child: ListTile(        
         leading: CachedNetworkImage(
           // youtube thumbnails url
@@ -28,30 +28,5 @@ class VideoItem extends StatelessWidget {
         onTap: () => onTap(videoDetails.key),
       ),
     );
-    // return GridTile(
-    //         footer: Text(
-    //       'Title goes here',
-    //       style: Theme.of(context).textTheme.headline4,
-    //   ),
-    //         child: Stack(
-    //       children: [
-    //         CachedNetworkImage(
-    //           imageUrl: 'https://img.youtube.com/vi/${videoDetails.key}/0.jpg',
-    //           fit: BoxFit.fill,
-    //         ),
-    //         Align(
-    //           alignment: Alignment.center,
-    //           child: GestureDetector(
-    //             child: Icon(
-    //               Icons.play_circle_outline,
-    //               size: 50,
-    //               color: Theme.of(context).accentColor,
-    //             ),
-    //             onTap: () => onTap(videoDetails.key),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //       );
   }
 }

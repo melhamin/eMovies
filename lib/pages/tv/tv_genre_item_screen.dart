@@ -1,12 +1,10 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart';
-import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
 
 class TVGenreItemScreen extends StatefulWidget {
@@ -102,12 +100,11 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
     final items = Provider.of<TV>(context).genre;
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          child: TopBar(
-            title: TV_GENRES[widget.id]
-          ),
-          preferredSize: Size.fromHeight(kToolbarHeight),
+        appBar: AppBar(
+          title: Text(TV_GENRES[widget.id], style: kTitleStyle),          
+          centerTitle: true,          
         ),
+          
         body: _isFetching
             ? _buildLoadingIndicator(context)
             : Column(
@@ -136,8 +133,6 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             childAspectRatio: 1 / 2,
-                            // crossAxisSpacing: 5,
-                            // mainAxisSpacing: 5,
                           ),
                         ),
                       ),

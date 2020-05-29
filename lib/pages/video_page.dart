@@ -1,6 +1,6 @@
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/movies.dart';
-import 'package:e_movies/widgets/top_bar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -52,9 +52,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
     if (_initLoaded) {
       final id = ModalRoute.of(context).settings.arguments as int;
       print('id --------> $id');
-      Provider.of<Movies>(context, listen: false)
-          .fetchVideos(id)
-          .then((value) {
+      Provider.of<Movies>(context, listen: false).fetchVideos(id).then((value) {
         setState(() {
           _videos = Provider.of<Movies>(context, listen: false).videos;
           // print('first video----------------> ${_videos[0].name}');
@@ -116,33 +114,33 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(          
+          title: Text('Videos', style: kTitleStyle),
+          centerTitle: true,
+        ),
         body: _isFetching
             ? Center(
                 child: SpinKitCircle(
                     size: 21, color: Theme.of(context).accentColor))
             : LayoutBuilder(
                 builder: (context, constraints) {
-                  return  Stack(
-                          children: [
-                            _isEmpty
-                      ? Center(
-                          child: Text(
-                            'No Video Availabe!',
-                            style: Theme.of(context).textTheme.headline5,
-                          ),
-                        )
-                      :
-                            ListView.separated(
+                  return Stack(
+                    children: <Widget>[
+                      _isEmpty
+                          ? Center(
+                              child: Text(
+                                'No Video Availabe!',
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            )
+                          : ListView.separated(
                               shrinkWrap: true,
                               padding: EdgeInsets.only(
-                                  top: constraints.maxHeight * 0.3 + APP_BAR_HEIGHT + 20),
-                              physics: BouncingScrollPhysics(),
+                                  top: constraints.maxHeight * 0.3 + 10),
+                              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                               itemCount: _videos.length,
                               separatorBuilder: (context, index) {
-                                return Divider(
-                                  // thickness: 0.5,
-                                  // color: Colors.white,
-                                );
+                                return Divider();
                               },
                               itemBuilder: (context, index) {
                                 return wid.VideoItem(
@@ -151,31 +149,22 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                                 );
                               },
                             ),
-                            Column(
-                              children: [
-                                TopBar(title: 'Videos'),
-                                if(!_isEmpty)
-                                Container(
-                                  height: constraints.maxHeight * 0.3,
-                                  child: Align(
-                                    alignment: Alignment.topCenter,
-                                    child: YoutubePlayer(
-                                      controller: _controller,
-                                      progressIndicatorColor: Theme.of(context).accentColor,
-                                    ),
-                                  ),
-                                ),                               
-                              ],
-                            ),
-                            SizedBox(),
-                          ],
-                        );
+                      Container(
+                        // color: Colors.red,
+                        height: constraints.maxHeight * 0.3,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: YoutubePlayer(
+                            controller: _controller,
+                            progressIndicatorColor:
+                                Theme.of(context).accentColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
                 },
               ),
-        //     : YoutubePlayer(
-        //         controller: _controller,
-        //         progressIndicatorColor: Colors.pink,
-        //       ),
       ),
     );
   }

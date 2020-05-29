@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import 'package:e_movies/providers/movies.dart' show Movies;
 import 'package:e_movies/widgets/movie/movie_item.dart';
-import 'package:e_movies/widgets/top_bar.dart';
 
 enum MovieLoaderStatus {
   STABLE,
@@ -105,15 +104,10 @@ class _AllMoviesState extends State<UpcomingScreen>
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: BASELINE_COLOR,
+        appBar:  AppBar(          
           centerTitle: true,
-          title: Text('Upcoming', style: kTitleStyle,),
+          title: Text('Upcoming', style: kTitleStyle,),          
         ),
-        // appBar: PreferredSize(
-        //   child: TopBar(title: 'Upcoming'),
-        //   preferredSize: Size.fromHeight(kToolbarHeight),
-        // ),
         body: NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(

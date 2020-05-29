@@ -20,7 +20,7 @@ class TopBar extends StatelessWidget {
       child: Container(        
         height: kToolbarHeight,
         decoration: BoxDecoration(
-          color: opaque ? BASELINE_COLOR : Colors.black54,
+          color: ONE_LEVEL_ELEVATION_WITHOPACITY,
         ),
         child: Row(
           children: [

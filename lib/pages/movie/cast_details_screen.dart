@@ -24,7 +24,7 @@ class _CastDetailsState extends State<CastDetails>
   bool _isInitLoaded = true;
   bool _isFetching = true;
   TabController _tabController;
-  int _selectedIndex;  
+  int _selectedIndex;
 
   @override
   void initState() {
@@ -48,7 +48,6 @@ class _CastDetailsState extends State<CastDetails>
         setState(() {
           _isFetching = false;
           _isInitLoaded = false;
-          
         });
       });
     }
@@ -89,9 +88,7 @@ class _CastDetailsState extends State<CastDetails>
     // super.build(context);
     final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
     prov.Person person;
-    if(!_isFetching)
-    person =
-              Provider.of<prov.Cast>(context).person;
+    if (!_isFetching) person = Provider.of<prov.Cast>(context).person;
     // print('item -------> ${item.id}');
     return SafeArea(
       child: Scaffold(
@@ -116,7 +113,6 @@ class _CastDetailsState extends State<CastDetails>
                       child: _buildTabBar(),
                     ),
                     Container(
-                      color: BASELINE_COLOR,
                       height: constraints.maxHeight,
                       child: _isFetching
                           ? SpinKitCircle(
@@ -166,7 +162,8 @@ class Movies extends StatelessWidget {
       settings: RouteSettings(
         arguments: item,
       ),
-      pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          MovieDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -189,38 +186,40 @@ class Movies extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return ListView.builder(
       itemCount: movies.length,
-      separatorBuilder: (context, index) {
-        return Padding(
-          padding: EdgeInsets.only(left: 75),
-          child: Divider(
-            color: Colors.white,
-            thickness: 0.2,
-          ),
-        );
-      },
+      // separatorBuilder: (context, index) {
+      //   return Padding(
+      //     padding: EdgeInsets.only(left: 75),
+      //     child: Divider(
+      //       color: Colors.white,
+      //       thickness: 0.2,
+      //     ),
+      //   );
+      // },
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, i) {
-        return Padding(
-          padding:
-              const EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
+        return InkWell(
+          onTap: () => _onTap(context, movies[i]),
+          highlightColor: Colors.black,
+          splashColor: Colors.transparent,
           child: ListTile(
             dense: true,
-            contentPadding: const EdgeInsets.all(0),            
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundColor: Colors.black,
+            contentPadding: const EdgeInsets.all(0),
+            leading: Container(
+              padding:
+              const EdgeInsets.only(left: LEFT_PADDING),
               child: movies[i].posterUrl == null
                   ? PlaceHolderImage(movies[i].title)
                   : CachedNetworkImage(
                       imageUrl: movies[i].posterUrl,
+                      fit: BoxFit.cover,
                     ),
             ),
             title: Text(
-              movies[i].title,
-              style: kBodyStyle,
-            ),
+                movies[i].title,
+                style: kBodyStyle,
+              ),
             subtitle: RichText(
               text: TextSpan(text: 'as ', style: kSubtitle2, children: [
                 TextSpan(
@@ -230,13 +229,16 @@ class Movies extends StatelessWidget {
                     ))
               ]),
             ),
-            trailing: Text(
-              movies[i].releaseDate == null
-                  ? 'N/A'
-                  : DateFormat.y().format(movies[i].releaseDate),
-              style: kSubtitle1,
+            trailing: Padding(
+              padding:
+              const EdgeInsets.only(right: LEFT_PADDING),
+              child: Text(
+                movies[i].releaseDate == null
+                    ? 'N/A'
+                    : DateFormat.y().format(movies[i].releaseDate),
+                style: kSubtitle1,
+              ),
             ),
-            onTap: () => _onTap(context, movies[i]),
           ),
         );
       },

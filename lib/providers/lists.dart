@@ -6,30 +6,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:e_movies/providers/movies.dart';
 
 class ListItemModel {
+  int id;
   String title;
   double genre;
   int releaseDate;
-  String imageURL;
+  String posterUrl;
+  String backdropUrl;
   String mediaType;
   int runtime;
+  double voteAverage;
 
   ListItemModel();
 
   ListItemModel.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
+      : id = json['id'],
+        title = json['title'],
         genre = json['genre'],
         releaseDate = json['releaseDate'],
-        imageURL = json['imageURL'],
+        posterUrl = json['posterUrl'],
+        backdropUrl = json['backdropUrl'],
         mediaType = json['mediaType'],
-        runtime = json['runtime'];
+        voteAverage = json['voteAverage'];
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'title': title,
         'genre': genre ?? 'N/A',
-        'imageURL': imageURL,
+        'posterUrl': posterUrl,
         'mediaType': mediaType,
-        'releaseDate': releaseDate,
-        'runtime': runtime,
+        'releaseDate': releaseDate,        
+        'voteAverage': voteAverage,
       };
 }
 
@@ -44,42 +50,61 @@ class Lists with ChangeNotifier {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   List<Map<String, dynamic>> _moviesLists = [
-    {
-      'title': 'Watched',
-      'data': [],
-    },
-    {
-      'title': 'To Watch',
-      'data': [],
-    },
+    // {
+    //   'title': 'Watched',
+    //   'data': [],
+    // },
+    // {
+    //   'title': 'To Watch',
+    //   'data': [],
+    // },
   ];
 
   List<Map<String, dynamic>> get moviesLists {
     return _moviesLists;
   }
 
-  void addNewItem(int index, MovieItem item) {
-    // _moviesLists.firstWhere((element) {
-    //   return element['title'] == title;
-    // });
-    // print('item ------------> ${item.title}');
-    // _moviesLists[index]['data'].add(item);
-    _moviesLists[index]['data'].add({
-      'title': item.title,
-      'genre': item.genreIDs[0] ?? 'N/A',
-      'imageURL': item.posterUrl,
-      'mediaType': item.mediaType,
-      'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
-      'runtime': item.duration ?? 0,
-    });
+  Future<void> loadLists() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString('lists');
+
+    if (data != null && data.length > 0) {
+      final lists = json.decode(data) as List<dynamic>;
+      _moviesLists.clear();
+      lists.forEach((element) {
+        _moviesLists.add(element);
+      });
+    }
     notifyListeners();
   }
 
-  void addNewListToMovies(String title) {
-    _moviesLists.add({
+  void addNewItemToList(int index, dynamic item) {
+    _moviesLists[index]['data'].add({
+      'id': item['id'],
+      'title': item['title'],
+      // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
+      'genre': item['genre'],
+      'posterUrl': item['posterUrl'],
+      'backdropUrl': item['backdropUrl'],
+      'mediaType': item['mediaType'],
+      // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
+      'releaseDate': item['releaseDate'],
+      'voteAverage': item['voteAverage']      
+    });
+
+    // update preferences
+    savePrefs();
+    notifyListeners();
+  }
+
+  void addNewList(String title) {
+    _moviesLists.insert(0, {
       'title': title,
       'data': [],
     });
+    
+    // update prefrences
+    savePrefs();
     notifyListeners();
   }
 
@@ -87,16 +112,34 @@ class Lists with ChangeNotifier {
     moviesLists.removeWhere((element) {
       return element['title'] == title;
     });
+
+    // update prefrences
+    savePrefs();
     notifyListeners();
   }
 
-  void encode() {
-    // Map<String, dynamic> map = {};
-    var enc = json.encode(moviesLists);
-    print(enc);
+  void deleteItemFromList(String title, int itemId) {
+    // get list with give title
+    final list = _moviesLists.firstWhere((element) {
+      return element['title'] == title;
+    });
+
+    // remove desired item form the list
+    list['data'].removeWhere((element) {
+      print('element ---------> $element');
+      return element['id'] == itemId;
+    });
+
+    // update preferences
+    savePrefs();
+
+    notifyListeners(); 
+
+
   }
 
-  void addToPrefs() async {
+
+  void savePrefs() async {
     print('-----> ${json.encode(moviesLists)}');
     SharedPreferences prefs = await _prefs;
     prefs.setString('lists', json.encode(moviesLists));
@@ -106,5 +149,11 @@ class Lists with ChangeNotifier {
     SharedPreferences prefs = await _prefs;
     var res = prefs.getString('lists');
     print(res);
+  }
+
+  void deleteAllPrefs() async {
+    SharedPreferences prefs = await _prefs;    
+    prefs.clear();    
+    notifyListeners();
   }
 }

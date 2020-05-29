@@ -60,6 +60,7 @@ flutter:
     - .env
     
     - assets/images/background_image_1.jpg
+    - assets/images/movie_list_image.jpg
     - assets/images/logo.png
     - assets/images/poster_placeholder.png        
     - assets/images/placeholder.png   

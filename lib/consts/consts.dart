@@ -77,19 +77,19 @@ TextStyle kTBStyle = TextStyle(
   fontFamily: 'Helvatica',
   fontWeight: FontWeight.bold,
   fontSize: 16,
-  color: Colors.pink,
+  color: Hexcolor('#55AB55'),
 );
 
 TextStyle kBTStyle = TextStyle(
   fontFamily: 'Helvatica',
   fontSize: 18,
   fontWeight: FontWeight.bold,
-  color: Colors.pink,
+  color: Hexcolor('#55AB55'),
 );
 
-TextStyle kListTitleStyle = TextStyle(
+TextStyle kListsItemTitleStyle = TextStyle(
   fontFamily: 'Helvatica',
-  fontSize: 16,
+  fontSize: 18,
   fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),
 );
@@ -107,7 +107,12 @@ const THUMBNAIL_URL = '';
 const Color TRRANSPARENT_BACKGROUND_COLOR = Color(0x991C306D);
 const Color LINE_COLOR = Colors.white10;
 Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212');
+// Color BASELINE_COLOR = Color.fromRGBO(28, 28, 30, 1);
 Color BASELINE_COLOR = Hexcolor('#121212');
+Color ONE_LEVEL_ELEVATION = Hexcolor('#202020');
+Color ONE_LEVEL_ELEVATION_WITHOPACITY = Hexcolor('#BF212121');
+Color TWO_LEVEL_ELEVATION = Hexcolor('#303030');
+Color THREE_LEVEL_ELEVATION = Hexcolor('#424242');
 const double APP_BAR_HEIGHT = 56;
 const double LEFT_PADDING = 15;
 const AVATAR_RADIUS = 20;

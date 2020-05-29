@@ -1,6 +1,4 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_genre_item_screen.dart';
-import 'package:e_movies/widgets/movie/movie_genre_tile.dart';
 import 'package:e_movies/widgets/movie/movie_genre_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +25,7 @@ class _MovieGenresScreenState extends State<MovieGenresScreen>
 
   @override
   Widget build(BuildContext context) {
+    // dynamic child;
     super.build(context);    
     return Scaffold(
       body: GridView.builder(  
@@ -36,7 +35,7 @@ class _MovieGenresScreenState extends State<MovieGenresScreen>
         physics: BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,
         itemCount: MOVIE_GENRE_DETAILS.length,
-        itemBuilder: (context, i) {
+        itemBuilder: (context, i) {        
           return MovieGenreTile(
             imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
             genreId: MOVIE_GENRE_DETAILS[i]['genreId'],

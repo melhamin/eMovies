@@ -1,13 +1,13 @@
+import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/main_screen.dart';
 import 'package:e_movies/pages/movie/trending_movies_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:e_movies/pages/movie/cast_details_screen.dart' show CastDetails;
 import 'package:e_movies/pages/movie/movie_details_screen.dart' show MovieDetailsScreen;
-import 'package:e_movies/pages/movie/trending_movies_screen.dart';
 import 'package:e_movies/pages/movie/top_rated_screen.dart';
 import 'package:e_movies/pages/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
@@ -38,13 +38,22 @@ class MyApp extends StatelessWidget {
           // primaryColor: Color(0xff1C306D),
           // primaryColor: Hexcolor('#2c3e50'),
           primaryColor: Colors.black,
+          applyElevationOverlayColor: true,
+          fontFamily: 'Helvatica',
+          // primarySwatch:,                   
           // accentColor: Colors.amber,
           // splashColor: Colors.transparent,
           // highlightColor: Colors.transparent,
           // accentColor: Colors.pink,
           // accentColor: Color(0xFFFFAD32),
-          accentColor: Colors.pink,
-          scaffoldBackgroundColor: Colors.black,                        
+          accentColor: Hexcolor('#55AB55'),
+          scaffoldBackgroundColor: BASELINE_COLOR,
+          appBarTheme: AppBarTheme(
+            elevation: 0,
+            color: ONE_LEVEL_ELEVATION,            
+          ),
+          errorColor: Hexcolor('#B00020'),
+          // Hexcolor('#101010'),
         ),
         home: MainScreen(),
         debugShowCheckedModeBanner: false,

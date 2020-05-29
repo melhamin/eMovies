@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:e_movies/consts/consts.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './bottom_bar.dart';
