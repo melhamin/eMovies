@@ -41,18 +41,13 @@ class MovieGenreTile extends StatelessWidget {
         return GestureDetector(
           child: Stack(
             children: [
-              Card(
-                color: Colors.black,
-                shadowColor: Colors.white30,
-                elevation: 5,
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: FadeInImage(
-                    image: AssetImage(imageUrl),
-                    placeholder: AssetImage('assets/images/placeholder.png'),
-                    fit: BoxFit.cover,
-                  ),
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: FadeInImage(
+                  image: AssetImage(imageUrl),
+                  placeholder: AssetImage('assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
               Align(

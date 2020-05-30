@@ -121,7 +121,7 @@ class _AllMoviesState extends State<TopRatedScreen> {
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 1 / 2,
+                      childAspectRatio: 2 / 3.5,
                       // mainAxisSpacing: 5,
                       // crossAxisSpacing: 5,
                     ),

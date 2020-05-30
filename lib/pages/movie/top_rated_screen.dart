@@ -109,12 +109,12 @@ class _AllMoviesState extends State<TopRated>  {
               itemCount: movies.length,
               itemBuilder: (ctx, i) {
                 return MovieItem(
-                  movie: movies[i],
+                  item: movies[i],
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 1 / 2,
+                childAspectRatio: 2 / 3.5,
                 // mainAxisSpacing: 5,
                 // crossAxisSpacing: 5,
               ),

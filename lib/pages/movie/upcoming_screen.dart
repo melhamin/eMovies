@@ -8,6 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:e_movies/providers/movies.dart' show Movies;
 import 'package:e_movies/widgets/movie/movie_item.dart';
 
+import 'package:e_movies/widgets/temp.dart' as temp;
+
+import '../../consts/consts.dart';
+import '../../consts/consts.dart';
+import '../../consts/consts.dart';
+
 enum MovieLoaderStatus {
   STABLE,
   LOADING,
@@ -82,12 +88,6 @@ class _AllMoviesState extends State<UpcomingScreen>
     return true;
   }
 
-  Future<void> _refreshMovies(bool refresh) async {
-    if (refresh)
-      await Provider.of<Movies>(context, listen: false)
-          .fetchUpcoming(1);
-  }
-
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
@@ -101,44 +101,39 @@ class _AllMoviesState extends State<UpcomingScreen>
   Widget build(BuildContext context) {
     super.build(context);
     var movies = Provider.of<Movies>(context).upcoming;
-    // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar:  AppBar(          
+        appBar: AppBar(
           centerTitle: true,
-          title: Text('Upcoming', style: kTitleStyle,),          
+          title: Text('Upcoming', style: kTitleStyle),
         ),
         body: NotificationListener(
           onNotification: onNotification,
-          child: RefreshIndicator(
-            onRefresh: () => _refreshMovies(movies.length == 0),
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                Flexible(
-                  child: GridView.builder(
-                    // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                    physics: const BouncingScrollPhysics(),
-                    controller: scrollController,
-                    key: PageStorageKey('UpcomingScreen'),
-                    cacheExtent: 12,
-                    itemCount: movies.length,
-                    itemBuilder: (ctx, i) {
-                      return MovieItem(
-                        movie: movies[i],
-                      );
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1 / 2,
-                      // mainAxisSpacing: 5,
-                      // crossAxisSpacing: 5,
-                    ),
+          child: Column(
+            children: [
+              Flexible(
+                child: GridView.builder(
+                  // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                  physics: const BouncingScrollPhysics(),
+                  controller: scrollController,
+                  key: const PageStorageKey('UpcomingScreen'),
+                  cacheExtent: 12,
+                  itemCount: movies.length,
+                  itemBuilder: (ctx, i) {
+                    return MovieItem(
+                      item: movies[i],
+                    );
+                  },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2 / 3.5,
+                    // mainAxisSpacing: 5,
+                    // crossAxisSpacing: 5,
                   ),
                 ),
-                if (_isFetching) _buildLoadingIndicator(context),
-              ],
-            ),
+              ),
+              if (_isFetching) _buildLoadingIndicator(context),
+            ],
           ),
         ),
       ),

@@ -1182,14 +1182,14 @@ class SimilarMovies extends StatelessWidget {
                         itemCount: movies.length,
                         itemBuilder: (context, index) {
                           return wid.MovieItem(
-                            movie: movies[index],
-                            withFooter: false,
+                            item: movies[index],
+                            withoutDetails: true,
                           );
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 1,
                           childAspectRatio: 3 / 2,
-                          // mainAxisSpacing: 5,
+                          mainAxisSpacing: 10,
                         ),
                         scrollDirection: Axis.horizontal,
                       ),

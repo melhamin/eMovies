@@ -142,8 +142,7 @@ class _GenreState extends State<Genre> {
                           itemBuilder: (ctx, i) {
                             return wid.TVItem(
                               item: items[i],
-                              tappable: true,
-                              withFooter: true,
+                              tappable: true,                              
                             );
                           },
                           gridDelegate:

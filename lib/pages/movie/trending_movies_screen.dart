@@ -41,9 +41,9 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
 
   @override
   void initState() {
+    super.initState();
     scrollController = ScrollController();
     // TODO: implement initState
-    super.initState();
   }
 
   @override
@@ -82,10 +82,10 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
     return true;
   }
 
-  Future<void> _refreshMovies(bool refresh) async {
-    if (refresh)
-      await Provider.of<Movies>(context, listen: false).fetchTrending(1);
-  }
+  // Future<void> _refreshMovies(bool refresh) async {
+  //   if (refresh)
+  //     await Provider.of<Movies>(context, listen: false).fetchTrending(1);
+  // }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
@@ -109,35 +109,31 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
         ),
         body: NotificationListener(
           onNotification: onNotification,
-          child: RefreshIndicator(
-            onRefresh: () => _refreshMovies(movies.length == 0),
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                Flexible(
-                  child: GridView.builder(
-                    // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                    physics: const BouncingScrollPhysics(),
-                    controller: scrollController,
-                    key: PageStorageKey('TrendingMoviesScreen'),
-                    cacheExtent: 12,
-                    itemCount: movies.length,
-                    itemBuilder: (ctx, i) {
-                      return MovieItem(
-                        movie: movies[i],
-                      );
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1 / 2,
-                      // mainAxisSpacing: 5,
-                      // crossAxisSpacing: 5,
-                    ),
+          child: Column(
+            children: [
+              Flexible(
+                child: GridView.builder(
+                  // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                  physics: const BouncingScrollPhysics(),
+                  controller: scrollController,
+                  key: const PageStorageKey('TrendingMoviesScreen'),
+                  cacheExtent: 12,
+                  itemCount: movies.length,
+                  itemBuilder: (ctx, i) {
+                    return MovieItem(
+                      item: movies[i],
+                    );
+                  },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2 / 3.5,
+                    // mainAxisSpacing: 5,
+                    // crossAxisSpacing: 5,
                   ),
                 ),
-                if (_isFetching) _buildLoadingIndicator(context),
-              ],
-            ),
+              ),
+              if (_isFetching) _buildLoadingIndicator(context),
+            ],
           ),
         ),
       ),

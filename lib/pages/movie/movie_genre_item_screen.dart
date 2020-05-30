@@ -112,27 +112,22 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
             Flexible(
               child: NotificationListener(
                 onNotification: onNotification,
-                child: RefreshIndicator(
-                  onRefresh: () {},
-                  // onRefresh: () => _refreshMovies(movies.length == 0),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: GridView.builder(
-                    physics: BouncingScrollPhysics(),
-                    controller: scrollController,
-                    // key: PageStorageKey('GenreItem'),
-                    cacheExtent: 12,
-                    itemCount: movies.length,
-                    itemBuilder: (ctx, i) {
-                      return wid.MovieItem(
-                        movie: movies[i],
-                      );
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1 / 2,
-                      // crossAxisSpacing: 5,
-                      // mainAxisSpacing: 5,
-                    ),
+                child: GridView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: scrollController,
+                  // key: PageStorageKey('GenreItem'),
+                  cacheExtent: 12,
+                  itemCount: movies.length,
+                  itemBuilder: (ctx, i) {
+                    return wid.MovieItem(
+                      item: movies[i],
+                    );
+                  },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2 / 3.5,
+                    // crossAxisSpacing: 5,
+                    // mainAxisSpacing: 5,
                   ),
                 ),
               ),

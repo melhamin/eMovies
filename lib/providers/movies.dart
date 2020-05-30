@@ -203,7 +203,7 @@ class Movies with ChangeNotifier {
     // print('${DotEnv().env['API_KEY']}');
     // final url =
     //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
-    final url = 'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}';
+    final url = 'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
 
     try {        
     final response = await http.get(url);

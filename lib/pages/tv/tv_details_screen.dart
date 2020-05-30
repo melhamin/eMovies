@@ -972,15 +972,14 @@ class _SimilarTVState extends State<SimilarTV> {
                             itemBuilder: (context, index) {
                               return wid.TVItem(
                                 item: items[index],
-                                withFooter: false,
-                                tappable: true,
+                                withoutDetails: true,                               
                               );
                             },
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 1,
                               childAspectRatio: 3 / 2,
-                              // mainAxisSpacing: 5,
+                              mainAxisSpacing: 10,
                             ),
                             scrollDirection: Axis.horizontal,
                           ),

@@ -1,34 +1,26 @@
-import 'package:e_movies/pages/tv/tv_details_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/providers/tv.dart' as tv;
+import 'package:e_movies/providers/movies.dart' as prov;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class TVItem extends StatelessWidget {
-  final tv.TVItem item;
-  final bool withoutDetails;
-  final bool tappable;
-  TVItem({
+import '../pages/movie/movie_details_screen.dart';
+import 'placeholder_image.dart';
+
+class MovieItem extends StatelessWidget {
+  final prov.MovieItem item;
+
+  MovieItem({
     this.item,
-    this.withoutDetails = false,
-    this.tappable = true,
   });
 
-  // Functions
-  String getGenreName(List<dynamic> genreIds) {
-    String str = 'N/A';
-    if (genreIds == null || genreIds.length == 0) return 'N/A';
-    if (MOVIE_GENRES.containsKey(genreIds[0])) {
-      str = MOVIE_GENRES[genreIds[0]];
-    }
-    if(str == 'Documentary') {
-      str = 'Docu...';
-    }
-    return str;
-    
+  String getGenreName() {
+    return MOVIE_GENRES[item.genreIDs[0]];
+  }
+
+  String _getRatings(double rating) {
+    return rating == null ? 'N/A' : rating.toString();
   }
 
   String _formatDate(DateTime date) {
@@ -36,9 +28,22 @@ class TVItem extends StatelessWidget {
   }
 
   Route _buildRoute() {
+    final initData = {
+      'id': item.id,
+      'title': item.title,
+      'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
+          ? 'N/A'
+          : item.genreIDs[0],
+      'posterUrl': item.posterUrl,
+      'backdropUrl': item.backdropUrl,
+      'mediaType': item.mediaType,
+      'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
+      'voteAverage': item.voteAverage,
+    };
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: item),
-      pageBuilder: (context, animation, secondaryAnimation) => TVDetailsScreen(),
+      settings: RouteSettings(arguments: initData),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          MovieDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -57,96 +62,8 @@ class TVItem extends StatelessWidget {
     );
   }
 
-  void _navigate(BuildContext context) {
-    // print('ontap ---------------> ');
-    Navigator.of(context).push(_buildRoute());
-  }
-
-  Widget _buildBackgroundImage(
-      BuildContext context, BoxConstraints constraints) {
-        // print('BackgroundImage -----------> ${constraints.maxWidth}');
-    return GestureDetector(
-      onTap: tappable ? () => _navigate(context) : null,
-      child: Card(
-          color: BASELINE_COLOR,
-          shadowColor: Colors.white30,
-          elevation: 5,
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.circular(10),
-          // ),
-          child: item.posterUrl == null
-      ? PlaceHolderImage(item.title)
-      : CachedNetworkImage(
-          imageUrl: item.posterUrl,
-          fit: BoxFit.cover,
-          placeholder: (context, url) {
-            return Center(
-              child: SpinKitCircle(
-                color: Theme.of(context).accentColor,
-                size: LOADING_INDICATOR_SIZE,
-              ),
-            );
-          },
-        ),
-        ),
-    );
-  }
-
-  String _getRatings(double rating) {
-    return rating == null ? 'N/A' : rating.toString();
-  }
-
-  Widget _buildFooter(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-            item.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: kItemTitle,
-          ),
-        SizedBox(height: 10),
-        // Text(
-        //   _formatDate(movie.firstAirDate),
-        //   style: kSubtitle1,
-        // ),
-        // SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white38)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2),
-                child: Text(
-                  getGenreName(item.genreIDs),
-                  style: kSubtitle1,
-                ),
-              ),
-            ),
-            Padding(
-                padding: EdgeInsets.only(right: 5),
-                child: Row(
-                  children: [
-                    Text(
-                      _getRatings(item.voteAverage),
-                      style: kSubtitle1,
-                    ),
-                    SizedBox(width: 2),
-                    Icon(Icons.favorite_border, color: Theme.of(context).accentColor),
-                  ],
-                )),
-          ],
-        ),
-      ],
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     return LayoutBuilder(
       builder: (context, constraints) {        
         return GestureDetector(
@@ -170,7 +87,6 @@ class TVItem extends StatelessWidget {
                         );
                       },
                     ),
-                    if(!withoutDetails)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
@@ -179,7 +95,6 @@ class TVItem extends StatelessWidget {
                   ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
                 ),
               ),
-              if(!withoutDetails)
               Positioned(
                 bottom: 10,
                 left: 5,
@@ -200,7 +115,7 @@ class TVItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        _formatDate(item.firstAirDate),
+                        _formatDate(item.releaseDate),
                         style: kSubtitle1,
                       ),
                       Container(
@@ -216,7 +131,7 @@ class TVItem extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 5.0, vertical: 2),
                                 child: Text(
-                                  getGenreName(item.genreIDs),
+                                  getGenreName(),
                                   style: kSubtitle1,
                                 ),
                               ),
@@ -247,25 +162,5 @@ class TVItem extends StatelessWidget {
         );
       },
     );
-    //  LayoutBuilder(
-    //   builder: (context, constraints) {
-        
-    //     return Column(
-    //       children: [
-    //         Container(              
-    //           height: withFooter ? constraints.maxHeight * 0.75 : constraints.maxHeight,
-    //           width: constraints.maxWidth,
-    //           child: _buildBackgroundImage(context, constraints),
-    //         ),            
-    //         if (withFooter)
-    //           Container(                
-    //             height: constraints.maxHeight * 0.25,
-    //             padding: const EdgeInsets.only(top: 10, left: 10),
-    //             child: _buildFooter(context),
-    //           ),
-    //       ],
-    //     );
-    //   },
-    // );
   }
 }

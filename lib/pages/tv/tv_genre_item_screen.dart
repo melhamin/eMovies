@@ -124,15 +124,13 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
                           itemCount: items.length,
                           itemBuilder: (ctx, i) {
                             return wid.TVItem(
-                              item: items[i],
-                              tappable: true,
-                              withFooter: true,
+                              item: items[i],                                                            
                             );
                           },
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            childAspectRatio: 1 / 2,
+                            childAspectRatio: 2 / 3.5,
                           ),
                         ),
                       ),

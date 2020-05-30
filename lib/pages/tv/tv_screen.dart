@@ -25,7 +25,7 @@ class _MoviesScreenState extends State<TVScreen>
 
   TabController _tabController;
 
-  static const SECTION_HEIGHT = 0.45;
+  static const SECTION_HEIGHT = 0.35;
 
   @override
   void initState() {
@@ -203,14 +203,13 @@ class Grid extends StatelessWidget {
       itemCount: tv.length > 20 ? 20 : tv.length,
       itemBuilder: (context, index) {
         return tvWid.TVItem(
-          item: tv[index],
-          withFooter: true,
+          item: tv[index],          
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        childAspectRatio: 1.8,
-        // mainAxisSpacing: 5,
+        childAspectRatio: 1.5,
+        mainAxisSpacing: 10,
       ),
       scrollDirection: Axis.horizontal,
     );

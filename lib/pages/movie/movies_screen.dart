@@ -11,6 +11,7 @@ import 'package:e_movies/pages/movie/upcoming_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart' as movieWid;
+import 'package:e_movies/widgets/temp.dart' as temp;
 
 class MoviesScreen extends StatefulWidget {
   @override
@@ -116,7 +117,7 @@ class _MoviesScreenState extends State<MoviesScreen>
       builder: (context, constraints) {
         return ListView(
           padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           children: [
             _buildSectionTitle('Genres', () {
               Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));
@@ -136,7 +137,7 @@ class _MoviesScreenState extends State<MoviesScreen>
               Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));
             }),
             Container(
-                height: constraints.maxHeight * 0.5,
+                height: constraints.maxHeight * 0.35,
                 child: _isFetching
                     ? SpinKitCircle(
                         color: Theme.of(context).accentColor,
@@ -147,7 +148,7 @@ class _MoviesScreenState extends State<MoviesScreen>
               Navigator.of(context).push(_buildRoute(UpcomingScreen()));
             }),
             Container(
-                height: constraints.maxHeight * 0.5,
+                height: constraints.maxHeight * 0.35,
                 child: _isFetching
                     ? SpinKitCircle(
                         color: Theme.of(context).accentColor,
@@ -158,7 +159,7 @@ class _MoviesScreenState extends State<MoviesScreen>
               Navigator.of(context).push(_buildRoute(TopRated()));
             }),
             Container(
-                height: constraints.maxHeight * 0.5,
+                height: constraints.maxHeight * 0.35,
                 child: _isFetching
                     ? SpinKitCircle(
                         color: Theme.of(context).accentColor,
@@ -185,19 +186,22 @@ class Grid extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       key: PageStorageKey('Grid'),
-      physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       itemCount: movies.length > 20 ? 20 : movies.length,
       itemBuilder: (context, index) {
-        return movieWid.MovieItem(
-          movie: movies[index],
-          withFooter: true,
+        return temp.MovieItem(
+          item: movies[index],
         );
+        // movieWid.MovieItem(
+        //   movie: movies[index],
+        //   withFooter: true,
+        // );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        childAspectRatio: 2,
-        // mainAxisSpacing: 5,
+        childAspectRatio: 1.5,
+        mainAxisSpacing: 10,
       ),
       scrollDirection: Axis.horizontal,
     );
