@@ -74,7 +74,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                 disableDragSeek: false,
                 loop: false,
                 isLive: false,
-                forceHideAnnotation: true,
+                forceHideAnnotation: false,
                 forceHD: false,
                 enableCaption: true,
               ),

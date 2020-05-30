@@ -744,15 +744,10 @@ class BackgroundAndTitle extends StatelessWidget {
               // ),
               ClipPath(
                   clipper: ImageClipper(),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 2,
-                      sigmaY: 2,
-                    ),
-                    child: Container(
-                      color: Colors.black.withOpacity(0),
-                    ),
-                  )),
+                  child: Container(
+                    color: Colors.black45,
+                  ),
+                  ),
               Positioned(
                 top: constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
                 // right: MediaQuery.of(context).size.width / 2,

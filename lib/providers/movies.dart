@@ -19,7 +19,6 @@ class MovieItem {
   final bool status;
   final double voteAverage;
   final int voteCount;
-  final String mediaType;
 
   int duration;
   int budget;
@@ -47,17 +46,14 @@ class MovieItem {
     @required this.overview,
     @required this.releaseDate,
     @required this.originalLanguage,
-    @required this.status,
-    @required this.mediaType,
+    @required this.status,    
     @required this.voteAverage,
     @required this.voteCount,
     this.crew,
     this.images,
     this.videos,
-    this.duration,
-    this.budget,
-    this.homepage,
-    this.revenue,
+    this.duration,    
+    this.homepage,    
     this.cast,
     this.productionCompanies,
     this.productionContries,
@@ -89,18 +85,15 @@ class MovieItem {
       // ? DateTime.tryParse(json['release_date'])
       // : null,
       originalLanguage: json['original_language'],
-      status: json['release_date'] != null,
-      mediaType: 'movie',
+      status: json['release_date'] != null,      
       voteAverage:
           json['vote_average'] == null ? 0 : json['vote_average'] + 0.0,
       videos: json['videos'] == null ? null : json['videos']['results'],
       images: json['images'] == null ? null : json['images']['backdrops'],
       // voteAverage: 9.3,
       duration: json['runtime'],
-      voteCount: json['vote_count'],
-      budget: json['budget'],
-      homepage: json['homepage'],
-      revenue: json['revenue'],
+      voteCount: json['vote_count'],      
+      homepage: json['homepage'],      
       cast: json['credits'] == null ? null : json['credits']['cast'],
       crew: json['credits'] == null ? null : json['credits']['crew'],
       reviews: json['reviews'] == null ? null : json['reviews']['results'],
@@ -118,7 +111,7 @@ class MovieItem {
 
   @override
   String toString() {
-    return 'budget: $budget\n revenue:$revenue\n productionCompanies: $productionCompanies\similar: $similar\n'; // \n overview: $overview\n vote_average: $voteAverage\n release_date: $releaseDate
+    return 'title: $title\n id:$id\n'; // \n overview: $overview\n vote_average: $voteAverage\n release_date: $releaseDate
   }
 }
 

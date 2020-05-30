@@ -1,8 +1,6 @@
-import 'package:e_movies/widgets/genre_grid.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/pages/movie/trending_movies_screen.dart';
@@ -11,7 +9,7 @@ import 'package:e_movies/pages/movie/upcoming_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart' as movieWid;
-import 'package:e_movies/widgets/temp.dart' as temp;
+import 'package:e_movies/consts/consts.dart';
 
 class MoviesScreen extends StatefulWidget {
   @override
@@ -24,11 +22,29 @@ class _MoviesScreenState extends State<MoviesScreen>
   bool _isFetching = true;
   TabController _tabController;
 
+  bool showTitle = false;
+
+  ScrollController _scrollController;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    // _scrollController = ScrollController()
+    //   ..addListener(() {
+    //     if (_scrollController.offset > 21) {
+    //       // 21 the font size
+    //       setState(() {
+    //         showTitle = true;
+    //       });
+    //     }
+    //     if (_scrollController.offset < 21) {
+    //       setState(() {
+    //         showTitle = false;
+    //       });
+    //     }
+    //   });
   }
 
   @override
@@ -48,9 +64,15 @@ class _MoviesScreenState extends State<MoviesScreen>
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
-  
 
-   Widget _buildSectionTitle(String title, Function onTap,
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildSectionTitle(String title, Function onTap,
       [bool withSeeAll = true]) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -74,7 +96,7 @@ class _MoviesScreenState extends State<MoviesScreen>
                   SizedBox(width: 3),
                   Icon(
                     Icons.arrow_forward_ios,
-                    color: Hexcolor('#DEDEDE'),
+                    color: Colors.white.withOpacity(0.6),
                     size: 18,
                   ),
                 ],
@@ -102,7 +124,7 @@ class _MoviesScreenState extends State<MoviesScreen>
         );
       },
     );
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +135,112 @@ class _MoviesScreenState extends State<MoviesScreen>
 
     return SafeArea(
       child: Scaffold(
-       body: LayoutBuilder(
+      // NestedScrollView(
+      //   headerSliverBuilder: (ctx, boo) {
+      //     return [
+      //       SliverAppBar(
+      //         backgroundColor: showTitle ? ONE_LEVEL_ELEVATION : BASELINE_COLOR,
+      //         pinned: true,
+      //         centerTitle: true,
+      //         expandedHeight: 50,
+      //         title:
+      //             showTitle ? Text('Discover', style: kTitleStyle) : Text(''),
+      //       ),
+      //     ];
+      //   },
+        body: LayoutBuilder(
+          builder: (ctx, constraints) {
+            return ListView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(
+                   bottom: kToolbarHeight),
+              controller: _scrollController,
+              children: <Widget>[
+                // SizedBox(height: 20,),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: LEFT_PADDING),
+                //   child: Text('Discover', style: TextStyle(
+                //     color: Colors.white.withOpacity(0.87),
+                //     fontFamily: 'Helvatica',
+                //     fontSize: 24,                    
+                //     fontWeight: FontWeight.bold,
+                //   )),
+                // ),
+                _buildSectionTitle('Trending', () {
+                  Navigator.of(context)
+                      .push(_buildRoute(TrendingMoviesScreen()));
+                }),
+                Container(
+                    height: constraints.maxHeight * 0.35,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(movies: trending, storageKey: 'Movie-Trending',)),
+                _buildSectionTitle('Upcoming', () {
+                  Navigator.of(context).push(_buildRoute(UpcomingScreen()));
+                }),
+                Container(
+                    height: constraints.maxHeight * 0.35,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(movies: upcoming, storageKey: 'Movie-Upcoming',)),
+                _buildSectionTitle('Top Rated', () {
+                  Navigator.of(context).push(_buildRoute(TopRated()));
+                }),
+                Container(
+                    height: constraints.maxHeight * 0.35,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(movies: topRated, storageKey: 'Movie-Top_Rated',)),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+}
+
+class Grid extends StatelessWidget {
+  final movies;
+  final String storageKey;
+  Grid({this.movies, this.storageKey});
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      key: PageStorageKey(storageKey),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      itemCount: movies.length > 20 ? 20 : movies.length,
+      itemBuilder: (context, index) {
+        return movieWid.MovieItem(
+          item: movies[index],
+        );
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 1.5,
+        mainAxisSpacing: 10,
+      ),
+      scrollDirection: Axis.horizontal,
+    );
+  }
+}
+
+/***
+ * LayoutBuilder(
       builder: (context, constraints) {
         return ListView(
           padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
@@ -170,40 +297,4 @@ class _MoviesScreenState extends State<MoviesScreen>
         );
       },
     ),
-      ),
-    );
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-}
-
-class Grid extends StatelessWidget {
-  final movies;
-  Grid({this.movies});
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      key: PageStorageKey('Grid'),
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-      itemCount: movies.length > 20 ? 20 : movies.length,
-      itemBuilder: (context, index) {
-        return temp.MovieItem(
-          item: movies[index],
-        );
-        // movieWid.MovieItem(
-        //   movie: movies[index],
-        //   withFooter: true,
-        // );
-      },
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 1.5,
-        mainAxisSpacing: 10,
-      ),
-      scrollDirection: Axis.horizontal,
-    );
-  }
-}
+ */

@@ -47,19 +47,14 @@ class GenreTile extends StatelessWidget {
         return GestureDetector(
           child: Stack(
             children: [
-              Card(
-                color: BASELINE_COLOR,
-                shadowColor: Colors.white30,
-                elevation: 5,
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  // color: Colors.red,
-                  child: FadeInImage(
-                    image: AssetImage(imageUrl),
-                    placeholder: AssetImage('assets/images/placeholder.png'),
-                    fit: BoxFit.cover,
-                  ),
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                // color: Colors.red,
+                child: FadeInImage(
+                  image: AssetImage(imageUrl),
+                  placeholder: AssetImage('assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
               Align(
@@ -67,7 +62,7 @@ class GenreTile extends StatelessWidget {
                 child: Container(
                   height: constraints.maxHeight * 0.4,
                   width: constraints.maxWidth,
-                  margin: const EdgeInsets.only(bottom: 1, left: 1),
+                  // margin: const EdgeInsets.only(bottom: 1, left: 1),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.bottomCenter,

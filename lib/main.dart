@@ -1,6 +1,7 @@
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/main_screen.dart';
 import 'package:e_movies/pages/movie/trending_movies_screen.dart';
+import 'package:e_movies/providers/search.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: Cast()),        
         ChangeNotifierProvider.value(value: TV()),        
         ChangeNotifierProvider.value(value: Lists()),        
+        ChangeNotifierProvider.value(value: Search()),        
       ],
       child: MaterialApp(
         title: 'eMovies',

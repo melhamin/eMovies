@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen>
     return Positioned.fill(
       child: PageView(
         controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         pageSnapping: false,        
         children: <Widget>[
           MoviesScreen(),
@@ -87,7 +87,9 @@ class _MainScreenState extends State<MainScreen>
       onTap: _onTap,      
     );
 
-    final _content = Scaffold(      
+    final _content = Scaffold( 
+      resizeToAvoidBottomInset: false,     
+      resizeToAvoidBottomPadding: false,
       body: Stack(
         children: <Widget>[
           _buildTabContent(),
@@ -98,14 +100,6 @@ class _MainScreenState extends State<MainScreen>
     );  
     return SafeArea(
       child: _content,
-      // Stack(
-      //   fit: StackFit.expand,
-      //   children: <Widget>[
-      //     // _background_image,
-      //     // transparentBackground,
-      //     _content,
-      //   ],
-      // ),
     );
   }
 }

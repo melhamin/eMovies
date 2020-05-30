@@ -39,7 +39,7 @@ class MovieItem extends StatelessWidget {
           : item.genreIDs[0],
       'posterUrl': item.posterUrl,
       'backdropUrl': item.backdropUrl,
-      'mediaType': item.mediaType,
+      'mediaType': 'movie',
       'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
       'voteAverage': item.voteAverage,
     };

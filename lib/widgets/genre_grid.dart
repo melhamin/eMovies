@@ -14,7 +14,7 @@ class GenreGrid extends StatelessWidget {
         // controller: _scrollController,              
         padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
         key: PageStorageKey('GenresPageGrid'),
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         addAutomaticKeepAlives: true,
         itemCount: itemsList.length,
         itemBuilder: (context, i) {
@@ -28,7 +28,7 @@ class GenreGrid extends StatelessWidget {
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1/1.5,
-          // mainAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
         scrollDirection: Axis.horizontal,
       );

@@ -21,6 +21,10 @@ class CastItem {
     this.character,
     this.job,
   });
+
+  // static CastItem.fromJson(json) {
+  //   return CastItem();
+  // }
 }
 
 class Person {

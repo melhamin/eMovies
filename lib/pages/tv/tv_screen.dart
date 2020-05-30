@@ -155,7 +155,7 @@ class _MoviesScreenState extends State<TVScreen>
                         color: Theme.of(context).accentColor,
                         size: 21,
                       )
-                    : Grid(tv: trending)),
+                    : Grid(tv: trending, storageKey: 'TV-Popular',)),
             _buildSectionTitle('On Air', () {
               Navigator.of(context).push(_buildRoute(OnAirScreen()));
             }),
@@ -166,7 +166,7 @@ class _MoviesScreenState extends State<TVScreen>
                         color: Theme.of(context).accentColor,
                         size: 21,
                       )
-                    : Grid(tv: onAirToday)),
+                    : Grid(tv: onAirToday, storageKey: 'TV-On_Air',)),
             _buildSectionTitle('Top Rated', () {
               Navigator.of(context).push(_buildRoute(TopRatedScreen()));
             }),
@@ -177,7 +177,7 @@ class _MoviesScreenState extends State<TVScreen>
                         color: Theme.of(context).accentColor,
                         size: 21,
                       )
-                    : Grid(tv: topRated)),
+                    : Grid(tv: topRated, storageKey: 'TV-Top_Rated',)),
           ],
         );
       },
@@ -193,11 +193,12 @@ class _MoviesScreenState extends State<TVScreen>
 
 class Grid extends StatelessWidget {
   final tv;
-  Grid({this.tv});
+  final String storageKey;
+  Grid({this.tv, this.storageKey});
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      key: PageStorageKey('Grid'),
+      key: PageStorageKey(storageKey),
       physics: BouncingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       itemCount: tv.length > 20 ? 20 : tv.length,

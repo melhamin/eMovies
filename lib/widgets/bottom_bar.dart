@@ -14,9 +14,15 @@ class BottomBar extends StatelessWidget {
     @required this.onTap,
   });
 
+  bool _isKeyboardVisible(BuildContext context) {
+    return !(MediaQuery.of(context).viewInsets.bottom == 0.0);
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return CupertinoTabBar(                        
+  Widget build(BuildContext context) {    
+    // In order to avoid showing tab bar when keyboard is opened
+    return _isKeyboardVisible(context) ? SizedBox() : 
+     CupertinoTabBar(                        
         backgroundColor:Hexcolor('#BF303030'),
         inactiveColor: Colors.white70,
         activeColor: Theme.of(context).accentColor,
@@ -27,3 +33,4 @@ class BottomBar extends StatelessWidget {
       );
   }
 }
+
