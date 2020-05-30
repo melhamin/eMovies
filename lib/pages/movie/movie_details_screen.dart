@@ -167,29 +167,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   //       ),
   //     ),
   //   );
-  // }
-
-  /**
-   * Build page route for image view
-   */
-  // Route _buildRoute(Widget toPage) {
-  //   return PageRouteBuilder(
-  //     pageBuilder: (context, animation, secondaryAnimation) => toPage,
-  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-  //       var begin = const Offset(
-  //           1, 0); // if x > 0 and y = 0 transition is from right to left
-  //       var end =
-  //           Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-  //       var tween = Tween(begin: begin, end: end);
-  //       var offsetAnimation = animation.drive(tween);
-
-  //       return SlideTransition(
-  //         position: offsetAnimation,
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
+  // }  
 
   Widget _buildImages(MovieItem film) {
     List<String> images = [];
@@ -261,25 +239,56 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         padding: const EdgeInsets.all(0),
         physics: NeverScrollableScrollPhysics(),
         children: [
-          DetailsItem(
-            left: 'Release Date',
-            right: film.releaseDate != null
-                ? DateFormat.yMMMd().format(film.releaseDate)
-                : 'N/A',
+          ListTile(
+            dense: true,
+            // contentPadding: const EdgeInsets.all(0),
+            title: Text('Release Date', style: kSubtitle1),
+            trailing: Text(
+                film.releaseDate != null
+                    ? DateFormat.yMMMd().format(film.releaseDate)
+                    : 'N/A',
+                style: kBodyStyle),
           ),
-          DetailsItem(
-            left: 'Runtime',
-            right: film.duration.toString() + ' min',
+          Divider(
+            indent: LEFT_PADDING,
+            endIndent: LEFT_PADDING,
+            height: 0,
+            thickness: 0.5,
+            color: LINE_COLOR,
           ),
-          DetailsItem(
-            left: 'Rating',
-            right: film.voteAverage.toString(),
+          ListTile(
+            dense: true,
+            // contentPadding: const EdgeInsets.only(left: 15),
+            title: Text('Runtime', style: kSubtitle1),
+            trailing:
+                Text(film.duration.toString() + ' min', style: kBodyStyle),
           ),
-          DetailsItem(
-            left: 'Genres',
-            right: _getGenres(film.genreIDs),
-            last: true,
+          Divider(
+            indent: LEFT_PADDING,
+            endIndent: LEFT_PADDING,
+            height: 0,
+            thickness: 0.5,
+            color: LINE_COLOR,
           ),
+          ListTile(
+            dense: true,
+            // contentPadding: const EdgeInsets.only(left: 15),
+            title: Text('Rating', style: kSubtitle1),
+            trailing: Text(film.voteAverage.toString(), style: kBodyStyle),
+          ),
+          Divider(
+            indent: LEFT_PADDING,
+            endIndent: LEFT_PADDING,
+            height: 0,
+            thickness: 0.5,
+            color: LINE_COLOR,
+          ),
+          ListTile(
+            dense: true,
+            // contentPadding: const EdgeInsets.only(left: 15),
+            title: Text('Genres', style: kSubtitle1),
+            trailing: Text(_getGenres(film.genreIDs), style: kBodyStyle),
+          ),          
         ],
       ),
     );
@@ -678,13 +687,36 @@ class BackgroundAndTitle extends StatelessWidget {
     return str;
   }
 
+  /**
+   * Build page route for image view
+   */
+  Route _buildRoute(Widget toPage) {
+    return PageRouteBuilder(
+        settings: RouteSettings(arguments: film.id),
+      pageBuilder: (context, animation, secondaryAnimation) => toPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+        var tween = Tween(begin: begin, end: end);
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Container(
           // color: BASELINE_COLOR,
-          padding: EdgeInsets.only(bottom: 80),
+          padding: const EdgeInsets.only(bottom: 80),
           height: constraints.maxHeight * 0.55,
           child: Stack(
             children: [
@@ -705,6 +737,22 @@ class BackgroundAndTitle extends StatelessWidget {
                         ),
                       ),
               ),
+              // Container(
+
+              //   margin: const EdgeInsets.only(bottom: 80),
+              //   color: Colors.black38,
+              // ),
+              ClipPath(
+                  clipper: ImageClipper(),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 2,
+                      sigmaY: 2,
+                    ),
+                    child: Container(
+                      color: Colors.black.withOpacity(0),
+                    ),
+                  )),
               Positioned(
                 top: constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
                 // right: MediaQuery.of(context).size.width / 2,
@@ -714,12 +762,7 @@ class BackgroundAndTitle extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          settings: RouteSettings(arguments: film.id),
-                          builder: (context) {
-                            return VideoPage();
-                          },
-                        ));
+                        Navigator.of(context).push(_buildRoute(VideoPage()));
                       },
                       // child: Image.asset('assets/icons/play.gif'),
                       child: SvgPicture.asset(
@@ -1071,7 +1114,15 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
                 ),
                 color: ONE_LEVEL_ELEVATION,
               ),
-              child: ListView.builder(
+              child: ListView.separated(
+                separatorBuilder: (_, i) {
+                  return Divider(
+                    thickness: 0.5,
+                    color: LINE_COLOR,
+                    indent: LEFT_PADDING + 60, // circle avatar has radius 30
+                    height: 0,
+                  );
+                },
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _calculateItemCount(),
                 itemBuilder: (context, index) {

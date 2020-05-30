@@ -59,18 +59,13 @@ class CastItem extends StatelessWidget {
 
     // print('Cast item ---------> URL ------- $')
 
-    return Container(
-      margin: const EdgeInsets.only(left: LEFT_PADDING),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-        ),
-      ),
-      child: ListTile(
-        onTap: _onTap,
-        dense: true,
-        contentPadding: const EdgeInsets.all(0),
-        leading: CircleAvatar(
+    return ListTile(
+      onTap: _onTap,
+      dense: true,
+      contentPadding: const EdgeInsets.all(0),
+      leading: Padding(
+        padding: const EdgeInsets.only(left: LEFT_PADDING),
+        child: CircleAvatar(
           backgroundColor: item.imageUrl == null
               ? Theme.of(context).accentColor
               : Colors.black,
@@ -84,22 +79,22 @@ class CastItem extends StatelessWidget {
                   style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
         ),
-        title: Text(
-          item.name,
-          style: kBodyStyle,
-        ),
-        subtitle: !subtitle
-            ? Text('')
-            : RichText(
-                text: TextSpan(text: 'as ', style: kSubtitle2, children: [
-                  TextSpan(
-                      text: item.character,
-                      style: TextStyle(
-                        color: Theme.of(context).accentColor,
-                      ))
-                ]),
-              ),
       ),
+      title: Text(
+        item.name,
+        style: kBodyStyle,
+      ),
+      subtitle: !subtitle
+          ? Text('')
+          : RichText(
+              text: TextSpan(text: 'as ', style: kSubtitle2, children: [
+                TextSpan(
+                    text: item.character,
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                    ))
+              ]),
+            ),
     );
   }
 }

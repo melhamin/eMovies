@@ -134,7 +134,7 @@ class _GenreState extends State<Genre> {
                         // onRefresh: () => _refreshMovies(movies.length == 0),
                         backgroundColor: Theme.of(context).primaryColor,
                         child: GridView.builder(
-                          physics: BouncingScrollPhysics(),
+                          physics: const  BouncingScrollPhysics(),
                           controller: scrollController,
                           // key: PageStorageKey('GenreItem'),
                           cacheExtent: 12,

@@ -138,17 +138,25 @@ class Biography extends StatelessWidget {
   Biography(this.biography);
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
-      child: Text(
-        biography,
-        style: TextStyle(
-          fontSize: 16,
-          height: 2,
-          color: Colors.white70,
-        ),
-        softWrap: true,
-      ),
+    return ListView(
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.only(
+          bottom:
+              MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
+          child: Text(
+            biography,
+            style: TextStyle(
+              fontSize: 16,
+              height: 2,
+              color: Colors.white70,
+            ),
+            softWrap: true,
+          ),
+        )
+      ],
     );
   }
 }
@@ -197,18 +205,22 @@ class Movies extends StatelessWidget {
       //     ),
       //   );
       // },
-      physics: NeverScrollableScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.only(
+          bottom:
+              MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
       itemBuilder: (context, i) {
         return InkWell(
           onTap: () => _onTap(context, movies[i]),
-          highlightColor: Colors.black,
           splashColor: Colors.transparent,
-          child: ListTile(
+          highlightColor: Colors.black,
+          child: ListTile(                        
             dense: true,
             contentPadding: const EdgeInsets.all(0),
             leading: Container(
-              padding:
-              const EdgeInsets.only(left: LEFT_PADDING),
+              width: 70,
+              margin: const EdgeInsets.only(left: LEFT_PADDING),
+              color: BASELINE_COLOR,
               child: movies[i].posterUrl == null
                   ? PlaceHolderImage(movies[i].title)
                   : CachedNetworkImage(
@@ -217,9 +229,11 @@ class Movies extends StatelessWidget {
                     ),
             ),
             title: Text(
-                movies[i].title,
-                style: kBodyStyle,
-              ),
+              movies[i].title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: kBodyStyle,
+            ),
             subtitle: RichText(
               text: TextSpan(text: 'as ', style: kSubtitle2, children: [
                 TextSpan(
@@ -230,8 +244,7 @@ class Movies extends StatelessWidget {
               ]),
             ),
             trailing: Padding(
-              padding:
-              const EdgeInsets.only(right: LEFT_PADDING),
+              padding: const EdgeInsets.only(right: LEFT_PADDING),
               child: Text(
                 movies[i].releaseDate == null
                     ? 'N/A'
