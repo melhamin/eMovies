@@ -34,7 +34,7 @@ class ListItemModel {
         'genre': genre ?? 'N/A',
         'posterUrl': posterUrl,
         'mediaType': mediaType,
-        'releaseDate': releaseDate,        
+        'releaseDate': releaseDate,
         'voteAverage': voteAverage,
       };
 }
@@ -49,37 +49,45 @@ class ListItem {
 class Lists with ChangeNotifier {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  List<Map<String, dynamic>> _moviesLists = [
-    // {
-    //   'title': 'Watched',
-    //   'data': [],
-    // },
-    // {
-    //   'title': 'To Watch',
-    //   'data': [],
-    // },
-  ];
+  List<Map<String, dynamic>> _lists = [];
 
-  List<Map<String, dynamic>> get moviesLists {
-    return _moviesLists;
+  List<Map<String, dynamic>> _favorites = [];
+
+  List<Map<String, dynamic>> get lists {
+    return _lists;
+  }
+
+  List<Map<String, dynamic>> get favorites {
+    return _favorites;
   }
 
   Future<void> loadLists() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('lists');
+    final loadedLists = prefs.getString('lists');
+    final favorites = prefs.getString('favorites');    
 
-    if (data != null && data.length > 0) {
-      final lists = json.decode(data) as List<dynamic>;
-      _moviesLists.clear();
-      lists.forEach((element) {
-        _moviesLists.add(element);
+    if(favorites != null && favorites.length > 0) {
+      final favoritesData = json.decode(favorites) as List<dynamic>;
+      _favorites.clear();
+      
+      favoritesData.forEach((element) { 
+        _favorites.add(element);
+      });
+    }
+
+    if (loadedLists != null && loadedLists.length > 0) {
+      final listsData = json.decode(loadedLists) as List<dynamic>;
+      _lists.clear();
+      listsData.forEach((element) {
+        _lists.add(element);
       });
     }
     notifyListeners();
   }
 
-  void addNewItemToList(int index, dynamic item) {
-    _moviesLists[index]['data'].add({
+  bool addToFavorites(dynamic item) {
+    // bool result;
+    _favorites.add({
       'id': item['id'],
       'title': item['title'],
       // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
@@ -89,38 +97,95 @@ class Lists with ChangeNotifier {
       'mediaType': item['mediaType'],
       // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
       'releaseDate': item['releaseDate'],
-      'voteAverage': item['voteAverage']      
+      'voteAverage': item['voteAverage']
     });
 
-    // update preferences
-    savePrefs();
     notifyListeners();
+    saveFavorites();
+
+    return true;
+  }
+
+  bool isInFavorites(int id) {
+    final temp = _favorites.firstWhere((element) {
+      return element['id'] == id;
+    }, orElse: () => null);
+
+    return temp != null;    
+  }
+
+  void removeFavorites(int id) {
+    _favorites.removeWhere((element) => element['id'] == id);
+
+    notifyListeners();
+    saveFavorites();
+  }
+
+  bool addNewItemToList(int listIndex, dynamic item) {
+    bool result;
+
+    // Check if item already in the list
+    final itemData = _lists[listIndex]['data'];
+    // print('itemData-----------------> $itemData');
+    final exist = itemData.firstWhere((element) {
+      return element['id'] == item['id'];
+    }, orElse: () => null);
+
+    if (exist == null) {
+      _lists[listIndex]['data'].add({
+        'id': item['id'],
+        'title': item['title'],
+        // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
+        'genre': item['genre'],
+        'posterUrl': item['posterUrl'],
+        'backdropUrl': item['backdropUrl'],
+        'mediaType': item['mediaType'],
+        // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
+        'releaseDate': item['releaseDate'],
+        'voteAverage': item['voteAverage']
+      });
+      result = true;
+
+      // update preferences
+      saveLists();
+      notifyListeners();
+    } else
+      result = false;
+
+    return result;
+  }
+
+  bool checkForExistence(String title) {
+    final alreadyExist = _lists.firstWhere((element) {
+      return element['title'] == title;
+    }, orElse: () => null);
+
+    return alreadyExist == null;
   }
 
   void addNewList(String title) {
-    _moviesLists.insert(0, {
+    _lists.insert(0, {
       'title': title,
       'data': [],
     });
-    
     // update prefrences
-    savePrefs();
+    saveLists();
     notifyListeners();
   }
 
   void deleteList(String title) {
-    moviesLists.removeWhere((element) {
+    lists.removeWhere((element) {
       return element['title'] == title;
     });
 
     // update prefrences
-    savePrefs();
+    saveLists();
     notifyListeners();
   }
 
   void deleteItemFromList(String title, int itemId) {
     // get list with give title
-    final list = _moviesLists.firstWhere((element) {
+    final list = _lists.firstWhere((element) {
       return element['title'] == title;
     });
 
@@ -131,18 +196,20 @@ class Lists with ChangeNotifier {
     });
 
     // update preferences
-    savePrefs();
-
-    notifyListeners(); 
-
+    notifyListeners();
+    saveLists();
 
   }
 
-
-  void savePrefs() async {
-    print('-----> ${json.encode(moviesLists)}');
+  void saveFavorites() async {
     SharedPreferences prefs = await _prefs;
-    prefs.setString('lists', json.encode(moviesLists));
+    prefs.setString('favorites', json.encode(_favorites));
+  }
+
+  void saveLists() async {
+    // print('-----> ${json.encode(moviesLists)}');
+    SharedPreferences prefs = await _prefs;
+    prefs.setString('lists', json.encode(_lists));
   }
 
   void printPrefs() async {
@@ -152,8 +219,8 @@ class Lists with ChangeNotifier {
   }
 
   void deleteAllPrefs() async {
-    SharedPreferences prefs = await _prefs;    
-    prefs.clear();    
+    SharedPreferences prefs = await _prefs;
+    prefs.clear();
     notifyListeners();
   }
 }

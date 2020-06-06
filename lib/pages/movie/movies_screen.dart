@@ -135,6 +135,8 @@ class _MoviesScreenState extends State<MoviesScreen>
 
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
       // NestedScrollView(
       //   headerSliverBuilder: (ctx, boo) {
       //     return [

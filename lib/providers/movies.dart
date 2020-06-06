@@ -13,7 +13,7 @@ class MovieItem {
   final String posterUrl;
   final String backdropUrl;
   final String overview;
-  final DateTime releaseDate;
+  final DateTime date;
   final List<dynamic> genreIDs;
   final String originalLanguage;
   final bool status;
@@ -44,7 +44,7 @@ class MovieItem {
     this.backdropUrl,
     @required this.genreIDs,
     @required this.overview,
-    @required this.releaseDate,
+    @required this.date,
     @required this.originalLanguage,
     @required this.status,    
     @required this.voteAverage,
@@ -77,7 +77,7 @@ class MovieItem {
           ? ''
           : '$IMAGE_URL/${json['backdrop_path']}',
       overview: json['overview'],      
-      releaseDate: (json['release_date'] == null || json['release_date'] == '')
+      date: (json['release_date'] == null || json['release_date'] == '')
           ? null
           : DateTime.parse(json['release_date']),
 
@@ -191,7 +191,39 @@ class Movies with ChangeNotifier {
     return [..._similar];
   }
 
+
+
   // functions
+  Future<void> fetchCategory(String category, int page) async {
+    // print('${DotEnv().env['API_KEY']}');
+    // final url =
+    //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+    final url = 'https://api.themoviedb.org/3/$category/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
+
+    try {        
+    final response = await http.get(url);
+    // print('pageno =---------------------> ${response.body}' );
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+    final moviesData = responseData['results'];
+
+    // When page reopened it will fetch page 1 
+    // so delete previous data to avoid duplicates
+    if(page == 1) {
+      _trending.clear();
+    }
+
+    moviesData.forEach((element) {
+      // print('element -----------> ${element.toString()}');
+      _trending.add(MovieItem.fromJson(element));
+    });
+    // print('_trending size------------------> ${_trending.length}');
+    // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
+    } catch (error) {
+      print('In Theaters error -----------> $error');
+      throw error;
+    }
+    notifyListeners();
+  }
   Future<void> fetchTrending(int page) async {
     // print('${DotEnv().env['API_KEY']}');
     // final url =

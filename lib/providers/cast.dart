@@ -22,9 +22,15 @@ class CastItem {
     this.job,
   });
 
-  // static CastItem.fromJson(json) {
-  //   return CastItem();
-  // }
+  static CastItem fromJson(json) {
+    return CastItem(
+      id: json['id'],
+      name: json['name'],
+      imageUrl: json['imageUrl'],
+      character: json['character'] ?? 'N/A',
+      job: json['job'] ?? 'N/A',
+    );
+  }
 }
 
 class Person {

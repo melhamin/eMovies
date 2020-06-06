@@ -27,8 +27,7 @@ class _CastDetailsState extends State<CastDetails>
   int _selectedIndex;
 
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState() {    
     super.initState();
     _selectedIndex = 0;
     _tabController = TabController(
@@ -38,10 +37,17 @@ class _CastDetailsState extends State<CastDetails>
     );
   }
 
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     if (_isInitLoaded) {
-      final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
-      final id = item.id;
+      final item = ModalRoute.of(context).settings.arguments as dynamic;
+      final id = item['id'];
       Provider.of<prov.Cast>(context, listen: false)
           .getPersonDetails(id)
           .then((value) {
@@ -59,14 +65,20 @@ class _CastDetailsState extends State<CastDetails>
       tabController: _tabController,
       tabs: [
         Tab(
-            icon: Text(
-          'Biography',
-          style: kTitleStyle2,
+            child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Biography',
+            style: kTitleStyle2,
+          ),
         )),
         Tab(
-            icon: Text(
-          'Movies',
-          style: kTitleStyle2,
+            child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Movies',
+            style: kTitleStyle2,
+          ),
         )),
         // Tab(icon: Icon(Icons.edit)),
       ],
@@ -86,29 +98,28 @@ class _CastDetailsState extends State<CastDetails>
   @override
   Widget build(BuildContext context) {
     // super.build(context);
-    final item = ModalRoute.of(context).settings.arguments as prov.CastItem;
+    final item = ModalRoute.of(context).settings.arguments as dynamic;
+    final mediaQueryHeight = MediaQuery.of(context).size.height;
     prov.Person person;
     if (!_isFetching) person = Provider.of<prov.Cast>(context).person;
-    // print('item -------> ${item.id}');
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ONE_LEVEL_ELEVATION,
+          centerTitle: true,
+          title: Text(item['name'], style: kTitleStyle),
+        ),
         body: Stack(
           children: [
             LayoutBuilder(
               builder: (context, constraints) {
                 return ListView(
-                  padding: EdgeInsets.only(top: APP_BAR_HEIGHT),
-                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.only(top: mediaQueryHeight * 0.4),
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    Container(
-                      height: constraints.maxHeight * 0.4,
-                      child: CachedNetworkImage(
-                        imageUrl: IMAGE_URL + item.imageUrl,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
                     // _buildTabBar(),
                     Container(
+                      color: ONE_LEVEL_ELEVATION,
                       width: constraints.maxWidth,
                       child: _buildTabBar(),
                     ),
@@ -125,7 +136,14 @@ class _CastDetailsState extends State<CastDetails>
                 );
               },
             ),
-            TopBar(title: item.name),
+            Container(
+              width: double.infinity,
+              height: mediaQueryHeight * 0.4,
+              child: CachedNetworkImage(
+                imageUrl: IMAGE_URL + item['imageUrl'],
+                fit: BoxFit.cover,
+              ),
+            ),
           ],
         ),
       ),
@@ -139,7 +157,8 @@ class Biography extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      physics: const BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(
+          parent: const AlwaysScrollableScrollPhysics()),
       padding: EdgeInsets.only(
           bottom:
               MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
@@ -166,9 +185,21 @@ class Movies extends StatelessWidget {
   Movies(this.movies);
 
   Route _buildRoute(MovieItem item) {
+    final initData = {
+      'id': item.id,
+      'title': item.title,
+      'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
+          ? 'N/A'
+          : item.genreIDs[0],
+      'posterUrl': item.posterUrl,
+      'backdropUrl': item.backdropUrl,
+      'mediaType': 'movie',
+      'releaseDate': item.date.year.toString() ?? 'N/A',
+      'voteAverage': item.voteAverage,
+    };
     return PageRouteBuilder(
       settings: RouteSettings(
-        arguments: item,
+        arguments: initData,
       ),
       pageBuilder: (context, animation, secondaryAnimation) =>
           MovieDetailsScreen(),
@@ -205,16 +236,16 @@ class Movies extends StatelessWidget {
       //     ),
       //   );
       // },
-      physics: const BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(
+          parent: const AlwaysScrollableScrollPhysics()),
       padding: EdgeInsets.only(
-          bottom:
-              MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
+          bottom: MediaQuery.of(context).size.height * 0.4 + kToolbarHeight),
       itemBuilder: (context, i) {
         return InkWell(
           onTap: () => _onTap(context, movies[i]),
           splashColor: Colors.transparent,
           highlightColor: Colors.black,
-          child: ListTile(                        
+          child: ListTile(
             dense: true,
             contentPadding: const EdgeInsets.all(0),
             leading: Container(
@@ -246,9 +277,9 @@ class Movies extends StatelessWidget {
             trailing: Padding(
               padding: const EdgeInsets.only(right: LEFT_PADDING),
               child: Text(
-                movies[i].releaseDate == null
+                movies[i].date == null
                     ? 'N/A'
-                    : DateFormat.y().format(movies[i].releaseDate),
+                    : DateFormat.y().format(movies[i].date),
                 style: kSubtitle1,
               ),
             ),

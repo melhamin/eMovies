@@ -12,7 +12,7 @@ class TVItem {
   final String posterUrl;
   final String backdropUrl;
   final String overview;
-  final DateTime firstAirDate;
+  final DateTime date;
   final List<dynamic> genreIDs;
   final String originalLanguage;
   final String status;
@@ -49,7 +49,7 @@ class TVItem {
     this.backdropUrl,
     @required this.genreIDs,
     @required this.overview,
-    @required this.firstAirDate,
+    @required this.date,
     @required this.originalLanguage,
     @required this.voteAverage,
     @required this.voteCount,
@@ -88,7 +88,7 @@ class TVItem {
           ? ''
           : '$IMAGE_URL/${json['backdrop_path']}',
       overview: json['overview'],
-      firstAirDate:
+      date:
           (json['first_air_date'] == null || json['first_air_date'] == '')
               ? null
               : DateTime.parse(json['first_air_date']),

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:e_movies/pages/movie/movies_screen.dart';
 import 'package:e_movies/pages/my_lists_screen.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/search_screen.dart';
+import 'package:e_movies/pages/search/search_screen.dart';
 import 'package:e_movies/pages/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +45,13 @@ class _MainScreenState extends State<MainScreen>
     //     FocusScope.of(context).nextFocus();
     //   }
     // });
+  }
+
+  @override 
+  void dispose() {
+    _tabController.dispose();
+    _pageController.dispose();    
+    super.dispose();
   }
 
   Widget _buildTabContent() {

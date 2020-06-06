@@ -8,6 +8,7 @@ import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/route_builder.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
@@ -58,6 +59,12 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     }
     _initLoaded = false;
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 
   Widget _buildDialogButtons(String title, Function onTap,
@@ -208,7 +215,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   }
 
   void _showAddToList(BuildContext context, dynamic initData) {
-    final lists = Provider.of<Lists>(context, listen: false).moviesLists;
+    final lists = Provider.of<Lists>(context, listen: false).lists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -421,8 +428,8 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
         children: [
           DetailsItem(
             left: 'First Air Date',
-            right: item.firstAirDate != null
-                ? DateFormat.yMMMd().format(item.firstAirDate)
+            right: item.date != null
+                ? DateFormat.yMMMd().format(item.date)
                 : 'N/A',
           ),
           DetailsItem(
@@ -469,7 +476,15 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
       SizedBox(height: 15),
       _buildDetails(details),
       SizedBox(height: 30),
-      Cast(details: details),
+      Padding(
+        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
+        child: Text('Cast', style: kSubtitle1),
+      ),
+      Container(
+        color: ONE_LEVEL_ELEVATION,
+        height: 110,
+        child: Cast(details: details),
+      ),
       SizedBox(height: 20),
       // _buildSimilar(constraints),
       Container(
@@ -579,9 +594,9 @@ class TitleAndDetails extends StatelessWidget {
               style: kTitleStyle,
               children: [
                 TextSpan(
-                    text: item.firstAirDate == null
+                    text: item.date == null
                         ? 'N/A'
-                        : ' (${item.firstAirDate.year})',
+                        : ' (${item.date.year})',
                     style: kSubtitle1),
               ],
             ),
@@ -641,11 +656,13 @@ class BackgroundImage extends StatelessWidget {
             child: Container(
               height: constraints.maxHeight * 0.4,
               width: constraints.maxWidth,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fadeInCurve: Curves.easeIn,
-                fit: BoxFit.fill,
-              ),
+              child: imageUrl == null
+                  ? PlaceHolderImage('Image Not Available')
+                  : CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fadeInCurve: Curves.easeIn,
+                      fit: BoxFit.fill,
+                    ),
             ),
           ),
           Positioned(
@@ -713,11 +730,11 @@ class _OverviewState extends State<Overview>
                     child: RichText(
                       text: TextSpan(
                         style: kBodyStyle,
-                        text: overview.length > 270
-                            ? overview.substring(0, 270) + '...'
+                        text: overview.length > 230
+                            ? overview.substring(0, 230) + '...'
                             : overview,
                         children: [
-                          if (!_expanded && overview.length > 270)
+                          if (!_expanded && overview.length > 230)
                             TextSpan(
                               text: 'More',
                               style: TextStyle(
@@ -827,73 +844,99 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
       director = crew.firstWhere((element) {
         return element.job == 'Executive Producer';
       }, orElse: () {});
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (director != null)
-            Padding(
-              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-              child: Text('Directed By', style: kSubtitle1),
+    return Column(
+      children: [       
+        if (cast != null && cast.length > 0)
+          
+        Flexible(
+                  child: GridView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: _calcualteItemCount(),
+            itemBuilder: (context, index) {
+              CastItem item = cast[index];
+              return castWid.CastItem(
+                id: item.id,
+                name: item.name,
+                imageUrl: item.imageUrl,
+              );
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              // mainAxisSpacing: 5,
             ),
-          if (director != null)
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                  top: BorderSide(width: 0.5, color: LINE_COLOR),
-                ),
-                color: ONE_LEVEL_ELEVATION,
-              ),
-              child: castWid.CastItem(
-                item: director,
-                // last: false,
-                subtitle: false,
-              ),
-            ),
-          if (cast != null && cast.length > 0) SizedBox(height: 20),
-          if (cast != null && cast.length > 0)
-            Padding(
-              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-              child: Text('Cast', style: kSubtitle1),
-            ),
-          if (cast != null && cast.length > 0)
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              height: _calcualteItemCount() * 60.0 +
-                  _calcualteItemCount() * 5, // ListTile height
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                  top: BorderSide(width: 0.5, color: LINE_COLOR),
-                ),
-                color: ONE_LEVEL_ELEVATION,
-              ),
-              child: ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _calcualteItemCount(),
-                itemBuilder: (context, index) {
-                  CastItem item = cast[index];
-                  return castWid.CastItem(
-                    item: item,
-                    // to add border to all except last one
-                    // last: _isLasItem(index),
-                  );
-                },
-              ),
-            ),
-          if ((cast.length > 5))
-            ListTile(
-              leading: Text(
-                (!_expanded) ? 'More...' : '',
-                style: TextStyle(color: Theme.of(context).accentColor),
-              ),
-              onTap: !_expanded ? _onTap : null,
-            ),
-        ],
-      ),
+            scrollDirection: Axis.horizontal,
+          ),
+        ),
+      ],
     );
+
+    // SingleChildScrollView(
+    //   child: Column(
+    //     mainAxisSize: MainAxisSize.min,
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     children: [
+    //       // if (director != null)
+    //       //   Padding(
+    //       //     padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
+    //       //     child: Text('Directed By', style: kSubtitle1),
+    //       //   ),
+    //       // if (director != null)
+    //       //   Container(
+    //       //     decoration: BoxDecoration(
+    //       //       border: Border(
+    //       //         bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+    //       //         top: BorderSide(width: 0.5, color: LINE_COLOR),
+    //       //       ),
+    //       //       color: ONE_LEVEL_ELEVATION,
+    //       //     ),
+    //       //     child: castWid.CastItem(
+    //       //       item: director
+    //       //       // item: director,
+    //       //       // last: false,
+    //       //       // subtitle: false,
+    //       //     ),
+    //       //   ),
+    //       if (cast != null && cast.length > 0) SizedBox(height: 20),
+    //       if (cast != null && cast.length > 0)
+    //         Padding(
+    //           padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
+    //           child: Text('Cast', style: kSubtitle1),
+    //         ),
+    //       if (cast != null && cast.length > 0)
+    //         AnimatedContainer(
+    //           duration: Duration(milliseconds: 300),
+    //           height: _calcualteItemCount() * 60.0 +
+    //               _calcualteItemCount() * 5, // ListTile height
+    //           decoration: BoxDecoration(
+    //             border: Border(
+    //               bottom: BorderSide(width: 0.5, color: LINE_COLOR),
+    //               top: BorderSide(width: 0.5, color: LINE_COLOR),
+    //             ),
+    //             color: ONE_LEVEL_ELEVATION,
+    //           ),
+    //           child: ListView.builder(
+    //             physics: const BouncingScrollPhysics(),
+    //             itemCount: _calcualteItemCount(),
+    //             itemBuilder: (context, index) {
+    //               CastItem item = cast[index];
+    //               return castWid.CastItem(
+    //                 item: item,
+    //               );
+    //             },
+    //             scrollDirection: Axis.horizontal,
+    //           ),
+    //         ),
+    //       if ((cast.length > 5))
+    //         ListTile(
+    //           leading: Text(
+    //             (!_expanded) ? 'More...' : '',
+    //             style: TextStyle(color: Theme.of(context).accentColor),
+    //           ),
+    //           onTap: !_expanded ? _onTap : null,
+    //         ),
+    //     ],
+    //   ),
+    // );
   }
 
   @override
@@ -972,7 +1015,7 @@ class _SimilarTVState extends State<SimilarTV> {
                             itemBuilder: (context, index) {
                               return wid.TVItem(
                                 item: items[index],
-                                withoutDetails: true,                               
+                                withoutDetails: true,
                               );
                             },
                             gridDelegate:

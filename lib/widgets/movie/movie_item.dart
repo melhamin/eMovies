@@ -18,8 +18,9 @@ class MovieItem extends StatelessWidget {
   });
 
   String getGenreName() {
-    return (item.genreIDs == null || item.genreIDs.length == 0) ? 'N/A':
-     MOVIE_GENRES[item.genreIDs[0]];
+    return (item.genreIDs == null || item.genreIDs.length == 0)
+        ? 'N/A'
+        : MOVIE_GENRES[item.genreIDs[0]];
   }
 
   String _getRatings(double rating) {
@@ -40,7 +41,7 @@ class MovieItem extends StatelessWidget {
       'posterUrl': item.posterUrl,
       'backdropUrl': item.backdropUrl,
       'mediaType': 'movie',
-      'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
+      'releaseDate': item.date.year.toString() ?? 'N/A',
       'voteAverage': item.voteAverage,
     };
     return PageRouteBuilder(
@@ -66,9 +67,9 @@ class MovieItem extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {        
+      builder: (context, constraints) {
         return GestureDetector(
           onTap: () {
             Navigator.of(context).push(_buildRoute());
@@ -79,89 +80,89 @@ class MovieItem extends StatelessWidget {
               item.posterUrl == null
                   ? PlaceHolderImage(item.title)
                   : CachedNetworkImage(
-                      imageUrl: item.posterUrl,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) {
-                        return Center(
-                          child: SpinKitCircle(
-                            color: Theme.of(context).accentColor,
-                            size: LOADING_INDICATOR_SIZE,
-                          ),
-                        );
-                      },
-                    ),
-                    if(!withoutDetails)
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Color.fromRGBO(0, 0, 0, 0.8),
-                    Color.fromRGBO(0, 0, 0, 0.1),
-                  ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
-                ),
-              ),
-              if(!withoutDetails)
-              Positioned(
-                bottom: 10,
-                left: 5,
-                child: Container(
-                  width: constraints.maxWidth,   
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        item.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Helvatica',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white.withOpacity(0.87),
+                    imageUrl: item.posterUrl,
+                    fit: BoxFit.fill,
+                    placeholder: (context, url) {
+                      return Center(
+                        child: SpinKitCircle(
+                          color: Theme.of(context).accentColor,
+                          size: LOADING_INDICATOR_SIZE,
                         ),
-                      ),
-                      Text(
-                        _formatDate(item.releaseDate),
-                        style: kSubtitle1,
-                      ),
-                      Container(
-                        width: constraints.maxWidth,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.white38)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5.0, vertical: 2),
-                                child: Text(
-                                  getGenreName(),
-                                  style: kSubtitle1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _getRatings(item.voteAverage),
-                                    style: kSubtitle1,
-                                  ),
-                                  SizedBox(width: 2),
-                                  Icon(Icons.favorite_border,
-                                      color: Theme.of(context).accentColor),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      );
+                    },
+                  ),
+              if (!withoutDetails)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                      Color.fromRGBO(0, 0, 0, 0.8),
+                      Color.fromRGBO(0, 0, 0, 0.1),
+                    ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
                   ),
                 ),
-              ),
+              if (!withoutDetails)
+                Positioned(
+                  bottom: 10,
+                  left: 5,
+                  child: Container(
+                    width: constraints.maxWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          item.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Helvatica',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white.withOpacity(0.87),
+                          ),
+                        ),
+                        Text(
+                          _formatDate(item.date),
+                          style: kSubtitle1,
+                        ),
+                        Container(
+                          width: constraints.maxWidth,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.white38)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0, vertical: 2),
+                                  child: Text(
+                                    getGenreName(),
+                                    style: kSubtitle1,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      _getRatings(item.voteAverage),
+                                      style: kSubtitle1,
+                                    ),
+                                    SizedBox(width: 2),
+                                    Icon(Icons.favorite_border,
+                                        color: Theme.of(context).accentColor),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
         );
@@ -169,14 +170,6 @@ class MovieItem extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
 
 // import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:e_movies/pages/movie/movie_details_screen.dart';
@@ -208,7 +201,7 @@ class MovieItem extends StatelessWidget {
 //       str = 'Docu...';
 //     }
 //     return str;
-    
+
 //   }
 
 //   String _formatDate(DateTime date) {
@@ -347,7 +340,7 @@ class MovieItem extends StatelessWidget {
 //               child: _buildBackgroundImage(context, constraints),
 //             ),
 //             if (withFooter)
-//               Container(                
+//               Container(
 //                 height: constraints.maxHeight * 0.3,
 //                 padding: const EdgeInsets.only(top: 10, left: 10),
 //                 child: _buildFooter(context),

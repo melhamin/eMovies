@@ -1,5 +1,6 @@
-import 'package:e_movies/consts/consts.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
+
 
 class PlaceHolderImage extends StatelessWidget {
   @required
@@ -8,14 +9,22 @@ class PlaceHolderImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      height: double.infinity,
       color: Colors.black,
-      // color: Colors.black,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Center(
-          child: FittedBox(
-            child: Text(title,
-                style: kTitleStyle),
+          child: Transform.rotate(
+            angle: - pi / 4,
+            child: FittedBox(
+              child: Text(title, style: TextStyle(
+                fontSize: 28,
+                fontFamily: 'Helvatica',
+                fontWeight: FontWeight.bold,
+                color: Colors.white.withOpacity(0.87)
+              )),
+            ),
           ),
         ),
       ),

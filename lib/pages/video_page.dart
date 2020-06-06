@@ -51,7 +51,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     if (_initLoaded) {
       final id = ModalRoute.of(context).settings.arguments as int;
-      print('id --------> $id');
+      // print('id --------> $id');
       Provider.of<Movies>(context, listen: false).fetchVideos(id).then((value) {
         setState(() {
           _videos = Provider.of<Movies>(context, listen: false).videos;
@@ -62,7 +62,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
           // get the first video to set as initial video
           VideoItem trailerVideo;
 
-          if (_videos.isEmpty) {
+          if (_videos == null || _videos.isEmpty) {
             _isEmpty = true;
           } else {
             trailerVideo = _videos[0];
@@ -102,6 +102,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     // TODO: implement dispose
+    _controller.dispose();
     super.dispose();
   }
 

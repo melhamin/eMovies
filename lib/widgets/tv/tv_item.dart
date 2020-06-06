@@ -200,7 +200,7 @@ class TVItem extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        _formatDate(item.firstAirDate),
+                        _formatDate(item.date),
                         style: kSubtitle1,
                       ),
                       Container(

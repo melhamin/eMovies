@@ -7,8 +7,9 @@ import 'package:e_movies/widgets/list_data_item.dart';
 import 'package:e_movies/providers/lists.dart';
 
 class ListItemScreen extends StatefulWidget {
-  final Map<String, dynamic> list;
-  ListItemScreen(this.list);
+  final int index;
+  final bool isFavorites;
+  ListItemScreen({this.index, this.isFavorites = false});
   @override
   _ListItemScreenState createState() => _ListItemScreenState();
 }
@@ -16,6 +17,10 @@ class ListItemScreen extends StatefulWidget {
 class _ListItemScreenState extends State<ListItemScreen> {
   void _deleteItem(String title, int id) {
     Provider.of<Lists>(context, listen: false).deleteItemFromList(title, id);
+  }
+
+  void _deleteFavoriteItem(int id) {
+    Provider.of<Lists>(context, listen: false).removeFavorites(id);
   }
 
   Future<bool> _confirmDeletion() async {
@@ -59,29 +64,32 @@ class _ListItemScreenState extends State<ListItemScreen> {
     );
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
-    // print(widget.list);
-    print('list ============> ${widget.list}');
+    final dynamic items = widget.isFavorites
+        ? Provider.of<Lists>(context).favorites
+        : Provider.of<Lists>(context).lists[widget.index]['data'];
+
+    final listTitle = Provider.of<Lists>(context, listen: false).lists[widget.index]['title'];
+        
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text(
-            widget.list['title'],
+          title: Text(            
+            widget.isFavorites ? 'Favorites' : listTitle,
             style: kTitleStyle,
           ),
         ),
         body: ListView.builder(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 15),
             physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics()),
-            itemCount: widget.list['data'].length,
+                parent: const AlwaysScrollableScrollPhysics()),
+            itemCount: items.length,
             itemBuilder: (context, i) {
-              var data = widget.list['data'][i];
-              print('data ----------> $data');
+              // print('item [i] --------> ${items[0]}');
+              var data = items[i];              
+              // print('data ----------> $data');
               // return Container();
               return Dismissible(
                 background: Container(
@@ -91,8 +99,9 @@ class _ListItemScreenState extends State<ListItemScreen> {
                   child: Icon(Icons.delete, color: Colors.white),
                 ),
                 direction: DismissDirection.endToStart,
-                onDismissed: (_) => _deleteItem(
-                    widget.list['title'], widget.list['data'][i]['id']),
+                onDismissed: (_) => widget.isFavorites
+                    ? _deleteFavoriteItem(items[i]['id'])
+                    : _deleteItem(listTitle, items[i]['id']),
                 confirmDismiss: (_) => _confirmDeletion(),
                 key: UniqueKey(),
                 child: ListDataItem(data),

@@ -1,12 +1,22 @@
+import 'package:e_movies/pages/movie/top_rated_screen.dart';
+
+import 'package:e_movies/pages/movie/upcoming_screen.dart';
+import 'package:e_movies/pages/search/actors_result.dart';
+import 'package:e_movies/pages/search/all_results.dart';
+import 'package:e_movies/pages/search/movies_result.dart';
+import 'package:e_movies/pages/search/tabs.dart';
+import 'package:e_movies/pages/search/tv_shows_result.dart';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter/services.dart';
+
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/genre_tile.dart';
-import 'package:e_movies/widgets/movie/movie_item.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -15,41 +25,22 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen>
     with AutomaticKeepAliveClientMixin {
-  TextEditingController _searchController;
   bool _isSearching = false;
-  String _searchQuery = '';
+  ScrollController _scrollController;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // clear searched movies list if use not searhing
-    if(_searchQuery.isEmpty)
-    Provider.of<Search>(context, listen: false).clearMovies();
-    super.didChangeDependencies();
+    Future.delayed(Duration.zero).then((value) {
+      Provider.of<Search>(context, listen: false).loadSearchHistory();
+    });
+    _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose    
-    _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: _searchQuery.isEmpty
-          ? null
-          : SpinKitCircle(
-              size: 21,
-              color: Theme.of(context).accentColor,
-            ),
-    );
   }
 
   Widget _buildNotSearching() {
@@ -141,26 +132,135 @@ class _SearchScreenState extends State<SearchScreen>
     );
   }
 
-  Widget _buildIsSearhing() {
+  void toggleSearch() {
+    setState(() {
+      _isSearching = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return SafeArea(
+      child: !_isSearching ? _buildNotSearching() : Searching(toggleSearch),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class Searching extends StatefulWidget {
+  final Function toggleSearch;
+  Searching(this.toggleSearch);
+  @override
+  _SearchingState createState() => _SearchingState();
+}
+
+class _SearchingState extends State<Searching>
+    with SingleTickerProviderStateMixin {
+  TextEditingController _searchController;
+  TabController _tabController;
+  int currentIndex = 1;
+
+  // LoaderStatus _loaderStatus = LoaderStatus.STABLE;
+  bool _isFetching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController(text: '');
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+  }
+
+  @override
+  void didChangeDependencies() {
+    // clear searched movies list if use not searhing
+    // if (_searchController.text.isEmpty) {
+    //   Provider.of<Search>(context, listen: false).clearMovies();
+    // Provider.of<Search>(context, listen: false).clearSeries();
+    // Provider.of<Search>(context, listen: false).clearPeople();
+    // }
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildTabContent() {
+    return TabBarView(
+      // physics: NeverScrollableScrollPhysics(),
+      controller: _tabController,
+      children: [
+        AllResults(searchController: _searchController, isLoading: _isFetching, handleTabChange: _onTap,),
+        MoviesResult(
+            searchController: _searchController, isLoading: _isFetching),
+        TVShowsResult(
+            searchController: _searchController, isLoading: _isFetching),
+        ActorsResult(
+            searchController: _searchController, isLoading: _isFetching),
+      ],
+    );
+  }
+
+  void _onTap(int newIndex) {
+    setState(() {
+      currentIndex = newIndex;
+      _tabController.index = newIndex;
+    });
+  }
+
+  Future<void> _fetch(String query) async {
+    Provider.of<Search>(context, listen: false)
+        .searchPerson(query, 1)
+        .then((value) {
+      Provider.of<Search>(context, listen: false)
+          .searchMovies(query, 1)
+          .then((value) {
+        Provider.of<Search>(context, listen: false).searchTVShows(query, 1);
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentPage = Tabs(
+      controller: _tabController,
+      // currentIndex: currentIndex,
+      onTap: _onTap,
+    );
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         // elevation: 10,
-        // bottom: PreferredSize(
-        //   child: Container(color: BASELINE_COLOR),
-        //   preferredSize: Size.fromHeight(5),
-        // ),
+        bottom: PreferredSize(
+          child: Container(
+            // margin: const EdgeInsets.only(right: 100),
+            // padding: const EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(),
+            height: 45,
+            child: currentPage,
+          ),
+          preferredSize: Size.fromHeight(40),
+        ),
         backgroundColor: Hexcolor('#151515'),
         title: Container(
-          height: 35,          
+          height: 35,
           padding: const EdgeInsets.only(left: 10),
           decoration: BoxDecoration(
-            color: ONE_LEVEL_ELEVATION,
+            color: TWO_LEVEL_ELEVATION,
             borderRadius: BorderRadius.circular(10),
           ),
           child: TextField(
             autofocus: true,
+            controller: _searchController,
+            textAlignVertical: TextAlignVertical.center,
+            textInputAction: TextInputAction.go,
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'Search',
@@ -174,103 +274,46 @@ class _SearchScreenState extends State<SearchScreen>
               fontFamily: 'Helvatica',
               fontSize: 18,
               // fontWeight: FontWeight.bold,
-              // height: 1.5,
+              height: 0.9,
               color: Colors.white.withOpacity(0.87),
             ),
             onChanged: (value) {
+              // set _isFetching = true to show loading indcator
               setState(() {
-                _searchQuery = value;
+                _isFetching = true;
               });
+              // Provider.of<Search>(context, listen: false)
+              //     .searchMovies(value, 1)
+
+              _fetch(value).then((value) {
+                setState(() {
+                  _isFetching = false;
+                });
+              });
+              //  Provider.of<Search>(context, listen: false)
+              //     .searchTVShows(value, 1);
+              //     Provider.of<Search>(context, listen: false)
+              //     .searchPerson(value, 1);
             },
           ),
         ),
         actions: <Widget>[
           FlatButton(
-            child: Text('Cancel', style: kBodyStyle2),
+            child: Text('Cancel', style: kTopBarTextStyle),
             onPressed: () {
               setState(() {
-                _isSearching = false;
-                _searchQuery = '';
+                widget.toggleSearch();
+                // _searchQuery = '';
+                _searchController.text = '';
               });
               Provider.of<Search>(context, listen: false).clearMovies();
+              Provider.of<Search>(context, listen: false).clearPeople();
+              Provider.of<Search>(context, listen: false).clearSeries();
             },
           ),
         ],
       ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanDown: (_) {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: FutureBuilder(
-          future: Provider.of<Search>(context).searchMovies(_searchQuery, 1),
-          builder: (_, snapshot) {
-            var movies = Provider.of<Search>(context).movies;
-            // print('query ---------> $_searchQuery');
-            return snapshot.connectionState == ConnectionState.waiting
-                ? _buildLoadingIndicator(context)
-                : GridView.builder(
-                    padding: const EdgeInsets.only(
-                        bottom: kToolbarHeight, left: 10, right: 10),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: movies.length,
-                    itemBuilder: (ctx, i) {
-                      return MovieItem(
-                        item: movies[i],
-                        withoutDetails: true,
-                      );
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 20,
-                      crossAxisSpacing: 20,
-                      childAspectRatio: 2,
-                    ),
-                  );
-          },
-        ),
-      ),
+      body: _buildTabContent(),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return SafeArea(
-      child: !_isSearching ? _buildNotSearching() : _buildIsSearhing(),
-    );
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
-
-/**
- * 
- * Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: ONE_LEVEL_ELEVATION,
-          title: Container(
-            child: TextField(
-              cursorColor: Theme.of(context).accentColor,
-              controller: _searchController,
-              autofocus: true,
-              decoration: const InputDecoration(
-                hintText: 'Search movies & TV shows...',
-                hintStyle: const TextStyle(color: Colors.white30),
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(color: Colors.white, fontSize: 16.0),
-              // onChanged: _updateSearchQuery,
-            ),
-          ),
-        ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-        ),
-      ),
- */

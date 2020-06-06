@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/pages/movie/movie_details_screen.dart';
+import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 
 class ListDataItem extends StatelessWidget {
-
   final dynamic data;
   ListDataItem(this.data);
 
-   Route _buildRoute() {
+  Route _buildRoute() {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: data),
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -27,7 +27,8 @@ class ListDataItem extends StatelessWidget {
         );
       },
     );
-  }  
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(data);
@@ -37,24 +38,31 @@ class ListDataItem extends StatelessWidget {
       },
       highlightColor: Colors.black,
       splashColor: Colors.black,
-          child: ListTile(
+      child: ListTile(
         leading: Container(
-          width: 70,
-          height: 60,
-          child: CachedNetworkImage(
-            imageUrl: data['posterUrl'],
-            fit: BoxFit.cover,
-          ),
+          width: 60,
+          height: 70,
+          child: data['posterUrl'] == null
+              ? PlaceHolderImage(data['title'])
+              : CachedNetworkImage(
+                  imageUrl: data['posterUrl'],
+                  fit: BoxFit.cover,
+                ),
         ),
         title: Text(
           data['title'],
           style: kTitleStyle2,
         ),
         subtitle: Text(
-          MOVIE_GENRES[data['genre']] == null ? 'N/A' : '${MOVIE_GENRES[data['genre']]}',
+          MOVIE_GENRES[data['genre']] == null
+              ? 'N/A'
+              : '${MOVIE_GENRES[data['genre']]}',
           style: kSubtitle1,
         ),
-        trailing: Text('${data['releaseDate']}', style: kSubtitle1,),      
+        trailing: Text(
+          '${data['releaseDate']}',
+          style: kSubtitle1,
+        ),
       ),
     );
   }

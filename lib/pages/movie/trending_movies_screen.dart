@@ -56,6 +56,12 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
     super.didChangeDependencies();
   }
 
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   bool onNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
       if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {

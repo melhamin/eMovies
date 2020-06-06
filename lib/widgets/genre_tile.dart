@@ -52,6 +52,7 @@ class GenreTile extends StatelessWidget {
                 width: double.infinity,
                 // color: Colors.red,
                 child: FadeInImage(
+                  fadeInDuration: Duration(milliseconds: 200),
                   image: AssetImage(imageUrl),
                   placeholder: AssetImage('assets/images/placeholder.png'),
                   fit: BoxFit.cover,

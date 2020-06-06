@@ -73,6 +73,12 @@ TextStyle kBottomBarTextStyle = TextStyle(
   fontSize: 14,
   
 );
+TextStyle kTopBarTextStyle = TextStyle(
+  fontFamily: 'Helvatica',
+  fontWeight: FontWeight.bold,
+  fontSize: 16,
+  color: Colors.white.withOpacity(0.87)
+);
 
 TextStyle kTBStyle = TextStyle(
   fontFamily: 'Helvatica',
@@ -107,11 +113,14 @@ const THUMBNAIL_URL = '';
 
 const Color TRRANSPARENT_BACKGROUND_COLOR = Color(0x991C306D);
 const Color LINE_COLOR = Colors.white10;
-Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212');
+Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212').withOpacity(0.45);
 // Color BASELINE_COLOR = Color.fromRGBO(28, 28, 30, 1);
+// Color BASELINE_COLOR = Hexcolor('#191414');
 Color BASELINE_COLOR = Hexcolor('#121212');
 Color ONE_LEVEL_ELEVATION = Hexcolor('#202020');
+// Color ONE_LEVEL_ELEVATION = Hexcolor('#121212');
 Color ONE_LEVEL_ELEVATION_WITHOPACITY = Hexcolor('#BF212121');
+// Color TWO_LEVEL_ELEVATION = Hexcolor('#202020');
 Color TWO_LEVEL_ELEVATION = Hexcolor('#303030');
 Color THREE_LEVEL_ELEVATION = Hexcolor('#424242');
 const double APP_BAR_HEIGHT = 56;

@@ -1,4 +1,3 @@
-
 import 'package:e_movies/pages/tv/on_air_screen.dart';
 import 'package:e_movies/pages/tv/popular_screen.dart';
 import 'package:e_movies/pages/tv/top_rated_screen.dart';
@@ -38,6 +37,12 @@ class _MoviesScreenState extends State<TVScreen>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     if (_initLoaded) {
       Provider.of<TV>(context, listen: false).fetchPopular(1).then((value) {
@@ -58,10 +63,6 @@ class _MoviesScreenState extends State<TVScreen>
     super.didChangeDependencies();
   }
 
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   Widget _buildSectionTitle(String title, Function onTap,
       [bool withSeeAll = true]) {
@@ -122,66 +123,77 @@ class _MoviesScreenState extends State<TVScreen>
     super.build(context);
     final trending = Provider.of<TV>(context).trending;
     final onAirToday = Provider.of<TV>(context).onAirToday;
-    final topRated = Provider.of<TV>(context).topRated;  
+    final topRated = Provider.of<TV>(context).topRated;
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         body: LayoutBuilder(
-      builder: (context, constraints) {
-        return ListView(
-          padding: EdgeInsets.only(bottom: kToolbarHeight),
-          physics: BouncingScrollPhysics(),
-          children: [
-            _buildSectionTitle('Genres', () {
-              Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
-            }, false),
-            Container(
-                height: constraints.maxHeight * 0.25,
-                child: _isFetching
-                    ? SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                        size: 21,
-                      )
-                    : GenreGrid(
-                        itemsList: TV_GENRE_DETAILS,
-                        mediaType: 1,
-                      )),
-            _buildSectionTitle('Popular', () {
-              Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
-            }),
-            Container(
-                height: constraints.maxHeight * SECTION_HEIGHT,
-                child: _isFetching
-                    ? SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                        size: 21,
-                      )
-                    : Grid(tv: trending, storageKey: 'TV-Popular',)),
-            _buildSectionTitle('On Air', () {
-              Navigator.of(context).push(_buildRoute(OnAirScreen()));
-            }),
-            Container(
-                height: constraints.maxHeight * SECTION_HEIGHT,
-                child: _isFetching
-                    ? SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                        size: 21,
-                      )
-                    : Grid(tv: onAirToday, storageKey: 'TV-On_Air',)),
-            _buildSectionTitle('Top Rated', () {
-              Navigator.of(context).push(_buildRoute(TopRatedScreen()));
-            }),
-            Container(
-                height: constraints.maxHeight * SECTION_HEIGHT,
-                child: _isFetching
-                    ? SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                        size: 21,
-                      )
-                    : Grid(tv: topRated, storageKey: 'TV-Top_Rated',)),
-          ],
-        );
-      },
-    ),
+          builder: (context, constraints) {
+            return ListView(
+              padding: EdgeInsets.only(bottom: kToolbarHeight),
+              physics: BouncingScrollPhysics(),
+              children: [
+                _buildSectionTitle('Genres', () {
+                  Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
+                }, false),
+                Container(
+                    height: constraints.maxHeight * 0.25,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : GenreGrid(
+                            itemsList: TV_GENRE_DETAILS,
+                            mediaType: 1,
+                          )),
+                _buildSectionTitle('Popular', () {
+                  Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
+                }),
+                Container(
+                    height: constraints.maxHeight * SECTION_HEIGHT,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(
+                            tv: trending,
+                            storageKey: 'TV-Popular',
+                          )),
+                _buildSectionTitle('On Air', () {
+                  Navigator.of(context).push(_buildRoute(OnAirScreen()));
+                }),
+                Container(
+                    height: constraints.maxHeight * SECTION_HEIGHT,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(
+                            tv: onAirToday,
+                            storageKey: 'TV-On_Air',
+                          )),
+                _buildSectionTitle('Top Rated', () {
+                  Navigator.of(context).push(_buildRoute(TopRatedScreen()));
+                }),
+                Container(
+                    height: constraints.maxHeight * SECTION_HEIGHT,
+                    child: _isFetching
+                        ? SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: 21,
+                          )
+                        : Grid(
+                            tv: topRated,
+                            storageKey: 'TV-Top_Rated',
+                          )),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -204,7 +216,7 @@ class Grid extends StatelessWidget {
       itemCount: tv.length > 20 ? 20 : tv.length,
       itemBuilder: (context, index) {
         return tvWid.TVItem(
-          item: tv[index],          
+          item: tv[index],
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -7,8 +7,10 @@ import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
+import 'package:e_movies/widgets/my_app_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/route_builder.dart';
+import 'package:e_movies/widgets/temp_cast.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -25,6 +27,8 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 import 'package:e_movies/widgets/my_lists_item.dart';
 
+import '../../my_toast_message.dart';
+
 class MovieDetailsScreen extends StatefulWidget {
   static const routeName = '/details-screen-movies';
   @override
@@ -32,7 +36,7 @@ class MovieDetailsScreen extends StatefulWidget {
 }
 
 class _MovieDetailsPageState extends State<MovieDetailsScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isInitLoaded = true;
   bool _isLoading = true;
   Map<String, dynamic> initData;
@@ -68,6 +72,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   void dispose() {
     // TODO: implement dispose
     _animationController.dispose();
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -91,7 +96,37 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     super.didChangeDependencies();
   }
 
+  void _toggleFavorite(bool isInfavorites) {
+    if (isInfavorites) {
+      Provider.of<Lists>(context, listen: false)
+          .removeFavorites(initData['id']);
+      ToastUtils.myToastMessage(
+        context: context,
+        alignment: Alignment.center,
+        color: BASELINE_COLOR_TRANSPARENT,
+        duration: Duration(seconds: 2),
+        child: _buildToastMessageIcons(
+            Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
+            'Removed from Favorites'),
+      );
+    } else {
+      Provider.of<Lists>(context, listen: false).addToFavorites(initData);
+      ToastUtils.myToastMessage(
+        context: context,
+        alignment: Alignment.center,
+        color: Colors.transparent,
+        duration: Duration(seconds: 2),
+        child: _buildToastMessageIcons(
+            Icon(Icons.favorite,
+                color: Theme.of(context).accentColor, size: 80),
+            ''),
+      );
+    }
+  }
+
   Widget _buildBottomIcons() {
+    final isInFavorites =
+        Provider.of<Lists>(context).isInFavorites(initData['id']);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -105,17 +140,17 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         children: [
           IconButton(
             icon: Icon(
-              Icons.favorite_border,
+              isInFavorites ? Icons.favorite : Icons.favorite_border,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
-            onPressed: () {},
+            onPressed: () => _toggleFavorite(isInFavorites),
           ),
           IconButton(
             icon: Icon(
               Icons.add,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
             onPressed: () {
               _showAddToList(context, initData);
@@ -125,7 +160,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             icon: Icon(
               Icons.share,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
             onPressed: () {},
           )
@@ -167,7 +202,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   //       ),
   //     ),
   //   );
-  // }  
+  // }
 
   Widget _buildImages(MovieItem film) {
     List<String> images = [];
@@ -244,8 +279,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             // contentPadding: const EdgeInsets.all(0),
             title: Text('Release Date', style: kSubtitle1),
             trailing: Text(
-                film.releaseDate != null
-                    ? DateFormat.yMMMd().format(film.releaseDate)
+                film.date != null
+                    ? DateFormat.yMMMd().format(film.date)
                     : 'N/A',
                 style: kBodyStyle),
           ),
@@ -288,15 +323,15 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             // contentPadding: const EdgeInsets.only(left: 15),
             title: Text('Genres', style: kSubtitle1),
             trailing: Text(_getGenres(film.genreIDs), style: kBodyStyle),
-          ),          
+          ),
         ],
       ),
     );
   }
 
   Widget _buildSimilarMovies(BoxConstraints constraints) {
-    bool hasItem = (Provider.of<Movies>(context).similar != null &&
-        Provider.of<Movies>(context).similar.length > 0);
+    bool hasItem = (Provider.of<Movies>(context, listen: false).similar != null &&
+        Provider.of<Movies>(context, listen: false).similar.length > 0);
     if (!hasItem) {
       return Container();
     } else {
@@ -317,7 +352,15 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       SizedBox(height: 20),
       _buildDetails(film),
       SizedBox(height: 30),
-      Cast(details: film),
+      Padding(
+        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
+        child: Text('Cast', style: kSubtitle1),
+      ),
+      Container(
+        color: ONE_LEVEL_ELEVATION,
+        height: 110,
+        child: Cast(details: film),
+      ),
       SizedBox(height: 30),
       _buildSimilarMovies(constraints),
       // Container(
@@ -385,6 +428,34 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
+  void _addList(BuildContext context) {
+    if (_textEditingController.text.isEmpty) return;
+    // print('tex---------> ${_textEditingController.text}');
+    final result = Provider.of<Lists>(context, listen: false)
+        .checkForExistence(_textEditingController.text);
+    // Set _isEmpty to true and clear the textfield
+
+    if (result) {
+      Provider.of<Lists>(context, listen: false)
+          .addNewList(_textEditingController.text);
+      Navigator.of(context).pop();
+      // ToastUtils.showMyToastMessage(
+      //     context, 'Added New List', Alignment.center, Duration(seconds: 1));
+      _textEditingController.clear();
+    } else {
+      ToastUtils.myToastMessage(
+        context: context,
+        alignment: Alignment.center,
+        color: BASELINE_COLOR_TRANSPARENT,
+        duration: Duration(seconds: 2),
+        child: _buildToastMessageIcons(
+          Icon(Icons.warning, color: Colors.white.withOpacity(0.87), size: 50),
+          'List Already Exist'
+        ),
+      );
+    }
+  }
+
   void _showAddNewListDialog(BuildContext context) {
     // _textEditingController.text = '${initData.title}';
     showDialog(
@@ -420,29 +491,23 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                 ),
                 child: Form(
                   child: TextFormField(
-                    controller: _textEditingController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      hintText: 'Name',
-                      hintStyle: kSubtitle1,
-                      border: InputBorder.none,
-                    ),
-                    cursorColor: Theme.of(context).accentColor,
-                    style: TextStyle(
-                      color: Hexcolor('#DEDEDE'),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Helvatica',
-                    ),
-                    autofocus: true,
-                    textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (val) {
-                      Provider.of<Lists>(context, listen: false)
-                          .addNewList(_textEditingController.text);
-                      _textEditingController.clear();
-                      Navigator.of(context).pop();
-                    },
-                  ),
+                      controller: _textEditingController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.only(left: 10),
+                        hintText: 'Name',
+                        hintStyle: kSubtitle1,
+                        border: InputBorder.none,
+                      ),
+                      cursorColor: Theme.of(context).accentColor,
+                      style: TextStyle(
+                        color: Hexcolor('#DEDEDE'),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Helvatica',
+                      ),
+                      autofocus: true,
+                      textInputAction: TextInputAction.go,
+                      onFieldSubmitted: (val) => _addList(context)),
                 ),
               ),
               SizedBox(height: 10),
@@ -459,12 +524,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                       _textEditingController.clear();
                       Navigator.of(context).pop();
                     }, true),
-                    _buildDialogButtons('Create', () {
-                      Provider.of<Lists>(context, listen: false)
-                          .addNewList(_textEditingController.text);
-                      _textEditingController.clear();
-                      Navigator.of(context).pop();
-                    }),
+                    _buildDialogButtons('Create', () => _addList(context)),
                   ],
                 ),
               ),
@@ -475,8 +535,56 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
+  Widget _buildToastMessageIcons(Icon icon, String message,
+      [double iconSize = 50]) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        icon,
+        SizedBox(height: 15),
+        Text(
+          message,
+          style: TextStyle(
+            fontFamily: 'Helvatica',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.87),
+          ),
+          textAlign: TextAlign.center,
+        )
+      ],
+    );
+  }
+
+  void _addNewItemtoList(BuildContext context, int index, dynamic item) {
+    final result = Provider.of<Lists>(context, listen: false)
+        .addNewItemToList(index, item);
+    if (result) {
+      Navigator.of(context).pop();
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: 2),
+          child: _buildToastMessageIcons(
+              Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
+              'Item added.'));
+    } else {
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: 2),
+          child: _buildToastMessageIcons(
+              Icon(Icons.warning,
+                  color: Colors.white.withOpacity(0.87), size: 50),
+              'Item is already in the list.'));
+    }
+  }
+
   void _showAddToList(BuildContext context, dynamic initData) {
-    final lists = Provider.of<Lists>(context, listen: false).moviesLists;
+    final lists = Provider.of<Lists>(context, listen: false).lists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -564,14 +672,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                         )
                       : MyListsItem(
                           list: lists[i - 1],
-                          onTap: () {
-                            // print('i ----------> $i');
-                            Provider.of<Lists>(context, listen: false)
-                                .addNewItemToList(i - 1,
-                                    initData); // (i - 1) because the first element is not lists element
-                            Navigator.of(context).pop();
-                          },
-                        );
+                          onTap: () =>
+                              _addNewItemtoList(context, i - 1, initData));
                 },
               ),
             ),
@@ -583,72 +685,73 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     initData =
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     // print('DetailsPage ------------------------> build() id: ${initData}');
     return SafeArea(
       child: Scaffold(
-        backgroundColor: BASELINE_COLOR,
         body: LayoutBuilder(
-          builder: (context, constraints) {
-            return Stack(
-              children: [
-                ListView(
-                  physics: BouncingScrollPhysics(),
-                  padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                  children: [
-                    BackgroundAndTitle(
-                      initData: initData,
-                      film: film,
-                      constraints: constraints,
-                      isLoading: _isLoading,
+          builder: (ctx, constraints) {
+            return MyAppBar(
+              title: initData['title'],
+              body: ListView(
+                physics: const BouncingScrollPhysics(),
+                // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                children: [
+                  BackgroundAndTitle(
+                    initData: initData,
+                    film: film,
+                    constraints: constraints,
+                    isLoading: _isLoading,
+                  ),
+                  if (!_isLoading)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 10,
+                        bottom: 5,
+                        left: LEFT_PADDING,
+                        right: LEFT_PADDING,
+                      ),
+                      child: Text('Storyline', style: kTitleStyle),
                     ),
-                    if (!_isLoading)
-                      Padding(
+                  if (!_isLoading)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        // vertical: 10,
+                        horizontal: LEFT_PADDING,
+                      ),
+                      child: Overview(initData: film, constraints: constraints),
+                    ),
+                  if (!_isLoading)
+                    Container(
+                      height: constraints.maxHeight * 0.1,
+                      child: _buildBottomIcons(),
+                    ),
+                  SizedBox(height: 20),
+                  if (!_isLoading)
+                    ..._buildOtherDetails(constraints, initData['id'])
+                  else
+                    Padding(
                         padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 5,
-                          left: LEFT_PADDING,
-                          right: LEFT_PADDING,
-                        ),
-                        child: Text('Storyline', style: kTitleStyle),
-                      ),
-                    if (!_isLoading)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          // vertical: 10,
-                          horizontal: LEFT_PADDING,
-                        ),
-                        child:
-                            Overview(initData: film, constraints: constraints),
-                      ),
-                    if (!_isLoading)
-                      Container(
-                        height: constraints.maxHeight * 0.1,
-                        child: _buildBottomIcons(),
-                      ),
-                    SizedBox(height: 20),
-                    if (!_isLoading)
-                      ..._buildOtherDetails(constraints, initData['id'])
-                    else
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              top:
-                                  50), // so the loading indicator is at overview place
-                          child: _showLoadingIndicator()),
-                  ],
-                ),
-                TopBar(title: initData['title']),
-              ],
+                            top:
+                                50), // so the loading indicator is at overview place
+                        child: _showLoadingIndicator()),
+                ],
+              ),
             );
           },
         ),
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
-class BackgroundAndTitle extends StatelessWidget {
+class BackgroundAndTitle extends StatefulWidget {
   const BackgroundAndTitle({
     Key key,
     @required this.initData,
@@ -662,37 +765,75 @@ class BackgroundAndTitle extends StatelessWidget {
   final BoxConstraints constraints;
   final bool isLoading;
 
+  @override
+  _BackgroundAndTitleState createState() => _BackgroundAndTitleState();
+}
+
+class _BackgroundAndTitleState extends State<BackgroundAndTitle>
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  // background image animation controller
+  AnimationController _animationController;
+  var _backgroundImageScale = 0.0;
+  bool initLoaded = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      lowerBound: 0.0,
+      upperBound: 1.0,
+      duration: Duration(milliseconds: 500),
+    )
+      ..addListener(() {
+        setState(() {
+          // update image scale as animation controller value changes
+          _backgroundImageScale = _animationController.value;
+        });
+      })
+      ..forward();      
+
+      initLoaded = true;    
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   String _getGenre() {
-    return (initData['genre'] == null)
-        ? 'N/A'
-        : MOVIE_GENRES[initData['genre']];
+    return MOVIE_GENRES[widget.initData['genre']] ?? 'N/A';
   }
 
   String _getRating() {
-    return initData['voteAverage'] == null
+    return widget.initData['voteAverage'] == null
         ? 'N/A'
-        : initData['voteAverage'].toString();
+        : widget.initData['voteAverage'].toString();
   }
 
   String _getYearAndDuration() {
     String str = '';
-    if (film.releaseDate == null) {
+    if (widget.film.date == null) {
       str += 'N/A';
     } else {
-      str += film.releaseDate.year.toString();
+      str += widget.film.date.year.toString();
     }
-    if (film.duration != null) {
-      str = str + ' \u2022 ' + film.duration.toString() + ' min';
+    if (widget.film.duration != null) {
+      str = str + ' \u2022 ' + widget.film.duration.toString() + ' min';
     }
     return str;
   }
 
-  /**
-   * Build page route for image view
-   */
+
   Route _buildRoute(Widget toPage) {
     return PageRouteBuilder(
-        settings: RouteSettings(arguments: film.id),
+      settings: RouteSettings(arguments: widget.film.id),
       pageBuilder: (context, animation, secondaryAnimation) => toPage,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -712,46 +853,52 @@ class BackgroundAndTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Stack(
       children: [
         Container(
           // color: BASELINE_COLOR,
           padding: const EdgeInsets.only(bottom: 80),
-          height: constraints.maxHeight * 0.55,
+          height: widget.constraints.maxHeight * 0.55,
           child: Stack(
             children: [
               ClipPath(
                 clipper: ImageClipper(),
-                child: initData['backdropUrl'] == null
-                    ? PlaceHolderImage(initData['title'])
-                    : CachedNetworkImage(
-                        imageUrl: initData['backdropUrl'],
-                        fadeInCurve: Curves.easeIn,
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: imageProvider,
+                child: Transform.scale(
+                  scale: _backgroundImageScale,
+                  child: widget.initData['backdropUrl'] == null
+                      ? PlaceHolderImage(widget.initData['title'] ?? 'N/A')
+                      : CachedNetworkImage(
+                          imageUrl: widget.initData['backdropUrl'],
+                          fadeInCurve: Curves.easeIn,
+                          imageBuilder: (context, imageProvider) => Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: imageProvider,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                ),
               ),
               // Container(
 
               //   margin: const EdgeInsets.only(bottom: 80),
               //   color: Colors.black38,
               // ),
+
+              // Build shadow on background image
               ClipPath(
-                  clipper: ImageClipper(),
-                  child: Container(
-                    color: Colors.black45,
-                  ),
-                  ),
+                clipper: ImageClipper(),
+                child: Container(
+                  color: Colors.black45,
+                ),
+              ),
               Positioned(
-                top: constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
+                top: widget.constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
                 // right: MediaQuery.of(context).size.width / 2,
-                right: constraints.maxWidth / 2 - 40,
+                right: widget.constraints.maxWidth / 2 - 40,
 
                 child: Column(
                   children: [
@@ -790,7 +937,7 @@ class BackgroundAndTitle extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: constraints.maxHeight * 0.55 -
+          top: widget.constraints.maxHeight * 0.55 -
               180, // (180 calculated from small poster height and padding given to the background image so the overlaps the background image)
           child: Container(
             width: MediaQuery.of(context).size.width,
@@ -811,10 +958,10 @@ class BackgroundAndTitle extends StatelessWidget {
                     // shape: RoundedRectangleBorder(
                     //   borderRadius: BorderRadius.circular(10),
                     // ),
-                    child: initData['posterUrl'] == null
-                        ? PlaceHolderImage(initData['title'])
+                    child: widget.initData['posterUrl'] == null
+                        ? PlaceHolderImage(widget.initData['title'] ?? 'N/A')
                         : CachedNetworkImage(
-                            imageUrl: initData['posterUrl'],
+                            imageUrl: widget.initData['posterUrl'],
                             fit: BoxFit.fill,
                             placeholder: (context, url) {
                               return Center(
@@ -837,7 +984,7 @@ class BackgroundAndTitle extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          initData['title'],
+                          widget.initData['title'] ?? 'N/A',
                           style: kTitleStyle2,
                           softWrap: true,
                           // overflow: TextOverflow.ellipsis,
@@ -872,7 +1019,7 @@ class BackgroundAndTitle extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 10),
-                        if (!isLoading)
+                        if (!widget.isLoading)
                           Text(
                             _getYearAndDuration(),
                             style: kSubtitle1,
@@ -888,6 +1035,9 @@ class BackgroundAndTitle extends StatelessWidget {
       ],
     );
   }
+
+  @override  
+  bool get wantKeepAlive => true;
 }
 
 class Overview extends StatefulWidget {
@@ -998,7 +1148,7 @@ class Cast extends StatefulWidget {
   _CastState createState() => _CastState();
 }
 
-class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
+class _CastState extends State<Cast> {
   bool _expanded = false;
 
   List<CastItem> crew = [];
@@ -1017,16 +1167,16 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
     // TODO: implement initState
     super.initState();
     // get Crew data
-    if (widget.details.crew != null) {
-      widget.details.crew.forEach((element) {
-        crew.add(CastItem(
-          id: element['id'],
-          name: element['name'],
-          imageUrl: element['profile_path'],
-          job: element['job'],
-        ));
-      });
-    }
+    // if (widget.details.crew != null) {
+    //   widget.details.crew.forEach((element) {
+    //     crew.add(CastItem(
+    //       id: element['id'],
+    //       name: element['name'],
+    //       imageUrl: element['profile_path'],
+    //       job: element['job'],
+    //     ));
+    //   });
+    // }
     // Get cast data
     if (widget.details.cast != null) {
       widget.details.cast.forEach((element) {
@@ -1042,114 +1192,33 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
     // print('Cast ------------------------> initState()');
   }
 
-  void _onTap() {
-    setState(() {
-      _expanded = true;
-    });
-  }
-
-  // Calculate number of items depending on whether list is expanded or not
-  // maximum 5 items should be shown in list has more than 5 elements when not expanded
-  // if expanded, only 10 items will be shown
-  int _calculateItemCount() {
-    return cast.length > 5
-        ? (_expanded
-            ? (cast.length > 10 ? 10 : cast.length)
-            : 6) // 1 more for (More...) tile
-        : cast.length;
-  }
+  // void _onTap() {
+  //   setState(() {
+  //     _expanded = true;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    // print('Cast ----------------------> build()');
-    CastItem director = crew.firstWhere((element) {
-      return element.job == 'Director';
-    });
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (director != null)
-            Padding(
-              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-              child: Text('Director', style: kSubtitle1),
-            ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                top: BorderSide(width: 0.5, color: LINE_COLOR),
-              ),
-              color: ONE_LEVEL_ELEVATION,
-            ),
-            child: castWid.CastItem(
-              item: director,
-              // last: false,
-              subtitle: false,
-            ),
-          ),
-          if (cast != null && cast.length > 0) SizedBox(height: 20),
-          if (cast != null && cast.length > 0)
-            Padding(
-              padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-              child: Text('Cast', style: kSubtitle1),
-            ),
-          if (cast != null && cast.length > 0)
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              // height should be list tile height(60) plus a 5 more that every item needs
-              height:
-                  _calculateItemCount() * 60.0 + _calculateItemCount() * 5 - 10,
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-                  top: BorderSide(width: 0.5, color: LINE_COLOR),
-                ),
-                color: ONE_LEVEL_ELEVATION,
-              ),
-              child: ListView.separated(
-                separatorBuilder: (_, i) {
-                  return Divider(
-                    thickness: 0.5,
-                    color: LINE_COLOR,
-                    indent: LEFT_PADDING + 60, // circle avatar has radius 30
-                    height: 0,
-                  );
-                },
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _calculateItemCount(),
-                itemBuilder: (context, index) {
-                  CastItem item = cast[index];
-                  if (index == _calculateItemCount() - 1 && !_expanded) {
-                    return ListTile(
-                      dense: true,
-                      onTap: _onTap,
-                      leading: Text('More...',
-                          style: TextStyle(
-                            color: Theme.of(context).accentColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            fontFamily: 'Helvatica',
-                          )),
-                    );
-                  } else {
-                    return castWid.CastItem(
-                      item: item,
-                    );
-                  }
-                },
-              ),
-            ),
-        ],
+    // super.build(context);
+    return GridView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: cast.length,
+      itemBuilder: (ctx, i) {
+        return castWid.CastItem(
+          id: cast[i].id,
+          name: cast[i].name,
+          imageUrl: cast[i].imageUrl,
+        );
+      },
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        // mainAxisSpacing: 5,
       ),
+      scrollDirection: Axis.horizontal,
     );
+    
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
 
 class SimilarMovies extends StatelessWidget {

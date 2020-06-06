@@ -27,6 +27,7 @@ class MyListsItem extends StatelessWidget {
       highlightColor: Colors.black,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+        margin: const EdgeInsets.only(bottom: 5),
         width: MediaQuery.of(context).size.width,
         height: 70,
         child: Row(
@@ -61,31 +62,33 @@ class MyListsItem extends StatelessWidget {
                           },
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0,
+                            crossAxisCount: 2,                          
                             childAspectRatio: 1,
                           ),
                           scrollDirection: Axis.horizontal,
                         ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
+            Flexible(
               child: Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.centerLeft ,
                 child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(left: 10, top: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           list['title'],
                           style: kListsItemTitleStyle,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 5),
                         Text(
-                          data.length == 0 ? 'empty' : '${data.length} ' + (data.length == 1 ? 'item' : 'items'),
+                          data.length == 0
+                              ? 'empty'
+                              : '${data.length} ' +
+                                  (data.length == 1 ? 'item' : 'items'),
                           style: kSubtitle1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     )),

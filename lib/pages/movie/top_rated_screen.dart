@@ -44,6 +44,7 @@ class _AllMoviesState extends State<TopRated>  {
   @override
   void dispose() {    
     // TODO: implement dispose   
+    scrollController.dispose();
     super.dispose();   
   }
 
