@@ -23,8 +23,7 @@ class _LoadingIndicatorState extends State<ImageLoadingIndicator>
   Animation<double> _animation;
 
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState() {    
     super.initState();
     _animationController = AnimationController(
       vsync: this,

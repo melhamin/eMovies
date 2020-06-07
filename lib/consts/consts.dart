@@ -202,7 +202,7 @@ const MOVIE_GENRE_DETAILS = [
   {
     'imageUrl': 'assets/images/movies/horror.jpg',
     'title': 'Horror',
-    'genreId': 14,
+    'genreId': 27,
   },
   {
     'imageUrl': 'assets/images/movies/music.jpg',

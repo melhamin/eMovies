@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:e_movies/providers/lists.dart';
 import 'package:flutter/material.dart';
 
-import 'package:e_movies/pages/movie/movies_screen.dart';
-import 'package:e_movies/pages/my_lists_screen.dart';
+import 'package:e_movies/screens/movie/movies_screen.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/search/search_screen.dart';
-import 'package:e_movies/pages/tv/tv_screen.dart';
+import 'package:e_movies/screens/search/search_screen.dart';
+import 'package:e_movies/screens/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
 import 'package:provider/provider.dart';
 

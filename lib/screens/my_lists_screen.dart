@@ -1,5 +1,5 @@
 import 'package:e_movies/my_toast_message.dart';
-import 'package:e_movies/pages/list_item_screen.dart';
+import 'package:e_movies/screens/list_item_screen.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -348,13 +348,6 @@ class _MyListsScreenState extends State<MyListsScreen>
       highlightColor: Colors.black,
       splashColor: Colors.transparent,
       onTap: onTap,
-      // onTap: () {
-      //   // disable editing when creating a new list
-      //   setState(() {
-      //     _isEditing = false;
-      //   });
-      //   _showAddDialog(context);
-      // },
       child: Container(
         padding: const EdgeInsets.only(left: LEFT_PADDING),
         width: MediaQuery.of(context).size.width,
@@ -436,9 +429,9 @@ class _MyListsScreenState extends State<MyListsScreen>
     );
   }
 
-  Future<void> _onRefresh() async {
-    await Provider.of<Lists>(context, listen: false).loadLists();
-  }
+  // Future<void> _onRefresh() async {
+  //   await Provider.of<Lists>(context, listen: false).loadLists();
+  // }
 
   /// Builds route with animation to selected list item.
   /// [list] Selected list item
@@ -499,46 +492,41 @@ class _MyListsScreenState extends State<MyListsScreen>
             style: kTitleStyle,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: _onRefresh,
-          color: Colors.white,
-          backgroundColor: Theme.of(context).accentColor,
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: kToolbarHeight, top: 15),
-            physics: const BouncingScrollPhysics(
-                parent: const AlwaysScrollableScrollPhysics()),
-            children: <Widget>[
-              _buildCustomTiles(context, 'Create List', Icons.add, () {
-                _showAddDialog(context);
-              }),
-              SizedBox(height: 5),
-              _buildCustomTiles(context, 'Favorites', Icons.favorite_border,
-                  () {
-                Navigator.of(context).push(_buildRoute(
-                    0,
-                    true));
-              }),
-              SizedBox(height: 5),
-              AnimatedList(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                key: _listKey,
-                itemBuilder: (ctx, i, animation) {
-                  return SlideTransition(
-                    position: CurvedAnimation(
-                      curve: Curves.easeOut,
-                      parent: animation,
-                    ).drive(Tween<Offset>(
-                      // animate form right end to left end
-                      begin: Offset(1, 0),
-                      end: Offset(0, 0),
-                    )),
-                    child: _buildListItem(moviesLists[i], i),
-                  );
-                },
-              ),
-            ],
-          ),
+        body: ListView(
+          padding: const EdgeInsets.only(bottom: kToolbarHeight, top: 15),
+          physics: const BouncingScrollPhysics(
+              parent: const AlwaysScrollableScrollPhysics()),
+          children: <Widget>[
+            _buildCustomTiles(context, 'Create List', Icons.add, () {
+              _showAddDialog(context);
+            }),
+            SizedBox(height: 5),
+            _buildCustomTiles(context, 'Favorites', Icons.favorite_border,
+                () {
+              Navigator.of(context).push(_buildRoute(
+                  0,
+                  true));
+            }),
+            SizedBox(height: 5),
+            AnimatedList(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              key: _listKey,
+              itemBuilder: (ctx, i, animation) {
+                return SlideTransition(
+                  position: CurvedAnimation(
+                    curve: Curves.easeOut,
+                    parent: animation,
+                  ).drive(Tween<Offset>(
+                    // animate form right end to left end
+                    begin: Offset(1, 0),
+                    end: Offset(0, 0),
+                  )),
+                  child: _buildListItem(moviesLists[i], i),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

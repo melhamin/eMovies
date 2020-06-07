@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/pages/movie/trending_movies_screen.dart';
-import 'package:e_movies/pages/movie/top_rated_screen.dart';
-import 'package:e_movies/pages/movie/upcoming_screen.dart';
+import 'package:e_movies/screens/movie/trending_movies_screen.dart';
+import 'package:e_movies/screens/movie/top_rated_screen.dart';
+import 'package:e_movies/screens/movie/upcoming_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart' as movieWid;
@@ -180,7 +180,7 @@ class _MoviesScreenState extends State<MoviesScreen>
                             size: 21,
                           )
                         : Grid(movies: trending, storageKey: 'Movie-Trending',)),
-                _buildSectionTitle('Upcoming', () {
+                _buildSectionTitle('Coming Soon', () {
                   Navigator.of(context).push(_buildRoute(UpcomingScreen()));
                 }),
                 Container(

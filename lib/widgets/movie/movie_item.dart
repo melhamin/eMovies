@@ -5,7 +5,7 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/movies.dart' as prov;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../pages/movie/movie_details_screen.dart';
+import '../../screens/movie/movie_details_screen.dart';
 import '../placeholder_image.dart';
 
 class MovieItem extends StatelessWidget {
@@ -80,24 +80,31 @@ class MovieItem extends StatelessWidget {
               item.posterUrl == null
                   ? PlaceHolderImage(item.title)
                   : CachedNetworkImage(
-                    imageUrl: item.posterUrl,
-                    fit: BoxFit.fill,
-                    placeholder: (context, url) {
-                      return Center(
-                        child: SpinKitCircle(
-                          color: Theme.of(context).accentColor,
-                          size: LOADING_INDICATOR_SIZE,
-                        ),
-                      );
-                    },
-                  ),
+                      imageUrl: item.posterUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) {
+                        return Center(
+                          child: SpinKitCircle(
+                            color: Theme.of(context).accentColor,
+                            size: LOADING_INDICATOR_SIZE,
+                          ),
+                        );
+                      },
+                    ),
               if (!withoutDetails)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      Color.fromRGBO(0, 0, 0, 0.8),
-                      Color.fromRGBO(0, 0, 0, 0.1),
-                    ], begin: Alignment.bottomCenter, end: Alignment.topCenter),
+                Positioned.fill(                  
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.9),
+                          Colors.black.withOpacity(0.01),
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
                   ),
                 ),
               if (!withoutDetails)
@@ -172,7 +179,7 @@ class MovieItem extends StatelessWidget {
 }
 
 // import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:e_movies/pages/movie/movie_details_screen.dart';
+// import 'package:e_movies/screens/movie/movie_details_screen.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -353,7 +360,7 @@ class MovieItem extends StatelessWidget {
 // }
 
 // // import 'package:cached_network_image/cached_network_image.dart';
-// // import 'package:e_movies/pages/details_page.dart';
+// // import 'package:e_movies/screens/details_page.dart';
 // // import 'package:e_movies/widgets/placeholder_image.dart';
 // // import 'package:flutter/material.dart';
 // // import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -361,7 +368,7 @@ class MovieItem extends StatelessWidget {
 
 // // import 'package:e_movies/consts/consts.dart';
 // // import 'package:transparent_image/transparent_image.dart';
-// // import '../pages/details_page.dart';
+// // import '../screens/details_page.dart';
 
 // // class MovieItem extends StatelessWidget {
 // //   final movie;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:e_movies/pages/movie/cast_details_screen.dart';
+import 'package:e_movies/screens/movie/cast_details_screen.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/cast.dart' as prov;
 

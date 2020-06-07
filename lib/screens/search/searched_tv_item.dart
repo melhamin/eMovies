@@ -1,15 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/cast_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/tv/tv_details_screen.dart';
+import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class SearchedActorItem extends StatelessWidget {
-  final ActorItem item;
-  SearchedActorItem(this.item);
+class SearchedTVItem extends StatelessWidget {
+  final dynamic item;
+  SearchedTVItem(this.item);
 
-  Route _buildRoute(ActorItem item) {
+  Route _buildRoute(dynamic item, [bool searchHistoryItem = false]) {
+    // if not search history item create initData for the tv show details screen
     // Map<String, dynamic> initData = searchHistoryItem
     //     ? item
     //     : {
@@ -26,10 +31,11 @@ class SearchedActorItem extends StatelessWidget {
     //       };
     return PageRouteBuilder(
       settings: RouteSettings(arguments: item),
-      pageBuilder: (context, animation, secondaryAnimation) => CastDetails(),
+      pageBuilder: (context, animation, secondaryAnimation) => TVDetailsScreen(),
       // {
-      //   // if()  MovieDetailsScreen(),
-
+      //   if (item is MovieItem) return MovieDetailsScreen();
+      //   if (item is TVItem) return TVDetailsScreen();
+      //   return MovieDetailsScreen();
       // },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -48,30 +54,30 @@ class SearchedActorItem extends StatelessWidget {
       },
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.black,
       splashColor: Colors.transparent,
       onTap: () {
+        Provider.of<Search>(context, listen: false).addToSearchHistory(item);
         Navigator.of(context).push(_buildRoute(item));
       },
       child: ListTile(
-        // contentPadding: EdgeInsets.all(0),
         isThreeLine: false,
         leading: Container(
           height: 65,
           width: 50,
-          child: item.imageUrl == null
-              ? PlaceHolderImage(item.name)
+          child: item.posterUrl == null
+              ? PlaceHolderImage(item.title)
               : CachedNetworkImage(
-                  imageUrl: IMAGE_URL + item.imageUrl,
+                  imageUrl: item.posterUrl,
                   fit: BoxFit.cover,
                 ),
         ),
         title: Text(
-          item.name?? 'N/A',
+          item.title ?? 'N/A',
           style: TextStyle(
             fontFamily: 'Helvatica',
             fontSize: 18,
@@ -80,20 +86,17 @@ class SearchedActorItem extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(
-                item.department,
+        subtitle: Row(
+          children: <Widget>[
+            Text(item.voteAverage == null ? 'N/A' : item.voteAverage.toString(),
                 style: kSubtitle1),
-        // trailing: IconButton(
-        //   splashColor: Colors.transparent,
-        //   icon: Icon(
-        //     Icons.close,
-        //     color: Colors.white.withOpacity(0.45),
-        //   ),
-        //   onPressed: () {
-        //     Provider.of<Search>(context, listen: false)
-        //         .removeSearchHistoryItem(index);
-        //   },
-        // ),
+            SizedBox(width: 5),
+            Icon(Icons.favorite_border, color: Theme.of(context).accentColor)
+          ],
+        ),
+        trailing: Text(
+            item.date == null ? 'N/A' : item.date.year.toString(),
+            style: kSubtitle1),
       ),
     );
   }

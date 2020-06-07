@@ -1,4 +1,4 @@
-import 'package:e_movies/pages/tv/tv_details_screen.dart';
+import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

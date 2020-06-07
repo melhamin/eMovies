@@ -1,46 +1,39 @@
 import 'package:async/async.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_details_screen.dart';
-import 'package:e_movies/providers/search.dart' show Search;
-import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/pages/search/searched_movie_item.dart';
+import 'package:e_movies/screens/search/searched_tv_item.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+
+import 'package:e_movies/providers/search.dart' show Search;
+
 
 enum LoaderStatus {
   STABLE,
   LOADING,
 }
 
-class MoviesResult extends StatefulWidget {
+class TVShowsResult extends StatefulWidget {
   final bool isLoading;
   final TextEditingController searchController;
-  MoviesResult({this.searchController, this.isLoading});
+  TVShowsResult({this.searchController, this.isLoading});
 
   @override
-  _MoviesResultState createState() => _MoviesResultState();
+  _TVShowsResultState createState() => _TVShowsResultState();
 }
 
-class _MoviesResultState extends State<MoviesResult> {
+class _TVShowsResultState extends State<TVShowsResult> {
   int curPage = 1;
   CancelableOperation _operation;
   LoaderStatus _loaderStatus = LoaderStatus.STABLE;
   bool _isFetchingNewData = false;
 
-  @override
   void didChangeDependencies() {
     // clear searched movies list if use not searhing
-    // if (widget.searchController.text.isEmpty)
-    //   Provider.of<Search>(context, listen: false).clearMovies();
+    // if (widget.searchController.text.isEmpty)      
+    //   Provider.of<Search>(context, listen: false).clearSeries();      
     super.didChangeDependencies();
   }
-
-  // Widget _buildMovieSearchItem(BuildContext context, prov.MovieItem item) {
-  //   return
-  // }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
@@ -81,16 +74,16 @@ class _MoviesResultState extends State<MoviesResult> {
 
   @override
   Widget build(BuildContext context) {
-    final movies = Provider.of<Search>(context).movies;
+    print('tv result build------------->');
+    final tvShows = Provider.of<Search>(context).tvShows;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onPanDown: (_) {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       // show recent search history when not searching
-      child: widget.searchController.text.isEmpty
-          ? Center(child: Text('Search movies', style: kTitleStyle))
-          : widget.isLoading // Show loading indicator when fetching data
+      child:          
+           widget.isLoading // Show loading indicator when fetching data
               ? _buildLoadingIndicator(context)
               : NotificationListener(
                   onNotification: onNotification,
@@ -101,10 +94,10 @@ class _MoviesResultState extends State<MoviesResult> {
                         bottom: kToolbarHeight, left: 10, right: 10, top: 10),
                     physics: const BouncingScrollPhysics(
                         parent: const AlwaysScrollableScrollPhysics()),
-                    itemCount: movies.length,
+                    itemCount: tvShows.length,
                     itemBuilder: (ctx, i) {
-                      var item = movies[i];
-                      return SearchedMovieItem(item);
+                      var item = tvShows[i];
+                      return SearchedTVItem(item);
                     },
                   ),
                 ),

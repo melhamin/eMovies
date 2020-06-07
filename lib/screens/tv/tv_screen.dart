@@ -1,6 +1,6 @@
-import 'package:e_movies/pages/tv/on_air_screen.dart';
-import 'package:e_movies/pages/tv/popular_screen.dart';
-import 'package:e_movies/pages/tv/top_rated_screen.dart';
+import 'package:e_movies/screens/tv/on_air_screen.dart';
+import 'package:e_movies/screens/tv/popular_screen.dart';
+import 'package:e_movies/screens/tv/top_rated_screen.dart';
 import 'package:e_movies/widgets/genre_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

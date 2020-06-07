@@ -5,7 +5,7 @@
 // import 'package:e_movies/providers/movies.dart' as prov;
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-// import '../pages/movie/movie_details_screen.dart';
+// import '../screens/movie/movie_details_screen.dart';
 // import 'placeholder_image.dart';
 
 // class MovieItem extends StatelessWidget {

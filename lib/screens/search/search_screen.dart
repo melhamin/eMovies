@@ -1,11 +1,8 @@
-import 'package:e_movies/pages/movie/top_rated_screen.dart';
-
-import 'package:e_movies/pages/movie/upcoming_screen.dart';
-import 'package:e_movies/pages/search/actors_result.dart';
-import 'package:e_movies/pages/search/all_results.dart';
-import 'package:e_movies/pages/search/movies_result.dart';
-import 'package:e_movies/pages/search/tabs.dart';
-import 'package:e_movies/pages/search/tv_shows_result.dart';
+import 'package:e_movies/screens/search/actors_result.dart';
+import 'package:e_movies/screens/search/all_results.dart';
+import 'package:e_movies/screens/search/movies_result.dart';
+import 'package:e_movies/screens/search/tabs.dart';
+import 'package:e_movies/screens/search/tv_shows_result.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,98 +40,9 @@ class _SearchScreenState extends State<SearchScreen>
     super.dispose();
   }
 
-  Widget _buildNotSearching() {
-    return NestedScrollView(
-      headerSliverBuilder: (ctx, i) {
-        return [
-          SliverAppBar(
-            backgroundColor: BASELINE_COLOR,
-            title: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                'Search',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Helvatica',
-                    color: Colors.white.withOpacity(0.87)),
-              ),
-            ),
-            pinned: false,
-          ),
-          SliverAppBar(
-            backgroundColor: BASELINE_COLOR,
-            expandedHeight: 80,
-            bottom: PreferredSize(
-              child: Container(color: BASELINE_COLOR),
-              preferredSize: Size.fromHeight(10),
-            ),
-            pinned: true,
-            title: GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isSearching = true;
-                });
-              },
-              child: Container(
-                height: 40,
-                padding: const EdgeInsets.only(left: 10),
-                decoration: BoxDecoration(
-                    color: Hexcolor('#DEDEDE'),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.search, color: Hexcolor('#010101')),
-                    SizedBox(width: 10),
-                    Text('Movies, Tv shows, People',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Helvatica',
-                          color: Hexcolor('#010101'),
-                          fontWeight: FontWeight.bold,
-                        ))
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ];
-      },
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        padding:
-            const EdgeInsets.only(bottom: kToolbarHeight, left: 20, right: 20),
-        children: <Widget>[
-          Text('Browse All', style: kTitleStyle2),
-          SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: MOVIE_GENRE_DETAILS.length,
-            itemBuilder: (ctx, i) {
-              return GenreTile(
-                imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
-                genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
-                title: MOVIE_GENRE_DETAILS[i]['title'],
-                mediaType: 0,
-              );
-            },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              childAspectRatio: 2,
-            ),
-            scrollDirection: Axis.vertical,
-          ),
-        ],
-      ),
-    );
-  }
-
   void toggleSearch() {
     setState(() {
-      _isSearching = false;
+      _isSearching = !_isSearching;
     });
   }
 
@@ -142,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return SafeArea(
-      child: !_isSearching ? _buildNotSearching() : Searching(toggleSearch),
+      child: !_isSearching ? NotSearching(toggleSearch) : Searching(toggleSearch),
     );
   }
 
@@ -314,6 +222,97 @@ class _SearchingState extends State<Searching>
         ],
       ),
       body: _buildTabContent(),
+    );
+  }
+}
+
+
+class NotSearching extends StatelessWidget {
+  final Function toggleSearch;
+  NotSearching(this.toggleSearch);
+  @override
+  Widget build(BuildContext context) {
+    return NestedScrollView(
+      headerSliverBuilder: (ctx, i) {
+        return [
+          SliverAppBar(
+            backgroundColor: BASELINE_COLOR,
+            title: Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Search',
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Helvatica',
+                    color: Colors.white.withOpacity(0.87)),
+              ),
+            ),
+            pinned: false,
+          ),
+          SliverAppBar(
+            backgroundColor: BASELINE_COLOR,
+            expandedHeight: 80,
+            bottom: PreferredSize(
+              child: Container(color: BASELINE_COLOR),
+              preferredSize: Size.fromHeight(10),
+            ),
+            pinned: true,
+            title: GestureDetector(
+              onTap: () => toggleSearch(),
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.only(left: 10),
+                decoration: BoxDecoration(
+                    color: Hexcolor('#DEDEDE'),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.search, color: Hexcolor('#010101')),
+                    SizedBox(width: 10),
+                    Text('Movies, TV shows, People',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'Helvatica',
+                          color: Hexcolor('#010101'),
+                          fontWeight: FontWeight.bold,
+                        ))
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ];
+      },
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding:
+            const EdgeInsets.only(bottom: kToolbarHeight, left: 20, right: 20),
+        children: <Widget>[
+          Text('Browse All', style: kTitleStyle2),
+          SizedBox(height: 20),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: MOVIE_GENRE_DETAILS.length,
+            itemBuilder: (ctx, i) {
+              return GenreTile(
+                imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+                genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+                title: MOVIE_GENRE_DETAILS[i]['title'],
+                mediaType: 0,
+              );
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: 2,
+            ),
+            scrollDirection: Axis.vertical,
+          ),
+        ],
+      ),
     );
   }
 }

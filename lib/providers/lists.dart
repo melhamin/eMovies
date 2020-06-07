@@ -87,7 +87,7 @@ class Lists with ChangeNotifier {
 
   bool addToFavorites(dynamic item) {
     // bool result;
-    _favorites.add({
+    _favorites.insert(0,{
       'id': item['id'],
       'title': item['title'],
       // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
@@ -132,7 +132,7 @@ class Lists with ChangeNotifier {
     }, orElse: () => null);
 
     if (exist == null) {
-      _lists[listIndex]['data'].add({
+      _lists[listIndex]['data'].insert(0, {
         'id': item['id'],
         'title': item['title'],
         // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
@@ -145,7 +145,6 @@ class Lists with ChangeNotifier {
         'voteAverage': item['voteAverage']
       });
       result = true;
-
       // update preferences
       saveLists();
       notifyListeners();

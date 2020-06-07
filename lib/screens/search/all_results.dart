@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_details_screen.dart';
-import 'package:e_movies/pages/search/searched_movie_item.dart';
-import 'package:e_movies/pages/search/searched_tv_item.dart';
+import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/search/searched_movie_item.dart';
+import 'package:e_movies/screens/search/searched_tv_item.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 class AllResults extends StatefulWidget {
   final TextEditingController searchController;
   final bool isLoading;
-  final ValueChanged<int> handleTabChange;  
+  final ValueChanged<int> handleTabChange;
 
   AllResults({this.searchController, this.isLoading, this.handleTabChange});
   @override
@@ -242,46 +242,6 @@ class _AllResultsState extends State<AllResults> {
           name: items[i].name,
           imageUrl: items[i].imageUrl,
         );
-        // Column(
-        //   children: [
-        //     InkWell(
-        //       splashColor: Colors.transparent,
-        //       highlightColor: Colors.black,
-        //       onTap: () => null,
-        //       child: Card(
-        //         elevation: 4,
-        //         shadowColor: Colors.white24,
-        //         shape: RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.circular(40)),
-        //         child: CircleAvatar(
-        //           radius: 35,
-        //           backgroundColor: items[i].imageUrl == null
-        //               ? Theme.of(context).accentColor
-        //               : Colors.black,
-        //           backgroundImage: items[i].imageUrl != null
-        //               ? NetworkImage(IMAGE_URL + items[i].imageUrl)
-        //               : null,
-        //           child: items[i].imageUrl != null
-        //               ? null
-        //               : Text(
-        //                   _getName(items[i].name),
-        //                   style: TextStyle(color: Colors.black, fontSize: 20),
-        //                 ),
-        //         ),
-        //       ),
-        //     ),
-        //     SizedBox(height: 5),
-        //     Text(items[i].name,
-        //         style: TextStyle(
-        //           fontFamily: 'Helvatica',
-        //           // fontWeight: FontWeight.bold,
-        //           fontSize: 14,
-        //           color: Hexcolor('#FFFFFF').withOpacity(0.87),
-        //         ),
-        //         overflow: TextOverflow.ellipsis,
-        //         maxLines: 1),
-        //   ],
-        // );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
@@ -336,28 +296,58 @@ class _AllResultsState extends State<AllResults> {
                       const EdgeInsets.only(top: 10, bottom: kToolbarHeight),
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    _buildSectionTitle('Actors', () => widget.handleTabChange(3)),
-                    Container(
-                      height: 110,
-                      child: _buildActors(actors),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                      child: Divider(color: kTextBorderColor, thickness: 0.5),
-                    ),
+                    // if (!widget.isLoading && widget.searchController.text.isNotEmpty &&
+                    //     movies.isEmpty &&
+                    //     actors.isEmpty &&
+                    //     tvShows.isEmpty)
+                      
+                    //   Container(
+                    //     margin: const EdgeInsets.only(top: 100, left: 50, right: 50),
+                    //     child: Column(
+                    //       children: [
+                    //         Text(
+                    //         'Couldn\'t find',
+                    //         style: kTitleStyle, textAlign: TextAlign.center,),
+                    //         SizedBox(height: 10),
+                    //         Text(
+                    //         '"${widget.searchController.text}"',
+                    //         style: kTitleStyle, textAlign: TextAlign.center,),                            
+                            
+                    //       ],
+                    //     )
+                    //   ),
+                    if (actors.isNotEmpty) ...[
+                      _buildSectionTitle(
+                          'Actors', () => widget.handleTabChange(3)),
+                      Container(
+                        height: 110,
+                        child: _buildActors(actors),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: LEFT_PADDING),
+                        child: Divider(color: kTextBorderColor, thickness: 0.5),
+                      ),
+                    ],
                     SizedBox(height: 20),
-                    _buildSectionTitle('Movies', () => widget.handleTabChange(1)),
-                    _buildCategory(movies),
-                    Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                      child: Divider(color: kTextBorderColor, thickness: 0.5),
-                    ),
+
+                    if (movies.isNotEmpty) ...[
+                      _buildSectionTitle(
+                          'Movies', () => widget.handleTabChange(1)),
+                      _buildCategory(movies),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: LEFT_PADDING),
+                        child: Divider(color: kTextBorderColor, thickness: 0.5),
+                      ),
+                    ],
 
                     SizedBox(height: 20),
-                    _buildSectionTitle('TV shows', () => widget.handleTabChange(2)),
-                    _buildCategory(tvShows),
+                    if (tvShows.isNotEmpty) ...[
+                      _buildSectionTitle(
+                          'TV shows', () => widget.handleTabChange(2)),
+                      _buildCategory(tvShows),
+                    ]
                     // Divider(color: kTextBorderColor, thickness: 0.5),
                   ],
                 ),

@@ -14,18 +14,18 @@ enum MovieLoaderStatus {
   LOADING,
 }
 
-class TrendingTVScreen extends StatefulWidget {
-  static const routeName = '/TrendingTVScreen';
+class OnAirScreen extends StatefulWidget {
+  static const routeName = '/onAirScreen';
 
-  TrendingTVScreen({
+  OnAirScreen({
     Key key,
   }) : super(key: key);
 
   @override
-  _TrendingTVScreenState createState() => _TrendingTVScreenState();
+  _AllMoviesState createState() => _AllMoviesState();
 }
 
-class _TrendingTVScreenState extends State<TrendingTVScreen> {
+class _AllMoviesState extends State<OnAirScreen> {
   bool _initLoaded = true;
   bool _isFetching = false;
   ScrollController scrollController;
@@ -43,7 +43,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<TV>(context, listen: false).fetchPopular(1);
+      Provider.of<TV>(context, listen: false).fetchOnAirToday(1);
     }
     _initLoaded = false;
     // TODO: implement didChangeDependencies
@@ -66,7 +66,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
           });
           movieOperation = CancelableOperation.fromFuture(
                   Provider.of<TV>(context, listen: false)
-                      .fetchPopular(curPage + 1))
+                      .fetchOnAirToday(curPage + 1))
               .then(
             (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
@@ -85,7 +85,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
   Future<void> _refreshMovies(bool refresh) async {
     if (refresh)
       await Provider.of<TV>(context, listen: false)
-          .fetchPopular(1);
+          .fetchOnAirToday(1);
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -99,13 +99,13 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
 
   @override
   Widget build(BuildContext context) {    
-    var movies = Provider.of<TV>(context).trending;
+    var movies = Provider.of<TV>(context).onAirToday;
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(          
+        appBar: AppBar(                  
           centerTitle: true,
-          title: Text('Upcoming', style: kTitleStyle),          
+          title: Text('On Air', style: kTitleStyle,),          
         ),
         body: NotificationListener(
           onNotification: onNotification,
@@ -119,7 +119,7 @@ class _TrendingTVScreenState extends State<TrendingTVScreen> {
                     // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
                     physics: const BouncingScrollPhysics(),
                     controller: scrollController,
-                    key: PageStorageKey('PopularScreen'),
+                    key: PageStorageKey('OnAirScreen'),
                     cacheExtent: 12,
                     itemCount: movies.length,
                     itemBuilder: (ctx, i) {

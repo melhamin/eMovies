@@ -1,5 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/tv/tv_genre_item_screen.dart';
+import 'package:e_movies/screens/tv/tv_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
 class TVGenreTile extends StatelessWidget {

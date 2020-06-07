@@ -1,16 +1,16 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/main_screen.dart';
-import 'package:e_movies/pages/movie/trending_movies_screen.dart';
+import 'package:e_movies/screens/main_screen.dart';
+import 'package:e_movies/screens/movie/trending_movies_screen.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'package:e_movies/pages/movie/cast_details_screen.dart' show CastDetails;
-import 'package:e_movies/pages/movie/movie_details_screen.dart' show MovieDetailsScreen;
-import 'package:e_movies/pages/movie/top_rated_screen.dart';
-import 'package:e_movies/pages/video_page.dart';
+import 'package:e_movies/screens/movie/cast_details_screen.dart' show CastDetails;
+import 'package:e_movies/screens/movie/movie_details_screen.dart' show MovieDetailsScreen;
+import 'package:e_movies/screens/movie/top_rated_screen.dart';
+import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/providers/movies.dart';

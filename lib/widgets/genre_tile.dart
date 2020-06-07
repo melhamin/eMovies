@@ -1,8 +1,8 @@
-import 'package:e_movies/pages/tv/tv_genre_item_screen.dart';
+import 'package:e_movies/screens/tv/tv_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_genre_item_screen.dart';
+import 'package:e_movies/screens/movie/movie_genre_item_screen.dart';
 
 class GenreTile extends StatelessWidget {
   final String title;
@@ -52,7 +52,7 @@ class GenreTile extends StatelessWidget {
                 width: double.infinity,
                 // color: Colors.red,
                 child: FadeInImage(
-                  fadeInDuration: Duration(milliseconds: 200),
+                  // fadeInDuration: Duration(milliseconds: 200),
                   image: AssetImage(imageUrl),
                   placeholder: AssetImage('assets/images/placeholder.png'),
                   fit: BoxFit.cover,

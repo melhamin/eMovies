@@ -1,17 +1,14 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/pages/video_page.dart';
+import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
-import 'package:e_movies/widgets/movie/details_item.dart';
-import 'package:e_movies/widgets/my_app_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/route_builder.dart';
-import 'package:e_movies/widgets/temp_cast.dart';
-import 'package:e_movies/widgets/top_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +24,7 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 import 'package:e_movies/widgets/my_lists_item.dart';
 
-import '../../my_toast_message.dart';
+import 'package:e_movies/my_toast_message.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
   static const routeName = '/details-screen-movies';
@@ -330,8 +327,9 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   }
 
   Widget _buildSimilarMovies(BoxConstraints constraints) {
-    bool hasItem = (Provider.of<Movies>(context, listen: false).similar != null &&
-        Provider.of<Movies>(context, listen: false).similar.length > 0);
+    bool hasItem =
+        (Provider.of<Movies>(context, listen: false).similar != null &&
+            Provider.of<Movies>(context, listen: false).similar.length > 0);
     if (!hasItem) {
       return Container();
     } else {
@@ -449,9 +447,9 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         color: BASELINE_COLOR_TRANSPARENT,
         duration: Duration(seconds: 2),
         child: _buildToastMessageIcons(
-          Icon(Icons.warning, color: Colors.white.withOpacity(0.87), size: 50),
-          'List Already Exist'
-        ),
+            Icon(Icons.warning,
+                color: Colors.white.withOpacity(0.87), size: 50),
+            'List Already Exist'),
       );
     }
   }
@@ -687,60 +685,67 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     initData =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    // print('DetailsPage ------------------------> build() id: ${initData}');
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;    
     return SafeArea(
       child: Scaffold(
-        body: LayoutBuilder(
-          builder: (ctx, constraints) {
-            return MyAppBar(
-              title: initData['title'],
-              body: ListView(
-                physics: const BouncingScrollPhysics(),
-                // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                children: [
-                  BackgroundAndTitle(
-                    initData: initData,
-                    film: film,
-                    constraints: constraints,
-                    isLoading: _isLoading,
-                  ),
-                  if (!_isLoading)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        bottom: 5,
-                        left: LEFT_PADDING,
-                        right: LEFT_PADDING,
+        body: Stack(
+          children: [
+            LayoutBuilder(
+              builder: (ctx, constraints) {
+                return ListView(
+                    physics: const BouncingScrollPhysics(),
+                    // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                    children: [
+                      BackgroundAndTitle(
+                        initData: initData,
+                        film: film,
+                        constraints: constraints,
+                        isLoading: _isLoading,
                       ),
-                      child: Text('Storyline', style: kTitleStyle),
-                    ),
-                  if (!_isLoading)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        // vertical: 10,
-                        horizontal: LEFT_PADDING,
-                      ),
-                      child: Overview(initData: film, constraints: constraints),
-                    ),
-                  if (!_isLoading)
-                    Container(
-                      height: constraints.maxHeight * 0.1,
-                      child: _buildBottomIcons(),
-                    ),
-                  SizedBox(height: 20),
-                  if (!_isLoading)
-                    ..._buildOtherDetails(constraints, initData['id'])
-                  else
-                    Padding(
-                        padding: const EdgeInsets.only(
-                            top:
-                                50), // so the loading indicator is at overview place
-                        child: _showLoadingIndicator()),
-                ],
-              ),
-            );
-          },
+                      if (!_isLoading)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 10,
+                            bottom: 5,
+                            left: LEFT_PADDING,
+                            right: LEFT_PADDING,
+                          ),
+                          child: Text('Storyline', style: kTitleStyle),
+                        ),
+                      if (!_isLoading)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            // vertical: 10,
+                            horizontal: LEFT_PADDING,
+                          ),
+                          child: Overview(
+                              initData: film, constraints: constraints),
+                        ),
+                      if (!_isLoading)
+                        Container(
+                          height: constraints.maxHeight * 0.1,
+                          child: _buildBottomIcons(),
+                        ),
+                      SizedBox(height: 20),
+                      if (!_isLoading)
+                        ..._buildOtherDetails(constraints, initData['id'])
+                      else
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                top:
+                                    50), // so the loading indicator is at overview place
+                            child: _showLoadingIndicator()),
+                    ],
+                  );
+              },
+            ),
+            // TopBar(title: 'title'),
+            Positioned(
+              top: 10,
+              left: 10,
+              child: CustomBackButton(),
+            )
+          ],
         ),
       ),
     );
@@ -791,9 +796,9 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
           _backgroundImageScale = _animationController.value;
         });
       })
-      ..forward();      
+      ..forward();
 
-      initLoaded = true;    
+    initLoaded = true;
   }
 
   @override
@@ -830,7 +835,6 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
     return str;
   }
 
-
   Route _buildRoute(Widget toPage) {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: widget.film.id),
@@ -859,7 +863,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
         Container(
           // color: BASELINE_COLOR,
           padding: const EdgeInsets.only(bottom: 80),
-          height: widget.constraints.maxHeight * 0.55,
+          height: widget.constraints.maxHeight * 0.55 + kToolbarHeight,
           child: Stack(
             children: [
               ClipPath(
@@ -938,7 +942,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
         ),
         Positioned(
           top: widget.constraints.maxHeight * 0.55 -
-              180, // (180 calculated from small poster height and padding given to the background image so the overlaps the background image)
+              180 + kToolbarHeight, // (180 + kToolbarHeight calculated from small poster height and padding given to the background image so the overlaps the background image)
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: Row(
@@ -1036,7 +1040,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
     );
   }
 
-  @override  
+  @override
   bool get wantKeepAlive => true;
 }
 
@@ -1217,7 +1221,6 @@ class _CastState extends State<Cast> {
       ),
       scrollDirection: Axis.horizontal,
     );
-    
   }
 }
 

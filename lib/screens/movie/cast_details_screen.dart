@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';

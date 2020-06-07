@@ -1,6 +1,6 @@
 import 'package:async/async.dart';
 
-import 'package:e_movies/pages/search/searched_actor_item.dart';
+import 'package:e_movies/screens/search/searched_actor_item.dart';
 
 import 'package:e_movies/providers/search.dart' show Search;
 

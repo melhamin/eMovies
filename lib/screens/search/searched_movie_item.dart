@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_details_screen.dart';
-import 'package:e_movies/pages/tv/tv_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/providers/tv.dart';

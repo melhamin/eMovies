@@ -111,7 +111,7 @@ class _AllMoviesState extends State<UpcomingScreen>
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Upcoming', style: kTitleStyle),
+          title: Text('Coming Soon', style: kTitleStyle),
         ),
         body: NotificationListener(
           onNotification: onNotification,
