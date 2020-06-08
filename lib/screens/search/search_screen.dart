@@ -50,7 +50,8 @@ class _SearchScreenState extends State<SearchScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return SafeArea(
-      child: !_isSearching ? NotSearching(toggleSearch) : Searching(toggleSearch),
+      child:
+          !_isSearching ? NotSearching(toggleSearch) : Searching(toggleSearch),
     );
   }
 
@@ -103,7 +104,11 @@ class _SearchingState extends State<Searching>
       // physics: NeverScrollableScrollPhysics(),
       controller: _tabController,
       children: [
-        AllResults(searchController: _searchController, isLoading: _isFetching, handleTabChange: _onTap,),
+        AllResults(
+          searchController: _searchController,
+          isLoading: _isFetching,
+          handleTabChange: _onTap,
+        ),
         MoviesResult(
             searchController: _searchController, isLoading: _isFetching),
         TVShowsResult(
@@ -226,10 +231,50 @@ class _SearchingState extends State<Searching>
   }
 }
 
-
 class NotSearching extends StatelessWidget {
   final Function toggleSearch;
   NotSearching(this.toggleSearch);
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: LEFT_PADDING,
+        right: LEFT_PADDING,
+        // top: 30,
+        bottom: 10,
+      ),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 5),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.12), width: 1))
+        ),
+        child: Text(title, style: TextStyle(
+          fontFamily: 'Helvatica',
+          fontSize: 18, 
+          fontWeight: FontWeight.bold,
+          color: Colors.white.withOpacity(0.87)          
+        )),
+        //     if (withSeeAll)
+        //       GestureDetector(
+        //         onTap: onTap,
+        //         child: Row(
+        //           children: [
+        //             Padding(
+        //                 padding: EdgeInsets.only(top: 3),
+        //                 child: Text('See All', style: kSeeAll)),
+        //             SizedBox(width: 3),
+        //             Icon(
+        //               Icons.arrow_forward_ios,
+        //               color: Colors.white.withOpacity(0.6),
+        //               size: 18,
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return NestedScrollView(
@@ -286,30 +331,36 @@ class NotSearching extends StatelessWidget {
       },
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding:
-            const EdgeInsets.only(bottom: kToolbarHeight, left: 20, right: 20),
+        padding: const EdgeInsets.only(bottom: kToolbarHeight),
         children: <Widget>[
-          Text('Browse All', style: kTitleStyle2),
-          SizedBox(height: 20),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: MOVIE_GENRE_DETAILS.length,
-            itemBuilder: (ctx, i) {
-              return GenreTile(
-                imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
-                genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
-                title: MOVIE_GENRE_DETAILS[i]['title'],
-                mediaType: 0,
-              );
-            },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              childAspectRatio: 2,
+          _buildSectionTitle(context, 'Movies'),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
+            child: Text('Browse All', style: kSubtitle1),
+          ),          
+          Container(
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+              physics: const BouncingScrollPhysics(),
+              itemCount: MOVIE_GENRE_DETAILS.length,
+              itemBuilder: (ctx, i) {
+                return GenreTile(
+                  imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+                  genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+                  title: MOVIE_GENRE_DETAILS[i]['title'],
+                  mediaType: 0,
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: 2 / 3,
+              ),
+              scrollDirection: Axis.horizontal,
             ),
-            scrollDirection: Axis.vertical,
           ),
         ],
       ),

@@ -343,7 +343,7 @@ class _MyListsScreenState extends State<MyListsScreen>
 
   /// Builds the first item of the list(Add new list)
   Widget _buildCustomTiles(
-      BuildContext context, String title, IconData icon, Function onTap) {
+      BuildContext context, String title, Widget child, Function onTap) {
     return InkWell(
       highlightColor: Colors.black,
       splashColor: Colors.transparent,
@@ -358,11 +358,7 @@ class _MyListsScreenState extends State<MyListsScreen>
               height: 60,
               width: 60,
               color: ONE_LEVEL_ELEVATION,
-              child: Icon(
-                icon,
-                size: 40,
-                color: Colors.white54,
-              ),
+              child: child,
             ),
             Align(
               alignment: Alignment.center,
@@ -497,15 +493,17 @@ class _MyListsScreenState extends State<MyListsScreen>
           physics: const BouncingScrollPhysics(
               parent: const AlwaysScrollableScrollPhysics()),
           children: <Widget>[
-            _buildCustomTiles(context, 'Create List', Icons.add, () {
+            _buildCustomTiles(
+                context,
+                'Create List',
+                Icon(Icons.add,
+                    size: 40, color: Colors.white.withOpacity(0.60)), () {
               _showAddDialog(context);
             }),
             SizedBox(height: 5),
-            _buildCustomTiles(context, 'Favorites', Icons.favorite_border,
-                () {
-              Navigator.of(context).push(_buildRoute(
-                  0,
-                  true));
+            _buildCustomTiles(context, 'Favorites', Icon(Icons.favorite_border,
+                    size: 40, color: Theme.of(context).accentColor), () {
+              Navigator.of(context).push(_buildRoute(0, true));
             }),
             SizedBox(height: 5),
             AnimatedList(

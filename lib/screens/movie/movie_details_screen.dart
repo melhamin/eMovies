@@ -97,6 +97,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     if (isInfavorites) {
       Provider.of<Lists>(context, listen: false)
           .removeFavorites(initData['id']);
+
+      // ToastUtils.removeOverlay();
       ToastUtils.myToastMessage(
         context: context,
         alignment: Alignment.center,
@@ -108,6 +110,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       );
     } else {
       Provider.of<Lists>(context, listen: false).addToFavorites(initData);
+      // ToastUtils.removeOverlay();
       ToastUtils.myToastMessage(
         context: context,
         alignment: Alignment.center,
@@ -306,7 +309,9 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             dense: true,
             // contentPadding: const EdgeInsets.only(left: 15),
             title: Text('Rating', style: kSubtitle1),
-            trailing: Text(film.voteAverage.toString(), style: kBodyStyle),
+            trailing: Text(
+                film.voteAverage == 0 ? 'NR' : film.voteAverage.toString(),
+                style: kBodyStyle),
           ),
           Divider(
             indent: LEFT_PADDING,
@@ -685,7 +690,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     initData =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;    
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -693,50 +698,50 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             LayoutBuilder(
               builder: (ctx, constraints) {
                 return ListView(
-                    physics: const BouncingScrollPhysics(),
-                    // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                    children: [
-                      BackgroundAndTitle(
-                        initData: initData,
-                        film: film,
-                        constraints: constraints,
-                        isLoading: _isLoading,
+                  physics: const BouncingScrollPhysics(),
+                  // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                  children: [
+                    BackgroundAndTitle(
+                      initData: initData,
+                      film: film,
+                      constraints: constraints,
+                      isLoading: _isLoading,
+                    ),
+                    if (!_isLoading)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 5,
+                          left: LEFT_PADDING,
+                          right: LEFT_PADDING,
+                        ),
+                        child: Text('Storyline', style: kTitleStyle),
                       ),
-                      if (!_isLoading)
-                        Padding(
+                    if (!_isLoading)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          // vertical: 10,
+                          horizontal: LEFT_PADDING,
+                        ),
+                        child:
+                            Overview(initData: film, constraints: constraints),
+                      ),
+                    if (!_isLoading)
+                      Container(
+                        height: constraints.maxHeight * 0.1,
+                        child: _buildBottomIcons(),
+                      ),
+                    SizedBox(height: 20),
+                    if (!_isLoading)
+                      ..._buildOtherDetails(constraints, initData['id'])
+                    else
+                      Padding(
                           padding: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 5,
-                            left: LEFT_PADDING,
-                            right: LEFT_PADDING,
-                          ),
-                          child: Text('Storyline', style: kTitleStyle),
-                        ),
-                      if (!_isLoading)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            // vertical: 10,
-                            horizontal: LEFT_PADDING,
-                          ),
-                          child: Overview(
-                              initData: film, constraints: constraints),
-                        ),
-                      if (!_isLoading)
-                        Container(
-                          height: constraints.maxHeight * 0.1,
-                          child: _buildBottomIcons(),
-                        ),
-                      SizedBox(height: 20),
-                      if (!_isLoading)
-                        ..._buildOtherDetails(constraints, initData['id'])
-                      else
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                top:
-                                    50), // so the loading indicator is at overview place
-                            child: _showLoadingIndicator()),
-                    ],
-                  );
+                              top:
+                                  50), // so the loading indicator is at overview place
+                          child: _showLoadingIndicator()),
+                  ],
+                );
               },
             ),
             // TopBar(title: 'title'),
@@ -819,7 +824,9 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
   String _getRating() {
     return widget.initData['voteAverage'] == null
         ? 'N/A'
-        : widget.initData['voteAverage'].toString();
+        : widget.initData['voteAverage'] == 0
+            ? 'NR'
+            : widget.initData['voteAverage'].toString();
   }
 
   String _getYearAndDuration() {
@@ -942,7 +949,8 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
         ),
         Positioned(
           top: widget.constraints.maxHeight * 0.55 -
-              180 + kToolbarHeight, // (180 + kToolbarHeight calculated from small poster height and padding given to the background image so the overlaps the background image)
+              180 +
+              kToolbarHeight, // (180 + kToolbarHeight calculated from small poster height and padding given to the background image so the overlaps the background image)
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: Row(

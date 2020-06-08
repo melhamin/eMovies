@@ -39,7 +39,7 @@ class _MyStatefulBuilderState extends State<MyStatefulBuilder>
         })
         ..forward()
         ..addStatusListener((status) {
-          print('status -------------> $status');
+          // print('status -------------> $status');
           if (status == AnimationStatus.completed) {
             _changeImage();
             _animationController.reset();
@@ -51,6 +51,7 @@ class _MyStatefulBuilderState extends State<MyStatefulBuilder>
 
   @override
   void dispose() {
+    _animationController.removeListener(() { });
     _animationController.dispose();
     super.dispose();
   }

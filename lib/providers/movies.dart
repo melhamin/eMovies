@@ -256,7 +256,7 @@ class Movies with ChangeNotifier {
   }
 
   Future<void> fetchUpcoming(int page) async {  
-    final url = '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+    final url = '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&page=$page';
 
     try {        
     final response = await http.get(url);

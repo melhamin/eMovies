@@ -115,12 +115,19 @@ class ToastUtils {
       _overlayEntry = createOverlayEntry(context, child, alignment, color);
       Overlay.of(context).insert(_overlayEntry);
       _toastTimer = Timer(duration, () {
-        if (_overlayEntry != null) {
+        if (_overlayEntry != null) {          
           _overlayEntry.remove();
         }
       });
     }
   }
+
+  static removeOverlay() {
+    if(_overlayEntry != null) {
+      _overlayEntry.remove();
+    }
+  }
+  
 
   static OverlayEntry createOverlayEntry(
       BuildContext context, Widget child, Alignment alignment, Color color) {

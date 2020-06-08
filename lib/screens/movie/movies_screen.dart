@@ -1,3 +1,4 @@
+import 'package:e_movies/widgets/movie/in_theaters.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -84,7 +85,12 @@ class _MoviesScreenState extends State<MoviesScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: kTitleStyle),
+          Text(title, style: TextStyle(
+            fontFamily: 'Helvatica',
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.87),
+          )),
           if (withSeeAll)
             GestureDetector(
               onTap: onTap,
@@ -97,7 +103,7 @@ class _MoviesScreenState extends State<MoviesScreen>
                   Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.white.withOpacity(0.6),
-                    size: 18,
+                    size: 16,
                   ),
                 ],
               ),
@@ -137,19 +143,6 @@ class _MoviesScreenState extends State<MoviesScreen>
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
-      // NestedScrollView(
-      //   headerSliverBuilder: (ctx, boo) {
-      //     return [
-      //       SliverAppBar(
-      //         backgroundColor: showTitle ? ONE_LEVEL_ELEVATION : BASELINE_COLOR,
-      //         pinned: true,
-      //         centerTitle: true,
-      //         expandedHeight: 50,
-      //         title:
-      //             showTitle ? Text('Discover', style: kTitleStyle) : Text(''),
-      //       ),
-      //     ];
-      //   },
         body: LayoutBuilder(
           builder: (ctx, constraints) {
             return ListView(
@@ -158,16 +151,9 @@ class _MoviesScreenState extends State<MoviesScreen>
                    bottom: kToolbarHeight),
               controller: _scrollController,
               children: <Widget>[
-                // SizedBox(height: 20,),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: LEFT_PADDING),
-                //   child: Text('Discover', style: TextStyle(
-                //     color: Colors.white.withOpacity(0.87),
-                //     fontFamily: 'Helvatica',
-                //     fontSize: 24,                    
-                //     fontWeight: FontWeight.bold,
-                //   )),
-                // ),
+
+                //  InTheatersGrid(),                
+
                 _buildSectionTitle('Trending', () {
                   Navigator.of(context)
                       .push(_buildRoute(TrendingMoviesScreen()));

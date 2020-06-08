@@ -19,27 +19,14 @@ class ListItemScreen extends StatefulWidget {
 
 class _ListItemScreenState extends State<ListItemScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  double imageScale = 1;
 
   @override
   void initState() {
     super.initState();
-    // _animationController = AnimationController(
-    //   vsync: this,
-    //   lowerBound: 1,
-    //   upperBound: 1.1,
-    //   duration: Duration(seconds: 3),
-    // )..addListener(() {
-    //     setState(() {
-    //       imageScale = _animationController.value;
-    //     });
-    //   });
   }
 
   @override
-  void dispose() {
-    _animationController.dispose();
+  void dispose() {  
     super.dispose();
   }
 
@@ -120,7 +107,7 @@ class _ListItemScreenState extends State<ListItemScreen>
               pinned: false,
               flexibleSpace: Stack(
                 children: [
-                  // Creates a zooming in effect on the background image
+                  // Creates a zoom in effect on the background image
                   MyStatefulBuilder(                    
                     items: items,
                   ),

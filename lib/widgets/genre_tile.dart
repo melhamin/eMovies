@@ -45,7 +45,14 @@ class GenreTile extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(
-          child: Stack(
+          child: Card(
+            color: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
             children: [
               Container(
                 height: double.infinity,
@@ -61,7 +68,7 @@ class GenreTile extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: constraints.maxHeight * 0.4,
+                  height: constraints.maxHeight * 0.6,
                   width: constraints.maxWidth,
                   // margin: const EdgeInsets.only(bottom: 1, left: 1),
                   decoration: BoxDecoration(
@@ -69,8 +76,8 @@ class GenreTile extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Color.fromRGBO(0, 0, 0, 0.9),
-                          Color.fromRGBO(0, 0, 0, 0.05),
+                          Colors.black.withOpacity(0.9),
+                          Colors.black.withOpacity(0.05),                                                    
                         ]),
                   ),
                 ),
@@ -80,10 +87,12 @@ class GenreTile extends StatelessWidget {
                 left: 15,
                 child: Text(
                   title,
-                  style: kTitleStyle,
+                  style: kTitleStyle2,
                 ),
               ),
             ],
+          ),
+            ),
           ),
           onTap: () => _onTap(context),
         );

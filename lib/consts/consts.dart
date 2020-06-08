@@ -55,7 +55,7 @@ TextStyle kInGridTitle = TextStyle(
 
 TextStyle kSeeAll = TextStyle(
   fontFamily: 'Helvatica',
-  fontWeight: FontWeight.bold,
+  // fontWeight: FontWeight.bold,
   fontSize: 16,
   // color: Hexcolor('#DEDEDE'),
   color: Colors.white.withOpacity(0.6)
