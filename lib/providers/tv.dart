@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:e_movies/providers/cast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -28,7 +29,6 @@ class TVItem {
   List<dynamic> episodRuntime;
   String homepage;
   double popularity;
-
 
   List<dynamic> images;
   List<dynamic> videos;
@@ -88,10 +88,9 @@ class TVItem {
           ? ''
           : '$IMAGE_URL/${json['backdrop_path']}',
       overview: json['overview'],
-      date:
-          (json['first_air_date'] == null || json['first_air_date'] == '')
-              ? null
-              : DateTime.parse(json['first_air_date']),
+      date: (json['first_air_date'] == null || json['first_air_date'] == '')
+          ? null
+          : DateTime.parse(json['first_air_date']),
 
       lastAirDate:
           (json['last_air_date'] == null || json['last_air_date'] == '')
@@ -134,10 +133,13 @@ class TV with ChangeNotifier {
   List<TVItem> _trending = [];
   List<TVItem> _onAirToday = [];
   List<TVItem> _topRated = [];
+  List<TVItem> _forKids = [];
   List<TVItem> _genre = [];
-  List<TVItem> _similar = [];
 
   TVItem _details;
+  List<TVItem> _similar = [];
+  List<CastItem> _cast = [];
+  List<CastItem> _crew = [];
 
   // Getters
 
@@ -157,12 +159,24 @@ class TV with ChangeNotifier {
     return _topRated;
   }
 
+  List<TVItem> get forKids {
+    return _forKids;
+  }
+
   List<TVItem> get genre {
     return _genre;
   }
 
   List<TVItem> get similar {
     return _similar;
+  }
+
+  List<CastItem> get cast {
+    return _cast;
+  }
+
+  List<CastItem> get crew {
+    return _cast;
   }
 
   // Functions
@@ -247,29 +261,85 @@ class TV with ChangeNotifier {
 
   Future<void> getDetails(int id) async {
     final url =
-        '$BASE_URL/tv/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,images&include_image_language=en,null';
+        '$BASE_URL/tv/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,images,similar&include_image_language=en,null';
     try {
       final response = await http.get(url);
       // print('getDetails credits ------------------------->');
-      // print('response ---------> ${response.body}');
+      print('response ---------> ${response.body}');
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       // final data = responseData['results'];
       // print('details --------------->  ${data}');
       // print('getDetails credits -------------------------> ${responseData['credits']['crew']}');
       _details = TVItem.fromJson(responseData);
+
+      // get cast and crew details
+
+      // final crewData = responseData[]
+
+      if (details.cast != null) {
+        details.cast.forEach((element) {
+          // print('crew/ ---------> ${element['character']} ');
+          _cast.add(CastItem(
+            id: element['id'],
+            name: element['name'],
+            imageUrl: element['profile_path'],
+            job: element['job'],
+          ));
+        });
+      }
+
+      if (details.crew != null) {
+        details.crew.forEach((element) {
+          // print('crew/ ---------> ${element['character']} ');
+          _crew.add(CastItem(
+            id: element['id'],
+            name: element['name'],
+            imageUrl: element['profile_path'],
+            job: element['job'],
+          ));
+        });
+      }
+
+      // get similar movies
+      final similarMovies = responseData['similar']['results'];
+      similarMovies.forEach((element) {
+        _similar.add(TVItem.fromJson(element));
+      });
     } catch (error) {
       print('TV - getDetails error -----------> $error ');
     }
     notifyListeners();
   }
 
-
-
-  Future<void> getGenre(int id, int page) async {
-    final url = 'https://api.themoviedb.org/3/discover/tv?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=$id';
+  Future<void> fetchForKids(int page) async {
+    final url =
+        '$BASE_URL/discover/tv?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=10762';
     try {
       final response = await http.get(url);
-      print(response.body);      
+      // print(response.body);
+
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'];
+      // print('toprated ------------> $data');
+
+      if (page == 1) {
+        _forKids.clear();
+      }
+
+      data.forEach((element) {
+        _forKids.add(TVItem.fromJson(element));
+      });
+    } catch (error) {
+      print('TV - forKids error -------------> $error');
+    }
+  }
+
+  Future<void> getGenre(int id, int page) async {
+    final url =
+        '$BASE_URL/discover/tv?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=$id';
+    try {
+      final response = await http.get(url);
+      print(response.body);
 
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       final data = responseData['results'];
@@ -281,33 +351,30 @@ class TV with ChangeNotifier {
 
       data.forEach((element) {
         _genre.add(TVItem.fromJson(element));
-      });        
-
+      });
     } catch (error) {
       print('TV - getGenre error -------------> $error');
     }
   }
 
-  Future<void> getSimilar(int id) async {    
-    final url = 'https://api.themoviedb.org/3/tv/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
-    try {
-      final response = await http.get(url);
-      // print(response.body);      
+  // Future<void> getSimilar(int id) async {
+  //   final url =
+  //       'https://api.themoviedb.org/3/tv/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
+  //   try {
+  //     final response = await http.get(url);
+  //     // print(response.body);
 
-      final responseData = json.decode(response.body) as Map<String, dynamic>;
-      final data = responseData['results'];
-      // print('toprated ------------> $data');
+  //     final responseData = json.decode(response.body) as Map<String, dynamic>;
+  //     final data = responseData['results'];
+  //     // print('toprated ------------> $data');
 
-     
-        _similar.clear();     
+  //     _similar.clear();
 
-      data.forEach((element) {
-        _similar.add(TVItem.fromJson(element));
-      });        
-
-    } catch (error) {
-      print('TV - getGenre error -------------> $error');
-    }
-  }
-  
+  //     data.forEach((element) {
+  //       _similar.add(TVItem.fromJson(element));
+  //     });
+  //   } catch (error) {
+  //     print('TV - getGenre error -------------> $error');
+  //   }
+  // }
 }

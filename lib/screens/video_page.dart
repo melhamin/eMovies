@@ -23,28 +23,27 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   bool _isFetching = true;
   bool _isEmpty = false;
 
+  String url = '';
+
   List<VideoItem> _videos;
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    // Future.delayed(Duration.zero).then((value) {
-
-    // _controller = YoutubePlayerController(
-    //   initialVideoId: videos[0]['key'],
-    // //   flags: YoutubePlayerFlags(
-    // //     mute: false,
-    // //     autoPlay: true,
-    // //     disableDragSeek: false,
-    // //     loop: false,
-    // //     isLive: false,
-    // //     forceHideAnnotation: true,
-    // //     forceHD: false,
-    // //     enableCaption: true,
-    // //   ),
-    // // )..addListener(listener);
-    // );
+    super.initState();    
+    
+    _controller = YoutubePlayerController(
+      initialVideoId: url,
+      flags: YoutubePlayerFlags(
+        mute: false,
+        autoPlay: false,
+        disableDragSeek: false,
+        loop: false,
+        isLive: false,
+        forceHideAnnotation: false,
+        forceHD: false,
+        enableCaption: true,
+      ),
+    );
   }
 
   @override
@@ -59,55 +58,24 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
           _isFetching = false;
           _initLoaded = false;
 
-          // get the first video to set as initial video
-          VideoItem trailerVideo;
-
           if (_videos == null || _videos.isEmpty) {
             _isEmpty = true;
           } else {
-            trailerVideo = _videos[0];
-            _controller = YoutubePlayerController(
-              initialVideoId: trailerVideo.key,
-              flags: YoutubePlayerFlags(
-                mute: false,
-                autoPlay: false,
-                disableDragSeek: false,
-                loop: false,
-                isLive: false,
-                forceHideAnnotation: false,
-                forceHD: false,
-                enableCaption: true,
-              ),
-            );
+            url = _videos[0].key;
           }
-
-          // print('trailerVidoe after(firstWhere) --------> ${trailerVideo.name}');
         });
       });
     }
-
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
-  //   void listener() {
-  //   if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
-  //     setState(() {
-  //       _playerState = _controller.value.playerState;
-  //       _videoMetaData = _controller.metadata;
-  //     });
-  //   }
-  // }
-
   @override
   void dispose() {
-    // TODO: implement dispose
     _controller.dispose();
     super.dispose();
   }
 
   void _onTap(String key) {
-    print('ontap ------------------> clicked');
     _controller.load(key);
   }
 
@@ -115,7 +83,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(          
+        appBar: AppBar(
           title: Text('Videos', style: kTitleStyle),
           centerTitle: true,
         ),
@@ -131,14 +99,15 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                           ? Center(
                               child: Text(
                                 'No Video Availabe!',
-                                style: Theme.of(context).textTheme.headline5,
+                                style: kTitleStyle,
                               ),
                             )
                           : ListView.separated(
                               shrinkWrap: true,
                               padding: EdgeInsets.only(
                                   top: constraints.maxHeight * 0.3 + 10),
-                              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                              physics: BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics()),
                               itemCount: _videos.length,
                               separatorBuilder: (context, index) {
                                 return Divider();

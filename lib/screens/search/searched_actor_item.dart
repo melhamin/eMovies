@@ -10,27 +10,10 @@ class SearchedActorItem extends StatelessWidget {
   SearchedActorItem(this.item);
 
   Route _buildRoute(ActorItem item) {
-    // Map<String, dynamic> initData = searchHistoryItem
-    //     ? item
-    //     : {
-    //         'id': item.id,
-    //         'title': item.title,
-    //         'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
-    //             ? 'N/A'
-    //             : item.genreIDs[0],
-    //         'posterUrl': item.posterUrl,
-    //         'backdropUrl': item.backdropUrl,
-    //         'mediaType': 'movie',
-    //         'releaseDate': item.date.year.toString() ?? 'N/A',
-    //         'voteAverage': item.voteAverage,
-    //       };
+   
     return PageRouteBuilder(
       settings: RouteSettings(arguments: item),
       pageBuilder: (context, animation, secondaryAnimation) => CastDetails(),
-      // {
-      //   // if()  MovieDetailsScreen(),
-
-      // },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -83,17 +66,7 @@ class SearchedActorItem extends StatelessWidget {
         subtitle: Text(
                 item.department,
                 style: kSubtitle1),
-        // trailing: IconButton(
-        //   splashColor: Colors.transparent,
-        //   icon: Icon(
-        //     Icons.close,
-        //     color: Colors.white.withOpacity(0.45),
-        //   ),
-        //   onPressed: () {
-        //     Provider.of<Search>(context, listen: false)
-        //         .removeSearchHistoryItem(index);
-        //   },
-        // ),
+       
       ),
     );
   }

@@ -2,19 +2,30 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-class TopBar extends StatelessWidget {
-  @required
-  final String title;  
-  final bool opaque;
+class DynamicAppBar extends StatefulWidget {
+  final ScrollController controller;  
 
-  TopBar({this.title, this.opaque = false});
+  DynamicAppBar(this.controller);
   @override
-  Widget build(BuildContext context) {      
-    // return AppBar(      
-    //   title: Text(title, style: kTitleStyle),
-    //   centerTitle: true,
-    //   leading: BackButton(),
-    // );
+  _DynamicAppBarState createState() => _DynamicAppBarState();
+}
+
+class _DynamicAppBarState extends State<DynamicAppBar> {
+
+  double position;  
+
+  @override
+  void initState() {    
+    super.initState();
+    widget.controller.addListener(() { 
+      setState(() {
+        position = widget.controller.position.pixels;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(        
@@ -24,14 +35,14 @@ class TopBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            BackButton(color: Hexcolor('#DEDEDE')),
+            // BackButton(color: Hexcolor('#DEDEDE')),
             Expanded(
               child: Align(
                 alignment: Alignment.center - Alignment(0.2, 0),
                 child: Padding(
                   padding: const EdgeInsets.only(right: 3.0),
                   child: Text(
-                    title,
+                    position < kToolbarHeight ? 'Discover' : 'Movies',
                     style: kTitleStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

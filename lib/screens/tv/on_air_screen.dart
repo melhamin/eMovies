@@ -1,6 +1,8 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart' show TV;
+import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/movie/movie_item.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -91,7 +93,7 @@ class _AllMoviesState extends State<OnAirScreen> {
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
-        size: 21,
+        size: 30,
         color: Theme.of(context).accentColor,
       ),
     );
@@ -103,43 +105,82 @@ class _AllMoviesState extends State<OnAirScreen> {
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(                  
-          centerTitle: true,
-          title: Text('On Air', style: kTitleStyle,),          
-        ),
+        // appBar: AppBar(                  
+        //   centerTitle: true,
+        //   title: Text('On Air', style: kTitleStyle,),          
+        // ),
         body: NotificationListener(
           onNotification: onNotification,
-          child: RefreshIndicator(
-            onRefresh: () => _refreshMovies(movies.length == 0),
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                Flexible(
-                  child: GridView.builder(
-                    // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                    physics: const BouncingScrollPhysics(),
-                    controller: scrollController,
-                    key: PageStorageKey('OnAirScreen'),
-                    cacheExtent: 12,
-                    itemCount: movies.length,
-                    itemBuilder: (ctx, i) {
-                      return TVItem(
-                        item: movies[i],
-                      );
-                    },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 2 / 3.5,
-                      // mainAxisSpacing: 5,
-                      // crossAxisSpacing: 5,
-                    ),
+          child: Stack(
+            children: [
+               GridView.builder(
+                  // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                  physics: const BouncingScrollPhysics(),
+                  controller: scrollController,
+                  key: const PageStorageKey('UpcomingScreen'),
+                  cacheExtent: 12,
+                  itemCount: movies.length,
+                  itemBuilder: (ctx, i) {
+                    return MovieItem(
+                      item: movies[i],
+                    );
+                  },
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2 / 3.5,
+                    // mainAxisSpacing: 5,
+                    // crossAxisSpacing: 5,
                   ),
                 ),
-                if (_isFetching) _buildLoadingIndicator(context),
-              ],
-            ),
+                Positioned(
+                top: 10,
+                left: 10,
+                child: CustomBackButton(text: 'On Air Today'),
+              ),
+              if (_isFetching)
+                Positioned.fill(
+                  bottom: 10,                  
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildLoadingIndicator(context),
+                  ),
+                )
+            ],
           ),
-        ),
+        ),        
+        // NotificationListener(
+        //   onNotification: onNotification,
+        //   child: RefreshIndicator(
+        //     onRefresh: () => _refreshMovies(movies.length == 0),
+        //     backgroundColor: Theme.of(context).primaryColor,
+        //     child: Column(
+        //       children: [
+        //         Flexible(
+        //           child: GridView.builder(
+        //             // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+        //             physics: const BouncingScrollPhysics(),
+        //             controller: scrollController,
+        //             key: PageStorageKey('OnAirScreen'),
+        //             cacheExtent: 12,
+        //             itemCount: movies.length,
+        //             itemBuilder: (ctx, i) {
+        //               return TVItem(
+        //                 item: movies[i],
+        //               );
+        //             },
+        //             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        //               crossAxisCount: 2,
+        //               childAspectRatio: 2 / 3.5,
+        //               // mainAxisSpacing: 5,
+        //               // crossAxisSpacing: 5,
+        //             ),
+        //           ),
+        //         ),
+        //         if (_isFetching) _buildLoadingIndicator(context),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }

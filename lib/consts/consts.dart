@@ -12,7 +12,7 @@ TextStyle kTitleStyle = TextStyle(
 TextStyle kTitleStyle2 = TextStyle(
   fontFamily: 'Helvatica',
   fontWeight: FontWeight.bold,
-  fontSize: 18,
+  fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kBodyStyle = TextStyle(
@@ -91,7 +91,7 @@ TextStyle kBTStyle = TextStyle(
   fontFamily: 'Helvatica',
   fontSize: 18,
   fontWeight: FontWeight.bold,
-  color: Hexcolor('#55AB55'),
+  color: Colors.pink,
 );
 
 TextStyle kListsItemTitleStyle = TextStyle(

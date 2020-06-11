@@ -1,18 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
+import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 
+
+/// 
 class ListDataItem extends StatelessWidget {
-  final dynamic data;
-  ListDataItem(this.data);
+  final InitialData initData;
+  ListDataItem(this.initData);
 
   Route _buildRoute() {
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: data),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          MovieDetailsScreen(),
+      settings: RouteSettings(arguments: initData),
+      pageBuilder: (context, animation, secondaryAnimation) => initData.mediaType == MediaType.Movie ?
+          MovieDetailsScreen() : TVDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -40,27 +45,26 @@ class ListDataItem extends StatelessWidget {
       splashColor: Colors.black,
       child: ListTile(
         leading: Container(
-          width: 60,
-          height: 70,
-          child: data['posterUrl'] == null
-              ? PlaceHolderImage(data['title'])
+          width: 50,
+          height: 80,
+          child: initData.posterUrl == null
+              ? PlaceHolderImage(initData.title)
               : CachedNetworkImage(
-                  imageUrl: data['posterUrl'],
+                  imageUrl: initData.posterUrl,
                   fit: BoxFit.cover,
                 ),
         ),
         title: Text(
-          data['title'],
+          initData.title,
           style: kTitleStyle2,
         ),
         subtitle: Text(
-          MOVIE_GENRES[data['genre']] == null
-              ? 'N/A'
-              : '${MOVIE_GENRES[data['genre']]}',
+          initData.genreIDs == null ? 'N/A' :
+          '${MOVIE_GENRES[initData.genreIDs[0]]}' ,
           style: kSubtitle1,
         ),
         trailing: Text(
-          '${data['releaseDate']}',
+          '${initData.releaseDate.year}',
           style: kSubtitle1,
         ),
       ),

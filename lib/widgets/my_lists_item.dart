@@ -1,26 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/providers/lists.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class MyListsItem extends StatelessWidget {
-  final Map<String, dynamic> list;
+  final ListItemModel list;
   final Function onTap;
   MyListsItem({this.list, this.onTap});
 
-  // // when length is 1 or 2 crossAxisCount should be 1 (in case 2 since childAspectRatio is 2, each image will occupy half of the space)
-  // int _calcCrossAxisCount(int length) {
-  //   return length <= 2 ? 1 : 2;
-  // }
-
-  // // when length 2 both ratio should be 2 (since crossAxisCount is 1 both images will be visible)
-  // double _calcChildAspectRation(int length) {
-  //   return length == 2 ? 2 : 1;
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final data = list['data'];
+    final  data = list.items;
     return InkWell(
       onTap: onTap,
       splashColor: Colors.black,
@@ -47,7 +39,7 @@ class MyListsItem extends StatelessWidget {
                   : (data.length > 0 &&
                           data.length < 4) // 0 > items > 4 show only one image
                       ? CachedNetworkImage(
-                          imageUrl: data[0]['posterUrl'],
+                          imageUrl: data[0].posterUrl,
                           fit: BoxFit.cover,
                         )
                       : GridView.builder(
@@ -56,7 +48,7 @@ class MyListsItem extends StatelessWidget {
                           itemCount: 4,
                           itemBuilder: (context, i) {
                             return CachedNetworkImage(
-                              imageUrl: data[i]['posterUrl'],
+                              imageUrl: data[i].posterUrl,
                               fit: BoxFit.cover,
                             );
                           },
@@ -77,7 +69,7 @@ class MyListsItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          list['title'],
+                          list.title,
                           style: kListsItemTitleStyle,
                           overflow: TextOverflow.ellipsis,
                         ),

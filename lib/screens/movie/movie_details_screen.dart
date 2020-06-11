@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/lists.dart';
@@ -36,7 +38,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isInitLoaded = true;
   bool _isLoading = true;
-  Map<String, dynamic> initData;
+  InitialData initData;
   MovieItem film;
 
   TextEditingController _textEditingController;
@@ -76,10 +78,10 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   @override
   void didChangeDependencies() {
     if (_isInitLoaded) {
-      final movie =
-          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final initData = ModalRoute.of(context).settings.arguments as InitialData;
+      // print('movie----------> $initData');
       Provider.of<Movies>(context, listen: false)
-          .getMovieDetails(movie['id'])
+          .getMovieDetails(initData.id)
           .then((value) {
         setState(() {
           // Get film item
@@ -96,7 +98,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   void _toggleFavorite(bool isInfavorites) {
     if (isInfavorites) {
       Provider.of<Lists>(context, listen: false)
-          .removeFavorites(initData['id']);
+          .removeFavoriteMovie(initData.id);
 
       // ToastUtils.removeOverlay();
       ToastUtils.myToastMessage(
@@ -109,7 +111,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             'Removed from Favorites'),
       );
     } else {
-      Provider.of<Lists>(context, listen: false).addToFavorites(initData);
+      Provider.of<Lists>(context, listen: false).addToFavoriteMovies(initData);
       // ToastUtils.removeOverlay();
       ToastUtils.myToastMessage(
         context: context,
@@ -126,7 +128,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
 
   Widget _buildBottomIcons() {
     final isInFavorites =
-        Provider.of<Lists>(context).isInFavorites(initData['id']);
+        Provider.of<Lists>(context).isFavoriteMovie(initData);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -345,6 +347,26 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     }
   }
 
+  Route _buildRoute(Widget toPage, [dynamic args]) {
+    return PageRouteBuilder(
+      settings: RouteSettings(arguments: args),
+      pageBuilder: (context, animation, secondaryAnimation) => toPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+        var tween = Tween(begin: begin, end: end);
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
   // Builds parts that needs detailed film to be fetched
   List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
     // print('DetailsPage ---------------------> ${film.videos}');
@@ -355,13 +377,30 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       SizedBox(height: 20),
       _buildDetails(film),
       SizedBox(height: 30),
+      
       Padding(
-        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-        child: Text('Cast', style: kSubtitle1),
+        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5, right: LEFT_PADDING),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Cast', style: kSubtitle1),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(_buildRoute(AllActorsScreen()));
+              },
+              child: Row(
+                children: [
+                  Text('Details', style: kSeeAll),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.6), size: 16,),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       Container(
         color: ONE_LEVEL_ELEVATION,
-        height: 110,
+        height: constraints.maxHeight * 0.15,
         child: Cast(details: film),
       ),
       SizedBox(height: 30),
@@ -435,15 +474,11 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     if (_textEditingController.text.isEmpty) return;
     // print('tex---------> ${_textEditingController.text}');
     final result = Provider.of<Lists>(context, listen: false)
-        .checkForExistence(_textEditingController.text);
+        .addNewMovieList(_textEditingController.text);
     // Set _isEmpty to true and clear the textfield
 
-    if (result) {
-      Provider.of<Lists>(context, listen: false)
-          .addNewList(_textEditingController.text);
-      Navigator.of(context).pop();
-      // ToastUtils.showMyToastMessage(
-      //     context, 'Added New List', Alignment.center, Duration(seconds: 1));
+    if (result) {      
+      Navigator.of(context).pop();      
       _textEditingController.clear();
     } else {
       ToastUtils.myToastMessage(
@@ -560,9 +595,9 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
-  void _addNewItemtoList(BuildContext context, int index, dynamic item) {
+  void _addNewItemtoList(BuildContext context, int index, InitialData item) {
     final result = Provider.of<Lists>(context, listen: false)
-        .addNewItemToList(index, item);
+        .addNewMovieToList(index, item);
     if (result) {
       Navigator.of(context).pop();
       ToastUtils.myToastMessage(
@@ -586,8 +621,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     }
   }
 
-  void _showAddToList(BuildContext context, dynamic initData) {
-    final lists = Provider.of<Lists>(context, listen: false).lists;
+  void _showAddToList(BuildContext context, InitialData initData) {
+    final lists = Provider.of<Lists>(context, listen: false).moviesLists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -651,7 +686,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
               height: MediaQuery.of(context).size.height * 0.75,
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
+                    parent: const AlwaysScrollableScrollPhysics()),
                 padding: const EdgeInsets.only(top: 20, right: LEFT_PADDING),
                 itemCount:
                     lists.length + 1, // since first element is New List button
@@ -686,11 +721,22 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: SpinKitCircle(
+        size: 21,
+        color: Theme.of(context).accentColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    initData =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    initData = ModalRoute.of(context).settings.arguments as InitialData;
+    // print('initData------------> $initData');
+    // if(!_isLoading)
+    // print('details -----------> ${film.genreIDs}');
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -707,33 +753,37 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                       constraints: constraints,
                       isLoading: _isLoading,
                     ),
-                    if (!_isLoading)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 5,
-                          left: LEFT_PADDING,
-                          right: LEFT_PADDING,
-                        ),
-                        child: Text('Storyline', style: kTitleStyle),
+                    // if (!_isLoading)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 10,
+                        bottom: 5,
+                        left: LEFT_PADDING,
+                        right: LEFT_PADDING,
                       ),
-                    if (!_isLoading)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          // vertical: 10,
-                          horizontal: LEFT_PADDING,
-                        ),
-                        child:
-                            Overview(initData: film, constraints: constraints),
-                      ),
-                    if (!_isLoading)
-                      Container(
-                        height: constraints.maxHeight * 0.1,
-                        child: _buildBottomIcons(),
-                      ),
+                      child: Text('Storyline', style: kTitleStyle),
+                    ),
+                    _isLoading
+                        ? Container(
+                            height: constraints.maxHeight * 0.3,
+                            child: _buildLoadingIndicator(context),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(
+                              // vertical: 10,
+                              horizontal: LEFT_PADDING,
+                            ),
+                            child: Overview(
+                                initData: film, constraints: constraints),
+                          ),
+                    // if (!_isLoading)
+                    Container(
+                      height: constraints.maxHeight * 0.1,
+                      child: _buildBottomIcons(),
+                    ),
                     SizedBox(height: 20),
                     if (!_isLoading)
-                      ..._buildOtherDetails(constraints, initData['id'])
+                      ..._buildOtherDetails(constraints, initData.id)
                     else
                       Padding(
                           padding: const EdgeInsets.only(
@@ -770,7 +820,7 @@ class BackgroundAndTitle extends StatefulWidget {
     @required this.isLoading,
   }) : super(key: key);
 
-  final Map<String, dynamic> initData;
+  final InitialData initData;
   final MovieItem film;
   final BoxConstraints constraints;
   final bool isLoading;
@@ -789,19 +839,21 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      lowerBound: 0.0,
-      upperBound: 1.0,
-      duration: Duration(milliseconds: 500),
-    )
-      ..addListener(() {
-        setState(() {
-          // update image scale as animation controller value changes
-          _backgroundImageScale = _animationController.value;
-        });
-      })
-      ..forward();
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      _animationController = AnimationController(
+        vsync: this,
+        lowerBound: 0.0,
+        upperBound: 1.0,
+        duration: Duration(milliseconds: 200),
+      )
+        ..addListener(() {
+          setState(() {
+            // update image scale as animation controller value changes
+            _backgroundImageScale = _animationController.value;
+          });
+        })
+        ..forward();
+    });
 
     initLoaded = true;
   }
@@ -818,15 +870,18 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
   }
 
   String _getGenre() {
-    return MOVIE_GENRES[widget.initData['genre']] ?? 'N/A';
+    // print('genreIDs-----------> ${widget.initData['genreIDs']}');
+    return widget.initData.genreIDs == null
+        ? 'N/A'
+        : MOVIE_GENRES[widget.initData.genreIDs[0]] ?? 'N/A';
   }
 
   String _getRating() {
-    return widget.initData['voteAverage'] == null
+    return widget.initData.voteAverage == null
         ? 'N/A'
-        : widget.initData['voteAverage'] == 0
+        : widget.initData.voteAverage == 0
             ? 'NR'
-            : widget.initData['voteAverage'].toString();
+            : widget.initData.voteAverage.toString();
   }
 
   String _getYearAndDuration() {
@@ -862,6 +917,15 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
     );
   }
 
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: SpinKitCircle(
+        size: 21,
+        color: Theme.of(context).accentColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -870,17 +934,21 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
         Container(
           // color: BASELINE_COLOR,
           padding: const EdgeInsets.only(bottom: 80),
-          height: widget.constraints.maxHeight * 0.55 + kToolbarHeight,
+          height: widget.constraints.maxHeight * 0.55,
           child: Stack(
             children: [
               ClipPath(
                 clipper: ImageClipper(),
-                child: Transform.scale(
+                child:
+                    // widget.isLoading
+                    //     ? _buildLoadingIndicator(context)
+                    //     :
+                    Transform.scale(
                   scale: _backgroundImageScale,
-                  child: widget.initData['backdropUrl'] == null
-                      ? PlaceHolderImage(widget.initData['title'] ?? 'N/A')
+                  child: widget.initData.backdropUrl == null
+                      ? PlaceHolderImage(widget.initData.backdropUrl ?? 'N/A')
                       : CachedNetworkImage(
-                          imageUrl: widget.initData['backdropUrl'],
+                          imageUrl: widget.initData.backdropUrl,
                           fadeInCurve: Curves.easeIn,
                           imageBuilder: (context, imageProvider) => Container(
                             decoration: BoxDecoration(
@@ -907,7 +975,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                 ),
               ),
               Positioned(
-                top: widget.constraints.maxHeight * 0.2 - APP_BAR_HEIGHT,
+                top: widget.constraints.maxHeight * 0.2,
                 // right: MediaQuery.of(context).size.width / 2,
                 right: widget.constraints.maxWidth / 2 - 40,
 
@@ -949,8 +1017,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
         ),
         Positioned(
           top: widget.constraints.maxHeight * 0.55 -
-              180 +
-              kToolbarHeight, // (180 + kToolbarHeight calculated from small poster height and padding given to the background image so the overlaps the background image)
+              180, // (180 calculated from small poster height and padding given to the background image so the overlaps the background image)
           child: Container(
             width: MediaQuery.of(context).size.width,
             child: Row(
@@ -965,15 +1032,12 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                   height: 180,
                   child: Card(
                     color: BASELINE_COLOR,
-                    shadowColor: Colors.white30,
+                    shadowColor: Colors.white12,
                     elevation: 5,
-                    // shape: RoundedRectangleBorder(
-                    //   borderRadius: BorderRadius.circular(10),
-                    // ),
-                    child: widget.initData['posterUrl'] == null
-                        ? PlaceHolderImage(widget.initData['title'] ?? 'N/A')
+                    child: widget.initData.posterUrl == null
+                        ? PlaceHolderImage(widget.initData.title ?? 'N/A')
                         : CachedNetworkImage(
-                            imageUrl: widget.initData['posterUrl'],
+                            imageUrl: widget.initData.posterUrl,
                             fit: BoxFit.fill,
                             placeholder: (context, url) {
                               return Center(
@@ -991,12 +1055,12 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                     padding: const EdgeInsets.only(
                         right: LEFT_PADDING,
                         top:
-                            80), // part of the poster image that overlaps background image
+                            70), // part of the poster image that overlaps background image
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.initData['title'] ?? 'N/A',
+                          widget.initData.title ?? 'N/A',
                           style: kTitleStyle2,
                           softWrap: true,
                           // overflow: TextOverflow.ellipsis,
@@ -1075,11 +1139,11 @@ class _OverviewState extends State<Overview>
     return ConstrainedBox(
       constraints: _expanded
           ? BoxConstraints(
-              minHeight: widget.constraints.maxHeight * 0.30 -
-                  APP_BAR_HEIGHT, // otherwise bottom icons will move up if text length is small
+              minHeight: widget.constraints.maxHeight *
+                  0.30, // otherwise bottom icons will move up if text length is small
             )
           : BoxConstraints(
-              maxHeight: widget.constraints.maxHeight * 0.30 - APP_BAR_HEIGHT,
+              maxHeight: widget.constraints.maxHeight * 0.30,
             ),
       child: AnimatedSize(
         duration: Duration(milliseconds: 300),
@@ -1099,30 +1163,32 @@ class _OverviewState extends State<Overview>
                 ),
               )
             : SizedBox.expand(
-                child: GestureDetector(
-                  onTap: widget.initData.overview.length > 200
-                      ? () {
-                          setState(() {
-                            _expanded = !_expanded;
-                          });
-                        }
-                      : null,
-                  child: RichText(
-                    text: TextSpan(
-                        text: widget.initData.overview.length < 200
-                            ? widget.initData.overview
-                            : widget.initData.overview.substring(0, 200) +
-                                '...',
-                        style: kBodyStyle,
-                        children: [
-                          if (!_expanded &&
-                              widget.initData.overview.length > 200)
-                            TextSpan(
-                                text: 'More',
-                                style: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                ))
-                        ]),
+                child: Container(
+                  child: GestureDetector(
+                    onTap: widget.initData.overview.length > 200
+                        ? () {
+                            setState(() {
+                              _expanded = !_expanded;
+                            });
+                          }
+                        : null,
+                    child: RichText(
+                      text: TextSpan(
+                          text: widget.initData.overview.length < 200
+                              ? widget.initData.overview
+                              : widget.initData.overview.substring(0, 200) +
+                                  '...',
+                          style: kBodyStyle,
+                          children: [
+                            if (!_expanded &&
+                                widget.initData.overview.length > 200)
+                              TextSpan(
+                                  text: 'More',
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                  ))
+                          ]),
+                    ),
                   ),
                 ),
               ),
@@ -1153,74 +1219,20 @@ class RatingItem extends StatelessWidget {
   }
 }
 
-class Cast extends StatefulWidget {
+class Cast extends StatelessWidget {
   final MovieItem details;
   Cast({this.details});
-  @override
-  _CastState createState() => _CastState();
-}
-
-class _CastState extends State<Cast> {
-  bool _expanded = false;
-
-  List<CastItem> crew = [];
-  List<CastItem> cast = [];
-
-  // Get the name abbreviation for circle avatar in case image is not available
-  String _getName(String str) {
-    String res = '';
-    List<String> name = str.split(' ');
-    res = res + name[0][0].toUpperCase() + name[1][0].toUpperCase();
-    return res;
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // get Crew data
-    // if (widget.details.crew != null) {
-    //   widget.details.crew.forEach((element) {
-    //     crew.add(CastItem(
-    //       id: element['id'],
-    //       name: element['name'],
-    //       imageUrl: element['profile_path'],
-    //       job: element['job'],
-    //     ));
-    //   });
-    // }
-    // Get cast data
-    if (widget.details.cast != null) {
-      widget.details.cast.forEach((element) {
-        // print('name/ ---------> ${element['character']} ');
-        cast.add(CastItem(
-          id: element['id'],
-          name: element['name'],
-          imageUrl: element['profile_path'],
-          character: element['character'],
-        ));
-      });
-    }
-    // print('Cast ------------------------> initState()');
-  }
-
-  // void _onTap() {
-  //   setState(() {
-  //     _expanded = true;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
+    final cast = Provider.of<Movies>(context).cast;
     // super.build(context);
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: cast.length,
       itemBuilder: (ctx, i) {
         return castWid.CastItem(
-          id: cast[i].id,
-          name: cast[i].name,
-          imageUrl: cast[i].imageUrl,
+          cast[i],
         );
       },
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

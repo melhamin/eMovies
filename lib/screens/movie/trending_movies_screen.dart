@@ -1,5 +1,5 @@
 import 'package:async/async.dart';
-import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/back_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -27,7 +27,7 @@ class TrendingMoviesScreen extends StatefulWidget {
 class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
     with AutomaticKeepAliveClientMixin {
   bool _initLoaded = true;
-  bool _isFetching = false;
+  bool _isLoading = true;
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
   CancelableOperation movieOperation;
@@ -35,24 +35,23 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
   var movies;
   int curPage = 1;
 
-  @override
-  // TODO: implement wantKeepAlive
+  @override  
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
-    // TODO: implement initState
+    scrollController = ScrollController();    
   }
 
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<Movies>(context, listen: false).fetchTrending(1);
+      Provider.of<Movies>(context, listen: false).fetchTrending(1).then((value) {       
+          _isLoading = false;        
+      });
     }
-    _initLoaded = false;
-    // TODO: implement didChangeDependencies
+    _initLoaded = false;    
     super.didChangeDependencies();
   }
 
@@ -68,7 +67,7 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
           setState(() {
-            _isFetching = true;
+            _isLoading = true;
           });
           movieOperation = CancelableOperation.fromFuture(
                   Provider.of<Movies>(context, listen: false)
@@ -78,7 +77,7 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
                 curPage = curPage + 1;
-                _isFetching = false;
+                _isLoading = false;
               });
             },
           );
@@ -88,15 +87,11 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
     return true;
   }
 
-  // Future<void> _refreshMovies(bool refresh) async {
-  //   if (refresh)
-  //     await Provider.of<Movies>(context, listen: false).fetchTrending(1);
-  // }
 
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
-        size: 21,
+        size: 30,
         color: Theme.of(context).accentColor,
       ),
     );
@@ -105,40 +100,45 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var movies = Provider.of<Movies>(context).trending;
-    // print('------------> length: ${movies.length}');
+    var movies = Provider.of<Movies>(context).trending;    
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(          
-          centerTitle: true,
-          title: Text('Trending', style: kTitleStyle),          
-        ),
         body: NotificationListener(
           onNotification: onNotification,
-          child: Column(
+          child: Stack(
             children: [
-              Flexible(
-                child: GridView.builder(
-                  // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                  physics: const BouncingScrollPhysics(),
-                  controller: scrollController,
-                  key: const PageStorageKey('TrendingMoviesScreen'),
-                  cacheExtent: 12,
-                  itemCount: movies.length,
-                  itemBuilder: (ctx, i) {
-                    return MovieItem(
-                      item: movies[i],
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2 / 3.5,
-                    // mainAxisSpacing: 5,
-                    // crossAxisSpacing: 5,
-                  ),
+              GridView.builder(
+                // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                physics: const BouncingScrollPhysics(),
+                controller: scrollController,
+                key: const PageStorageKey('TrendingMoviesScreen'),
+                cacheExtent: 12,
+                itemCount: movies.length,
+                itemBuilder: (ctx, i) {
+                  return MovieItem(
+                    item: movies[i],
+                  );
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2 / 3.5,
+                  // mainAxisSpacing: 5,
+                  // crossAxisSpacing: 5,
                 ),
               ),
-              if (_isFetching) _buildLoadingIndicator(context),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: CustomBackButton(text: 'Trending'),
+              ),
+              if (_isLoading)
+                Positioned.fill(
+                  bottom: 10,                  
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildLoadingIndicator(context),
+                  ),
+                )
             ],
           ),
         ),

@@ -6,6 +6,7 @@ import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/providers/init_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,20 +16,7 @@ class SearchedMovieItem extends StatelessWidget {
 
   Route _buildRoute(dynamic item, [bool searchHistoryItem = false]) {
     // if not search history item create initData for the tv show details screen
-    Map<String, dynamic> initData = searchHistoryItem
-        ? item
-        : {
-            'id': item.id,
-            'title': item.title,
-            'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
-                ? 'N/A'
-                : item.genreIDs[0],
-            'posterUrl': item.posterUrl,
-            'backdropUrl': item.backdropUrl,
-            'mediaType': 'movie',
-            'releaseDate': item.date.year.toString() ?? 'N/A',
-            'voteAverage': item.voteAverage,
-          };
+    InitialData initData = InitialData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),

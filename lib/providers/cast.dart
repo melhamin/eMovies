@@ -26,7 +26,7 @@ class CastItem {
     return CastItem(
       id: json['id'],
       name: json['name'],
-      imageUrl: json['imageUrl'],
+      imageUrl: json['profile_path'],
       character: json['character'] ?? 'N/A',
       job: json['job'] ?? 'N/A',
     );
@@ -55,6 +55,8 @@ class Cast with ChangeNotifier {
 
   Person person;
   List<MovieItem> _movies = [];
+  List<CastItem> _popularPeople = [];
+
 
   Person get getPerson {
     return person;
@@ -62,6 +64,10 @@ class Cast with ChangeNotifier {
 
   List<MovieItem> get getMovies {
     return [..._movies];
+  }
+
+  List<CastItem> get popularPeople {
+    return [..._popularPeople];
   }
 
   Future<void> getPersonDetails(int id) async {    
@@ -94,14 +100,40 @@ class Cast with ChangeNotifier {
       );
       // print(personResponse.body);
 
+    notifyListeners();
     }
     catch (error) {
       print('cast provider error -------------> $error');
       throw error;
     }
-    notifyListeners();
 
   } 
+  Future<void> getPopularPeople(int page) async {    
+      final url = 'https://api.themoviedb.org/3/person/popular?api_key=$API_KEY&language=en-US&page=1';
+
+    try {
+      final response = await http.get(url);
+      final responseData = json.decode(response.body) as Map<String, dynamic>;    
+      final data = responseData['results'];
+
+      // print('results -----------> $data');
+
+      data.forEach((element) {
+        _popularPeople.add(CastItem.fromJson(element));
+      }); 
+
+      // print('done---------> $_popularPeople');
+     
+    notifyListeners();
+    }
+    catch (error) {
+      print('cast provider error -------------> $error');
+      throw error;
+    }
+
+  } 
+
+
 
 
 

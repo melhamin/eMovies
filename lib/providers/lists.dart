@@ -1,42 +1,64 @@
 import 'dart:convert';
 
+import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:e_movies/providers/movies.dart';
-
 class ListItemModel {
-  int id;
   String title;
-  double genre;
-  int releaseDate;
-  String posterUrl;
-  String backdropUrl;
-  String mediaType;
-  int runtime;
-  double voteAverage;
+  List<InitialData> items;
 
-  ListItemModel();
+  ListItemModel(String title) {
+    this.title = title;
+    this.items = [];
+  }
 
-  ListItemModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'],
-        genre = json['genre'],
-        releaseDate = json['releaseDate'],
-        posterUrl = json['posterUrl'],
-        backdropUrl = json['backdropUrl'],
-        mediaType = json['mediaType'],
-        voteAverage = json['voteAverage'];
+  ListItemModel.fromJson(json) {
+    this.title = json['title'];
+    List<InitialData> temp = [];    
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'genre': genre ?? 'N/A',
-        'posterUrl': posterUrl,
-        'mediaType': mediaType,
-        'releaseDate': releaseDate,
-        'voteAverage': voteAverage,
-      };
+    for (int i = 0; i < json['data'].length; i++) {
+      temp.add(InitialData.fromJson(json['data'][i]));
+    }
+    this.items = temp;    
+  }
+
+  List<InitialData> get getItems {
+    return items;
+  }
+
+  @override
+  String toString() {
+    // print(items);
+    String res = '';
+    var aa = [];
+    items.forEach((element) {
+      aa.add(InitialData.toJson(element));
+    });
+    return aa.toString();
+  }
+
+  void addItem(InitialData newItem) {
+    items.insert(0, newItem);
+  }
+
+  void removeItem(int id) {
+    items.removeWhere((element) => element.id == id);
+  }
+
+  void removeAllItems() {
+    items.clear();
+  }
+
+  List<Map<String, dynamic>> toMap() {
+    List<Map<String, dynamic>> temp = [];
+    items.forEach((item) {
+      temp.add(InitialData.toJson(item));
+    });    
+
+    return temp;
+  }
 }
 
 class ListItem {
@@ -49,177 +71,289 @@ class ListItem {
 class Lists with ChangeNotifier {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  List<Map<String, dynamic>> _lists = [];
+  static const MOVIE_LISTS = 'MoviesLists';
+  static const FAVORITE_MOVIES = 'FavoriteMovies';
+  static const TV_LISTS = 'TVLists';
+  static const FAVORITE_TVS = 'FavoriteTVs';
 
-  List<Map<String, dynamic>> _favorites = [];
+  // Movies
+  List<ListItemModel> _moviesLists = [];
+  List<InitialData> _favoriteMovies = [];
 
-  List<Map<String, dynamic>> get lists {
-    return _lists;
+  // Tv shows
+  List<ListItemModel> _tvLists = [];
+  List<InitialData> _favoriteTVs = [];
+
+  // Movies getter
+  List<ListItemModel> get moviesLists {
+    return _moviesLists;
   }
 
-  List<Map<String, dynamic>> get favorites {
-    return _favorites;
+  List<InitialData> get favoriteMovies {
+    return _favoriteMovies;
   }
 
-  Future<void> loadLists() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final loadedLists = prefs.getString('lists');
-    final favorites = prefs.getString('favorites');    
+  // TV getters
+  List<ListItemModel> get tvLists {
+    return _tvLists;
+  }
 
-    if(favorites != null && favorites.length > 0) {
-      final favoritesData = json.decode(favorites) as List<dynamic>;
-      _favorites.clear();
-      
-      favoritesData.forEach((element) { 
-        _favorites.add(element);
-      });
+  List<InitialData> get favoriteTVs {
+    return _favoriteTVs;
+  }
+
+
+  // Load all lists (movie & tv)
+  Future<void> loadMovieLists() async {
+    SharedPreferences prefs = await _prefs;
+
+    // Load Favorite movies list
+    final favoritesData = prefs.getString(FAVORITE_MOVIES);
+    if (favoritesData != null) {
+      _favoriteMovies.clear();
+      final favorites = json.decode(favoritesData) as List<dynamic>;
+      if (favorites != null && favorites.isNotEmpty) {
+        _favoriteMovies.clear();
+        favorites.forEach((element) {
+          _favoriteMovies.add(InitialData.fromJson(element));
+        });
+      }
     }
 
-    if (loadedLists != null && loadedLists.length > 0) {
-      final listsData = json.decode(loadedLists) as List<dynamic>;
-      _lists.clear();
-      listsData.forEach((element) {
-        _lists.add(element);
+    // load other lists
+    final moviesData = prefs.getString(MOVIE_LISTS);
+    if (moviesData != null) {
+      _moviesLists.clear();      
+      final movieLists = json.decode(moviesData) as List<dynamic>;
+      movieLists.forEach((element) {
+        _moviesLists.add(ListItemModel.fromJson(element));
       });
-    }
-    notifyListeners();
+    }    
+    notifyListeners(); 
   }
 
-  bool addToFavorites(dynamic item) {
-    // bool result;
-    _favorites.insert(0,{
-      'id': item['id'],
-      'title': item['title'],
-      // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
-      'genre': item['genre'],
-      'posterUrl': item['posterUrl'],
-      'backdropUrl': item['backdropUrl'],
-      'mediaType': item['mediaType'],
-      // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
-      'releaseDate': item['releaseDate'],
-      'voteAverage': item['voteAverage']
-    });
+  ListItemModel getMovieList(String title) {
+    return _moviesLists.firstWhere((element) => element.title == title);
+  }
 
+  // Favorite movies and other movie lists
+  bool addToFavoriteMovies(InitialData item) {
+    _favoriteMovies.insert(0, item);
     notifyListeners();
-    saveFavorites();
-
+    saveFavoriteMovies();
     return true;
   }
 
-  bool isInFavorites(int id) {
-    final temp = _favorites.firstWhere((element) {
-      return element['id'] == id;
-    }, orElse: () => null);
-
-    return temp != null;    
+  bool isFavoriteMovie(InitialData item) {
+    var temp = _favoriteMovies.firstWhere((element) => element.id == item.id,
+        orElse: () => null);
+    return temp != null;
   }
 
-  void removeFavorites(int id) {
-    _favorites.removeWhere((element) => element['id'] == id);
-
+  void removeFavoriteMovie(int id) {
+    _favoriteMovies.removeWhere((element) => element.id == id);
     notifyListeners();
-    saveFavorites();
+    saveFavoriteMovies();
   }
 
-  bool addNewItemToList(int listIndex, dynamic item) {
-    bool result;
+  bool addNewMovieToList(int listIndex, InitialData item) {
+    final temp = _moviesLists[listIndex]
+        .items
+        .firstWhere((element) => element.id == item.id, orElse: () => null);
 
-    // Check if item already in the list
-    final itemData = _lists[listIndex]['data'];
-    // print('itemData-----------------> $itemData');
-    final exist = itemData.firstWhere((element) {
-      return element['id'] == item['id'];
-    }, orElse: () => null);
-
-    if (exist == null) {
-      _lists[listIndex]['data'].insert(0, {
-        'id': item['id'],
-        'title': item['title'],
-        // 'genre': (item.genreIDs['length'] == 0 || item.genreIDs[0] == null) ? 'N/A' : item.genreIDs[0],
-        'genre': item['genre'],
-        'posterUrl': item['posterUrl'],
-        'backdropUrl': item['backdropUrl'],
-        'mediaType': item['mediaType'],
-        // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
-        'releaseDate': item['releaseDate'],
-        'voteAverage': item['voteAverage']
-      });
-      result = true;
-      // update preferences
-      saveLists();
-      notifyListeners();
-    } else
-      result = false;
-
-    return result;
+    if (temp != null) return false;
+    _moviesLists[listIndex].addItem(item);
+    notifyListeners();
+    saveMovieLists();
+    return true;
   }
 
-  bool checkForExistence(String title) {
-    final alreadyExist = _lists.firstWhere((element) {
-      return element['title'] == title;
-    }, orElse: () => null);
+  bool addNewMovieList(String title) {
+    // check if item already exists in the list    
+    final temp = _moviesLists.firstWhere((element) => element.title == title,
+        orElse: () => null);
+    if (temp != null) return false;
 
-    return alreadyExist == null;
+    _moviesLists.insert(0, ListItemModel(title));
+    notifyListeners();
+    saveMovieLists();
+    return true;
   }
 
-  void addNewList(String title) {
-    _lists.insert(0, {
-      'title': title,
-      'data': [],
+  void removeMovieList(String title) {
+    _moviesLists.removeWhere((element) => element.title == title);
+    notifyListeners();
+    saveMovieLists();
+  }
+
+  void removeMovieFromList(String title, int itemId) {
+    int index = _moviesLists.indexWhere((element) => element.title == title);
+    _moviesLists[index].removeItem(itemId);
+    notifyListeners();
+    saveMovieLists();
+  }
+
+  void removeAllListItemsMovie(String title) {
+    final list = _moviesLists.firstWhere((element) {
+      return element.title == title;
     });
-    // update prefrences
-    saveLists();
+    list.removeAllItems();
     notifyListeners();
   }
 
-  void deleteList(String title) {
-    lists.removeWhere((element) {
-      return element['title'] == title;
-    });
-
-    // update prefrences
-    saveLists();
-    notifyListeners();
-  }
-
-  void deleteItemFromList(String title, int itemId) {
-    // get list with give title
-    final list = _lists.firstWhere((element) {
-      return element['title'] == title;
-    });
-
-    // remove desired item form the list
-    list['data'].removeWhere((element) {
-      print('element ---------> $element');
-      return element['id'] == itemId;
-    });
-
-    // update preferences
-    notifyListeners();
-    saveLists();
-
-  }
-
-  void saveFavorites() async {
+  void saveFavoriteMovies() async {
     SharedPreferences prefs = await _prefs;
-    prefs.setString('favorites', json.encode(_favorites));
+    var favorites = [];
+    _favoriteMovies.forEach((element) {
+      favorites.add(InitialData.toJson(element));
+    });
+    prefs.setString(FAVORITE_MOVIES, json.encode(favorites));
   }
 
-  void saveLists() async {
-    // print('-----> ${json.encode(moviesLists)}');
+  void saveMovieLists() async {
     SharedPreferences prefs = await _prefs;
-    prefs.setString('lists', json.encode(_lists));
+    var movies = [];
+    _moviesLists.forEach((element) {
+      List<Map<String, dynamic>> data = element.toMap();
+      final item = {
+        'title': element.title,
+        'data': data,
+      };      
+      movies.add(item);
+    });
+    
+    prefs.setString(MOVIE_LISTS, json.encode(movies));
   }
 
-  void printPrefs() async {
-    SharedPreferences prefs = await _prefs;
-    var res = prefs.getString('lists');
-    print(res);
-  }
+  void printPrefs() async {}
 
   void deleteAllPrefs() async {
     SharedPreferences prefs = await _prefs;
     prefs.clear();
     notifyListeners();
   }
+
+  // Favorite TV shows and other tv lists
+  Future<void> loadTVLists() async {
+    SharedPreferences prefs = await _prefs;
+
+    // Load Favorite movies list
+    final favoritesData = prefs.getString(FAVORITE_TVS);
+    if (favoritesData != null) {
+      _favoriteTVs.clear();
+      final favorites = json.decode(favoritesData) as List<dynamic>;
+      if (favorites != null && favorites.isNotEmpty) {
+        _favoriteTVs.clear();
+        favorites.forEach((element) {
+          _favoriteTVs.add(InitialData.fromJson(element));
+        });
+      }
+    }
+
+    // load other lists
+    final tvData = prefs.getString(TV_LISTS);
+    if (tvData != null) {
+      _tvLists.clear();      
+      final tvLists = json.decode(tvData) as List<dynamic>;
+      tvLists.forEach((element) {
+        _tvLists.add(ListItemModel.fromJson(element));
+      });
+    }    
+    notifyListeners(); 
+  }
+
+  ListItemModel getTVList(String title) {
+    return _tvLists.firstWhere((element) => element.title == title);
+  }
+
+
+  // Favorite movies and other movie lists
+  bool addToFavoriteTVs(InitialData item) {
+    _favoriteTVs.insert(0, item);
+    notifyListeners();
+    saveFavoriteTVs();
+    return true;
+  }
+
+  bool isFavoriteTV(InitialData item) {
+    var temp = _favoriteTVs.firstWhere((element) => element.id == item.id,
+        orElse: () => null);
+    return temp != null;
+  }
+
+  void removeFavoriteTV(int id) {
+    _favoriteTVs.removeWhere((element) => element.id == id);
+    notifyListeners();
+    saveFavoriteTVs();
+  }
+
+  void removeAllListItemsTV(String title) {
+    final list = _tvLists.firstWhere((element) {
+      return element.title == title;
+    });
+    list.removeAllItems();
+    notifyListeners();
+  }
+
+  bool addNewTVToList(int listIndex, InitialData item) {
+    final temp = _tvLists[listIndex]
+        .items
+        .firstWhere((element) => element.id == item.id, orElse: () => null);
+
+    if (temp != null) return false;
+    _tvLists[listIndex].addItem(item);
+    notifyListeners();
+    saveTVLists();
+    return true;
+  }
+
+  bool addNewTVList(String title) {
+    final temp = _tvLists.firstWhere((element) => element.title == title,
+        orElse: () => null);
+    if (temp != null) return false;
+
+    _tvLists.insert(0, ListItemModel(title));
+    notifyListeners();
+    saveTVLists();
+    return true;
+  }
+
+  void removeTVList(String title) {
+    _tvLists.removeWhere((element) => element.title == title);
+    notifyListeners();
+    saveTVLists();
+  }
+
+  void removeTVFromList(String title, int itemId) {
+    int index = _tvLists.indexWhere((element) => element.title == title);
+    _tvLists[index].removeItem(itemId);
+    notifyListeners();
+    saveTVLists();
+  }
+
+  void saveFavoriteTVs() async {
+    SharedPreferences prefs = await _prefs;
+    var favorites = [];
+    _favoriteTVs.forEach((element) {
+      favorites.add(InitialData.toJson(element));
+    });
+    prefs.setString(FAVORITE_TVS, json.encode(favorites));
+  }
+
+  void saveTVLists() async {
+    SharedPreferences prefs = await _prefs;
+    var lists = [];
+    _tvLists.forEach((element) {
+      List<Map<String, dynamic>> data = element.toMap();
+      final item = {
+        'title': element.title,
+        'data': data,
+      };      
+      lists.add(item);
+    });
+    
+    prefs.setString(TV_LISTS, json.encode(lists));
+  }
+  
 }
+  

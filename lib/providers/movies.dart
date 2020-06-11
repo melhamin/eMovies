@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:e_movies/providers/cast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -46,14 +47,14 @@ class MovieItem {
     @required this.overview,
     @required this.date,
     @required this.originalLanguage,
-    @required this.status,    
+    @required this.status,
     @required this.voteAverage,
     @required this.voteCount,
     this.crew,
     this.images,
     this.videos,
-    this.duration,    
-    this.homepage,    
+    this.duration,
+    this.homepage,
     this.cast,
     this.productionCompanies,
     this.productionContries,
@@ -76,7 +77,7 @@ class MovieItem {
       backdropUrl: json['backdrop_path'] == null
           ? ''
           : '$IMAGE_URL/${json['backdrop_path']}',
-      overview: json['overview'],      
+      overview: json['overview'],
       date: (json['release_date'] == null || json['release_date'] == '')
           ? null
           : DateTime.parse(json['release_date']),
@@ -85,15 +86,15 @@ class MovieItem {
       // ? DateTime.tryParse(json['release_date'])
       // : null,
       originalLanguage: json['original_language'],
-      status: json['release_date'] != null,      
+      status: json['release_date'] != null,
       voteAverage:
           json['vote_average'] == null ? 0 : json['vote_average'] + 0.0,
       videos: json['videos'] == null ? null : json['videos']['results'],
       images: json['images'] == null ? null : json['images']['backdrops'],
       // voteAverage: 9.3,
       duration: json['runtime'],
-      voteCount: json['vote_count'],      
-      homepage: json['homepage'],      
+      voteCount: json['vote_count'],
+      homepage: json['homepage'],
       cast: json['credits'] == null ? null : json['credits']['cast'],
       crew: json['credits'] == null ? null : json['credits']['crew'],
       reviews: json['reviews'] == null ? null : json['reviews']['results'],
@@ -105,7 +106,7 @@ class MovieItem {
           : json['recommendations']['results'],
       popularity: json['popularity'] == null ? 0 : json['popularity'] + 0.0,
       // popularity: 9.3
-      character: json['character'],      
+      character: json['character'],
     );
   }
 
@@ -145,28 +146,31 @@ class VideoItem {
 }
 
 class Movies with ChangeNotifier {
-
   // Environemnt Variables
   // final API_KEY = DotEnv().env['API_KEYY'];
 
   List<MovieItem> _trending = [];
   List<MovieItem> _topRated = [];
   List<MovieItem> _upcoming = [];
+  List<MovieItem> _inTheaters = [];
+  List<MovieItem> _forKids = [];
 
   // Movie all details, recommendation, similar etc
   MovieItem _detailedMovie;
+  List<CastItem> _cast = [];
   List<MovieItem> _recommendations = [];
   List<MovieItem> _similar = [];
 
   List<VideoItem> _videos = [];
 
   // Genres
-  List<MovieItem> _genre = [];    
+  List<MovieItem> _genre = [];
 
   // getters
   List<MovieItem> get genre {
     return _genre;
   }
+
   List<MovieItem> get topRated {
     return _topRated;
   }
@@ -179,8 +183,20 @@ class Movies with ChangeNotifier {
     return _upcoming;
   }
 
+  List<MovieItem> get inTheaters {
+    return _inTheaters;
+  }
+
+  List<MovieItem> get forKids {
+    return _forKids;
+  }
+
   MovieItem get movieDetails {
     return _detailedMovie;
+  }
+
+  List<CastItem> get cast {
+    return _cast;
   }
 
   List<MovieItem> get recommended {
@@ -191,63 +207,89 @@ class Movies with ChangeNotifier {
     return [..._similar];
   }
 
-
-
   // functions
-  Future<void> fetchCategory(String category, int page) async {
-    // print('${DotEnv().env['API_KEY']}');
-    // final url =
-    //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
-    final url = 'https://api.themoviedb.org/3/$category/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
+  // Future<void> fetchCategory(String category, int page) async {
+  //   // print('${DotEnv().env['API_KEY']}');
+  //   // final url =
+  //   //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+  //   final url =
+  //       'https://api.themoviedb.org/3/$category/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
 
-    try {        
-    final response = await http.get(url);
-    // print('pageno =---------------------> ${response.body}' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
+  //   try {
+  //     final response = await http.get(url);
+  //     // print('pageno =---------------------> ${response.body}' );
+  //     final responseData = json.decode(response.body) as Map<String, dynamic>;
+  //     final moviesData = responseData['results'];
 
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _trending.clear();
-    }
+  //     // When page reopened it will fetch page 1
+  //     // so delete previous data to avoid duplicates
+  //     if (page == 1) {
+  //       _trending.clear();
+  //     }
 
-    moviesData.forEach((element) {
-      // print('element -----------> ${element.toString()}');
-      _trending.add(MovieItem.fromJson(element));
-    });
-    // print('_trending size------------------> ${_trending.length}');
-    // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
+  //     moviesData.forEach((element) {
+  //       // print('element -----------> ${element.toString()}');
+  //       _trending.add(MovieItem.fromJson(element));
+  //     });
+  //     // print('_trending size------------------> ${_trending.length}');
+  //     // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
+  //   } catch (error) {
+  //     print('In Theaters error -----------> $error');
+  //     throw error;
+  //   }
+  //   notifyListeners();
+  // }
+
+  Future<void> fetchInTheaters(int page) async {
+    final url =
+        '$BASE_URL/movie/now_playing?api_key=${DotEnv().env['API_KEY']}&page=$page';
+
+    try {
+      final response = await http.get(url);
+      // print('pageno =---------------------> ${response.body}' );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final moviesData = responseData['results'];
+
+      // When page reopened it will fetch page 1
+      // so delete previous data to avoid duplicates
+      if (page == 1) {
+        _inTheaters.clear();
+      }
+      moviesData.forEach((element) {
+        _inTheaters.add(MovieItem.fromJson(element));
+      });
     } catch (error) {
       print('In Theaters error -----------> $error');
       throw error;
     }
     notifyListeners();
   }
+
   Future<void> fetchTrending(int page) async {
     // print('${DotEnv().env['API_KEY']}');
     // final url =
     //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
-    final url = 'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
+    final url =
+        'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
 
-    try {        
-    final response = await http.get(url);
-    // print('pageno =---------------------> ${response.body}' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
+    try {
+      final response = await http.get(url);
+      // print('pageno =---------------------> ${response.body}' );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final moviesData = responseData['results'];
 
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _trending.clear();
-    }
+      // When page reopened it will fetch page 1
+      // so delete previous data to avoid duplicates
+      if (page == 1) {
+        _trending.clear();
+      }
 
-    moviesData.forEach((element) {
-      // print('element -----------> ${element.toString()}');
-      _trending.add(MovieItem.fromJson(element));
-    });
-    // print('_trending size------------------> ${_trending.length}');
-    // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
+      moviesData.forEach((element) {
+        // print('element -----------> ${element.toString()}');
+        _trending.add(MovieItem.fromJson(element));
+      });
+      // print('_trending size------------------> ${_trending.length}');
+      // print('length movies(trending) -------------> ' + trendingMoviesLength().toString());
     } catch (error) {
       print('In Theaters error -----------> $error');
       throw error;
@@ -255,27 +297,53 @@ class Movies with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchUpcoming(int page) async {  
-    final url = '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&page=$page';
+  Future<void> fetchUpcoming(int page) async {
+    final url =
+        '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&page=$page';
 
-    try {        
-    final response = await http.get(url);
-    // print('pageno =---------------------> ${response.body}' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
+    try {
+      final response = await http.get(url);
+      // print('pageno =---------------------> ${response.body}' );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final moviesData = responseData['results'];
 
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _upcoming.clear();
-    }
+      // When page reopened it will fetch page 1
+      // so delete previous data to avoid duplicates
+      if (page == 1) {
+        _upcoming.clear();
+      }
 
-    moviesData.forEach((element) {      
-      _upcoming.add(MovieItem.fromJson(element));
-    });
+      moviesData.forEach((element) {
+        _upcoming.add(MovieItem.fromJson(element));
+      });
     } catch (error) {
       print('fetchUpcoming error -----------> $error');
       throw error;
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchForKids(int page) async {
+    final url =
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=16';
+
+    try {
+      final response = await http.get(url);
+      // print('pageno =---------------------> $page' );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final moviesData = responseData['results'];
+
+      // When page reopened it will fetch page 1
+      // so delete previous data to avoid duplicates
+      if (page == 1) {
+        _forKids.clear();
+      }
+
+      moviesData.forEach((element) {
+        _forKids.add(MovieItem.fromJson(element));
+      });
+    } catch (error) {
+      print('Top Rated Error -------------> $error');
     }
     notifyListeners();
   }
@@ -284,34 +352,33 @@ class Movies with ChangeNotifier {
     // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
     final url =
         '$BASE_URL/movie/top_rated?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
-    
+
     try {
-    final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
-    final moviesData = responseData['results'];
+      final response = await http.get(url);
+      // print('pageno =---------------------> $page' );
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final moviesData = responseData['results'];
 
-    // When page reopened it will fetch page 1 
-    // so delete previous data to avoid duplicates
-    if(page == 1) {
-      _topRated.clear();
-    }
+      // When page reopened it will fetch page 1
+      // so delete previous data to avoid duplicates
+      if (page == 1) {
+        _topRated.clear();
+      }
 
-    moviesData.forEach((element) {
-      _topRated.add(MovieItem.fromJson(element));
-    });
-    // print('length movies(upcoming) -------------> ' + upcomingMoviesLength().toString());
+      moviesData.forEach((element) {
+        _topRated.add(MovieItem.fromJson(element));
+      });
+      // print('length movies(upcoming) -------------> ' + upcomingMoviesLength().toString());
     } catch (error) {
       print('Top Rated Error -------------> $error');
     }
     notifyListeners();
   }
 
-  Future<void> getMovieDetails(int id) async {    
-      final url =
-          '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,similar,reviews,images&include_image_language=en,null';
+  Future<void> getMovieDetails(int id) async {
+    final url =
+        '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,similar,reviews,images&include_image_language=en,null';
     try {
-
       final response = await http.get(url);
       // print('MovieDetails ----------->- ${response.body}');
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -325,6 +392,8 @@ class Movies with ChangeNotifier {
 
       // _recommendations.clear();
       _similar.clear();
+      _cast.clear();
+      // _crew
 
       // try {
       if (_detailedMovie.similar != null) {
@@ -332,6 +401,18 @@ class Movies with ChangeNotifier {
           _similar.add(MovieItem.fromJson(element));
         });
       }
+
+      if (_detailedMovie.cast != null) {
+      _detailedMovie.cast.forEach((element) {
+        // print('name/ ---------> ${element['character']} ');
+        cast.add(CastItem(
+          id: element['id'],
+          name: element['name'],
+          imageUrl: element['profile_path'],
+          character: element['character'],
+        ));
+      });
+    }
 
       // _detailedMovie.recommendations.forEach((element) {
       //   _recommendations.add(MovieItem.fromJson(element));
@@ -345,22 +426,21 @@ class Movies with ChangeNotifier {
     // print(response.body);
   }
 
-  // Future<void> getSimilar(int id) async {    
+  // Future<void> getSimilar(int id) async {
   //   final url = 'https://api.themoviedb.org/3/movie/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
   //   try {
   //     final response = await http.get(url);
-  //     print(response.body);      
+  //     print(response.body);
 
   //     final responseData = json.decode(response.body) as Map<String, dynamic>;
   //     final data = responseData['results'];
   //     // print('toprated ------------> $data');
 
-     
-  //       _similar.clear();     
+  //       _similar.clear();
 
   //     data.forEach((element) {
   //       _similar.add(MovieItem.fromJson(element));
-  //     });        
+  //     });
 
   //   } catch (error) {
   //     print('Movies - getSimilar error -------------> $error');
@@ -368,7 +448,8 @@ class Movies with ChangeNotifier {
   // }
 
   Future<void> fetchVideos(int id) async {
-    final url = '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['API_KEY']}&language=en-US';
+    final url =
+        '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['API_KEY']}&language=en-US';
 
     try {
       final response = await http.get(url);
@@ -393,18 +474,19 @@ class Movies with ChangeNotifier {
 
   // Fetch genres
   Future<void> getGenre(int id, int page) async {
-    print('DotEnv API_KEY---------------> ${DotEnv().env['API_KEY']}');
+    // print('DotEnv API_KEY---------------> ${DotEnv().env['API_KEY']}');
     // print('API_KEY---------------> $API_KEY');
     final url =
         '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
     final response = await http.get(url);
-    // print('pageno =---------------------> $page' );
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
 
-    // When page reopened it will fetch page 1 
+    // print('pageno =---------------------> $moviesData' );
+
+    // When page reopened it will fetch page 1
     // so delete previous data to avoid duplicates
-    if(page == 1) {
+    if (page == 1) {
       _genre.clear();
     }
 
@@ -415,5 +497,8 @@ class Movies with ChangeNotifier {
     notifyListeners();
   }
 
-  
+  void clearGenre() {
+    _genre.clear();
+    notifyListeners();
+  }
 }

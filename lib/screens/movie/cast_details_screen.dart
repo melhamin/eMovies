@@ -1,3 +1,4 @@
+import 'package:e_movies/providers/init_data.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,6 +12,7 @@ import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/top_bar.dart';
 import 'package:e_movies/providers/cast.dart' as prov;
+import 'package:e_movies/providers/cast.dart';
 
 class CastDetails extends StatefulWidget {
   static const routeName = '/cast-details';
@@ -22,12 +24,12 @@ class CastDetails extends StatefulWidget {
 class _CastDetailsState extends State<CastDetails>
     with SingleTickerProviderStateMixin {
   bool _isInitLoaded = true;
-  bool _isFetching = true;
+  bool _isLoading = true;
   TabController _tabController;
   int _selectedIndex;
 
   @override
-  void initState() {    
+  void initState() {
     super.initState();
     _selectedIndex = 0;
     _tabController = TabController(
@@ -47,12 +49,12 @@ class _CastDetailsState extends State<CastDetails>
   void didChangeDependencies() {
     if (_isInitLoaded) {
       final item = ModalRoute.of(context).settings.arguments as dynamic;
-      final id = item['id'];
+      final id = item.id;
       Provider.of<prov.Cast>(context, listen: false)
           .getPersonDetails(id)
           .then((value) {
         setState(() {
-          _isFetching = false;
+          _isLoading = false;
           _isInitLoaded = false;
         });
       });
@@ -61,25 +63,21 @@ class _CastDetailsState extends State<CastDetails>
   }
 
   Widget _buildTabBar() {
-    return NavBar(
+    return NavBar(      
       tabController: _tabController,
       tabs: [
-        Tab(
-            child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Biography',
-            style: kTitleStyle2,
+        Tab(          
+          child: Align(
+            alignment: Alignment.center,
+            child: Text('Biography', style: kTitleStyle2),
           ),
-        )),
+        ),
         Tab(
-            child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Movies',
-            style: kTitleStyle2,
+          child: Align(
+            alignment: Alignment.center,
+            child: Text('Movies', style: kTitleStyle2),
           ),
-        )),
+        ),
         // Tab(icon: Icon(Icons.edit)),
       ],
     );
@@ -89,8 +87,8 @@ class _CastDetailsState extends State<CastDetails>
     return TabBarView(
       controller: _tabController,
       children: [
-        Biography(item.biography),
-        Movies(item.movies),
+        Biography(item: item, isLoading: _isLoading),
+        Movies(item: item, isLoading: _isLoading),
       ],
     );
   }
@@ -101,13 +99,13 @@ class _CastDetailsState extends State<CastDetails>
     final item = ModalRoute.of(context).settings.arguments as dynamic;
     final mediaQueryHeight = MediaQuery.of(context).size.height;
     prov.Person person;
-    if (!_isFetching) person = Provider.of<prov.Cast>(context).person;
+    if (!_isLoading) person = Provider.of<prov.Cast>(context).person;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: ONE_LEVEL_ELEVATION,
           centerTitle: true,
-          title: Text(item['name'], style: kTitleStyle),
+          title: Text(item.name, style: kTitleStyle),
         ),
         body: Stack(
           children: [
@@ -125,12 +123,14 @@ class _CastDetailsState extends State<CastDetails>
                     ),
                     Container(
                       height: constraints.maxHeight,
-                      child: _isFetching
-                          ? SpinKitCircle(
-                              size: 21,
-                              color: Theme.of(context).accentColor,
-                            )
-                          : _buildTabs(person),
+                      child:
+                          //  _isLoading
+                          //     ? SpinKitCircle(
+                          //         size: 21,
+                          //         color: Theme.of(context).accentColor,
+                          //       )
+                          // : _
+                          _buildTabs(person),
                     ),
                   ],
                 );
@@ -140,7 +140,7 @@ class _CastDetailsState extends State<CastDetails>
               width: double.infinity,
               height: mediaQueryHeight * 0.4,
               child: CachedNetworkImage(
-                imageUrl: IMAGE_URL + item['imageUrl'],
+                imageUrl: IMAGE_URL + item.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -152,51 +152,55 @@ class _CastDetailsState extends State<CastDetails>
 }
 
 class Biography extends StatelessWidget {
-  final String biography;
-  Biography(this.biography);
+  final prov.Person item;
+  final bool isLoading;
+  Biography({this.item, this.isLoading});
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 100),
+      child: Center(
+        child: SpinKitCircle(
+          size: 21,
+          color: Theme.of(context).accentColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: const BouncingScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics()),
-      padding: EdgeInsets.only(
-          bottom:
-              MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
-          child: Text(
-            biography,
-            style: TextStyle(
-              fontSize: 16,
-              height: 2,
-              color: Colors.white70,
-            ),
-            softWrap: true,
-          ),
-        )
-      ],
-    );
+    return SingleChildScrollView(
+        physics: const BouncingScrollPhysics(
+            parent: const AlwaysScrollableScrollPhysics()),
+        padding: EdgeInsets.only(
+            bottom:
+                MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
+        child: isLoading
+            ? _buildLoadingIndicator(context)
+            : Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: LEFT_PADDING, vertical: 10),
+                child: Text(
+                  item.biography,
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 2,
+                    color: Colors.white70,
+                  ),
+                  softWrap: true,
+                ),
+              ));
   }
 }
 
 class Movies extends StatelessWidget {
-  final List<MovieItem> movies;
-  Movies(this.movies);
+  final prov.Person item;
+  final bool isLoading;
+  Movies({this.item, this.isLoading});
 
   Route _buildRoute(MovieItem item) {
-    final initData = {
-      'id': item.id,
-      'title': item.title,
-      'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
-          ? 'N/A'
-          : item.genreIDs[0],
-      'posterUrl': item.posterUrl,
-      'backdropUrl': item.backdropUrl,
-      'mediaType': 'movie',
-      'releaseDate': item.date.year.toString() ?? 'N/A',
-      'voteAverage': item.voteAverage,
-    };
+    final initData = InitialData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(
         arguments: initData,
@@ -223,69 +227,77 @@ class Movies extends StatelessWidget {
     Navigator.of(context).push(_buildRoute(item));
   }
 
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 100),
+      child: Center(
+        child: SpinKitCircle(
+          size: 21,
+          color: Theme.of(context).accentColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: movies.length,
-      // separatorBuilder: (context, index) {
-      //   return Padding(
-      //     padding: EdgeInsets.only(left: 75),
-      //     child: Divider(
-      //       color: Colors.white,
-      //       thickness: 0.2,
-      //     ),
-      //   );
-      // },
-      physics: const BouncingScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics()),
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.4 + kToolbarHeight),
-      itemBuilder: (context, i) {
-        return InkWell(
-          onTap: () => _onTap(context, movies[i]),
-          splashColor: Colors.transparent,
-          highlightColor: Colors.black,
-          child: ListTile(
-            dense: true,
-            contentPadding: const EdgeInsets.all(0),
-            leading: Container(
-              width: 70,
-              margin: const EdgeInsets.only(left: LEFT_PADDING),
-              color: BASELINE_COLOR,
-              child: movies[i].posterUrl == null
-                  ? PlaceHolderImage(movies[i].title)
-                  : CachedNetworkImage(
-                      imageUrl: movies[i].posterUrl,
-                      fit: BoxFit.cover,
+    // final movies = item.movies;
+    return isLoading
+        ? _buildLoadingIndicator(context)
+        : ListView.builder(
+            itemCount: item.movies.length,
+            physics: const BouncingScrollPhysics(
+                parent: const AlwaysScrollableScrollPhysics()),
+            padding: EdgeInsets.only(
+                bottom:
+                    MediaQuery.of(context).size.height * 0.4 + kToolbarHeight),
+            itemBuilder: (context, i) {
+              final temp = item.movies[i];
+              return InkWell(
+                onTap: () => _onTap(context, temp),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.black,
+                child: ListTile(
+                  dense: true,
+                  contentPadding: const EdgeInsets.all(0),
+                  leading: Container(
+                    width: 70,
+                    margin: const EdgeInsets.only(left: LEFT_PADDING),
+                    color: BASELINE_COLOR,
+                    child: temp.posterUrl == null
+                        ? PlaceHolderImage(temp.title)
+                        : CachedNetworkImage(
+                            imageUrl: temp.posterUrl,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                  title: Text(
+                    temp.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: kBodyStyle,
+                  ),
+                  subtitle: RichText(
+                    text: TextSpan(text: 'as ', style: kSubtitle2, children: [
+                      TextSpan(
+                          text: temp.character,
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                          ))
+                    ]),
+                  ),
+                  trailing: Padding(
+                    padding: const EdgeInsets.only(right: LEFT_PADDING),
+                    child: Text(
+                      temp.date == null
+                          ? 'N/A'
+                          : DateFormat.y().format(temp.date),
+                      style: kSubtitle1,
                     ),
-            ),
-            title: Text(
-              movies[i].title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: kBodyStyle,
-            ),
-            subtitle: RichText(
-              text: TextSpan(text: 'as ', style: kSubtitle2, children: [
-                TextSpan(
-                    text: movies[i].character,
-                    style: TextStyle(
-                      color: Theme.of(context).accentColor,
-                    ))
-              ]),
-            ),
-            trailing: Padding(
-              padding: const EdgeInsets.only(right: LEFT_PADDING),
-              child: Text(
-                movies[i].date == null
-                    ? 'N/A'
-                    : DateFormat.y().format(movies[i].date),
-                style: kSubtitle1,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                  ),
+                ),
+              );
+            },
+          );
   }
 }

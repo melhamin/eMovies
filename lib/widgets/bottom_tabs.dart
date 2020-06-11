@@ -25,18 +25,10 @@ class BottomTabs extends StatelessWidget {
           items: [
         BottomNavigationBarItem(
           title: Text(
-            'Movies',
+            'Discover',
             style: kBottomBarTextStyle,
           ),
           icon: Icon(Icons.theaters),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
-        BottomNavigationBarItem(
-          title: Text(
-            'TV',
-            style: kBottomBarTextStyle,
-          ),
-          icon: Icon(Icons.tv),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
@@ -45,6 +37,14 @@ class BottomTabs extends StatelessWidget {
             style: kBottomBarTextStyle,
           ),
           icon: Icon(Icons.search),
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
+        BottomNavigationBarItem(
+          title: Text(
+            'Cinemas',
+            style: kBottomBarTextStyle,
+          ),
+          icon: Icon(Icons.location_on),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(

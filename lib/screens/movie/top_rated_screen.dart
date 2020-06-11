@@ -1,5 +1,6 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/back_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,15 +36,13 @@ class _AllMoviesState extends State<TopRated>  {
 
   @override
   void initState() {
-    scrollController = ScrollController();
-    // TODO: implement initState
+    scrollController = ScrollController();    
     _initLoaded = true;
     super.initState();
   }
 
   @override
-  void dispose() {    
-    // TODO: implement dispose   
+  void dispose() {        
     scrollController.dispose();
     super.dispose();   
   }
@@ -53,8 +52,7 @@ class _AllMoviesState extends State<TopRated>  {
     if (_initLoaded) {
       Provider.of<Movies>(context, listen: false).fetchTopRated(1);
     }
-    _initLoaded = false;
-    // TODO: implement didChangeDependencies
+    _initLoaded = false;    
     super.didChangeDependencies();
   }
 
@@ -92,11 +90,13 @@ class _AllMoviesState extends State<TopRated>  {
     // print('------------> length: ${movies.length}');
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Top Rated', style: kTitleStyle),          
-          centerTitle: true,
-        ),
-        body: NotificationListener(
+        // appBar: AppBar(
+        //   title: Text('Top Rated', style: kTitleStyle),          
+        //   centerTitle: true,
+        // ),
+        body: Stack(
+          children: [
+            NotificationListener(
           onNotification: onNotification,
           child: RefreshIndicator(
             onRefresh: () => _refreshMovies(movies.length == 0),
@@ -121,6 +121,13 @@ class _AllMoviesState extends State<TopRated>  {
               ),
             ),
           ),
+        ),
+        Positioned(
+          top: 10,
+          left: 10,
+          child: CustomBackButton(text: 'Top Rated'),
+        ),
+          ],
         ),
       ),
     );

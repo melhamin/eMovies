@@ -1,6 +1,8 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart';
+import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +32,6 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     scrollController = ScrollController();
     _initLoaded = true;
@@ -38,7 +39,6 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     scrollController.dispose();
     super.dispose();
   }
@@ -46,14 +46,15 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      Provider.of<TV>(context, listen: false).getGenre(widget.id, 1).then((value) {
+      Provider.of<TV>(context, listen: false)
+          .getGenre(widget.id, 1)
+          .then((value) {
         setState(() {
           _isFetching = false;
           _initLoaded = false;
         });
       });
-    }    
-    // TODO: implement didChangeDependencies
+    }
     super.didChangeDependencies();
   }
 
@@ -71,7 +72,7 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
                   Provider.of<TV>(context, listen: false)
                       .getGenre(widget.id, curPage + 1))
               .then(
-            (_) {              
+            (_) {
               loaderStatus = MovieLoaderStatus.STABLE;
               setState(() {
                 curPage = curPage + 1;
@@ -88,7 +89,7 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
-        size: 21,
+        size: 30,
         color: Theme.of(context).accentColor,
       ),
     );
@@ -100,45 +101,45 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
     final items = Provider.of<TV>(context).genre;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(TV_GENRES[widget.id], style: kTitleStyle),          
-          centerTitle: true,          
-        ),
-          
-        body: _isFetching
-            ? _buildLoadingIndicator(context)
-            : Column(
-                children: [
-                  Flexible(
-                    child: NotificationListener(
-                      onNotification: onNotification,
-                      child: RefreshIndicator(
-                        onRefresh: () {},
-                        // onRefresh: () => _refreshMovies(movies.length == 0),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: GridView.builder(
-                          physics: BouncingScrollPhysics(),
-                          controller: scrollController,
-                          // key: PageStorageKey('GenreItem'),
-                          cacheExtent: 12,
-                          itemCount: items.length,
-                          itemBuilder: (ctx, i) {
-                            return wid.TVItem(
-                              item: items[i],                                                            
-                            );
-                          },
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 2 / 3.5,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (_isLoading) _buildLoadingIndicator(context),
-                ],
+        body: NotificationListener(
+          onNotification: onNotification,
+          child: Stack(
+            children: [
+              GridView.builder(
+                // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                physics: const BouncingScrollPhysics(),
+                controller: scrollController,
+                key: const PageStorageKey('UpcomingScreen'),
+                cacheExtent: 12,
+                itemCount: items.length,
+                itemBuilder: (ctx, i) {
+                  return MovieItem(
+                    item: items[i],
+                  );
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2 / 3.5,
+                  // mainAxisSpacing: 5,
+                  // crossAxisSpacing: 5,
+                ),
               ),
+              if (_isFetching)
+                Positioned.fill(
+                  bottom: 10,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildLoadingIndicator(context),
+                  ),
+                ),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: CustomBackButton(text: TV_GENRES[widget.id]),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

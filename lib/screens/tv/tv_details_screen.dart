@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/my_toast_message.dart';
 import 'package:e_movies/providers/cast.dart';
+import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 import 'package:e_movies/providers/tv.dart' as prov;
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
+import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/route_builder.dart';
@@ -28,9 +32,10 @@ class TVDetailsScreen extends StatefulWidget {
 class _TVDetailsScreenState extends State<TVDetailsScreen> {
   bool _initLoaded = true;
   bool _isLoading = true;
+  InitialData initData;
   prov.TVItem details;
 
-  prov.TVItem initData;
+  // prov.TVItem initData;
   List<CastItem> cast = [];
   List<CastItem> crew = [];
 
@@ -45,9 +50,9 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      final tv = ModalRoute.of(context).settings.arguments as prov.TVItem;
+      initData = ModalRoute.of(context).settings.arguments as InitialData;
       Provider.of<prov.TV>(context, listen: false)
-          .getDetails(tv.id)
+          .getDetails(initData.id)
           .then((value) {
         setState(() {
           // Get film item
@@ -177,7 +182,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
                     textInputAction: TextInputAction.go,
                     onFieldSubmitted: (val) {
                       Provider.of<Lists>(context, listen: false)
-                          .addNewList(_textEditingController.text);
+                          .addNewTVList(_textEditingController.text);
                       _textEditingController.clear();
                       Navigator.of(context).pop();
                     },
@@ -200,7 +205,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
                     }, true),
                     _buildDialogButtons('Create', () {
                       Provider.of<Lists>(context, listen: false)
-                          .addNewList(_textEditingController.text);
+                          .addNewTVList(_textEditingController.text);
                       _textEditingController.clear();
                       Navigator.of(context).pop();
                     }),
@@ -214,8 +219,34 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
-  void _showAddToList(BuildContext context, dynamic initData) {
-    final lists = Provider.of<Lists>(context, listen: false).lists;
+  void _addNewItemtoList(BuildContext context, int index, InitialData item) {
+    final result =
+        Provider.of<Lists>(context, listen: false).addNewTVToList(index, item);
+    if (result) {
+      Navigator.of(context).pop();
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: 2),
+          child: _buildToastMessageIcons(
+              Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
+              'Item added.'));
+    } else {
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: 2),
+          child: _buildToastMessageIcons(
+              Icon(Icons.warning,
+                  color: Colors.white.withOpacity(0.87), size: 50),
+              'Item is already in the list.'));
+    }
+  }
+
+  void _showAddToList(BuildContext context, InitialData initData) {
+    final lists = Provider.of<Lists>(context, listen: false).tvLists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -299,11 +330,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
                       : MyListsItem(
                           list: lists[i - 1],
                           onTap: () {
-                            // print('i ----------> $i');
-                            Provider.of<Lists>(context, listen: false)
-                                .addNewItemToList(i - 1,
-                                    initData); // (i - 1) because the first element is not lists element
-                            Navigator.of(context).pop();
+                            _addNewItemtoList(context, i - 1, initData);
                           },
                         );
                 },
@@ -316,6 +343,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   }
 
   Widget _buildBottomIcons() {
+    final isInFavorites = Provider.of<Lists>(context).isFavoriteTV(initData);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -329,25 +357,25 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
         children: [
           IconButton(
             icon: Icon(
-              Icons.favorite_border,
+              isInFavorites ? Icons.favorite : Icons.favorite_border,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
-            onPressed: () {},
+            onPressed: () => _toggleFavorite(isInFavorites),
           ),
           IconButton(
             icon: Icon(
               Icons.add,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
-            onPressed: () {},
+            onPressed: () => _showAddToList(context, initData),
           ),
           IconButton(
             icon: Icon(
               Icons.share,
               color: Theme.of(context).accentColor,
-              size: 30,
+              size: 35,
             ),
             onPressed: () {},
           )
@@ -454,19 +482,6 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
-  // Widget _buildSimilar(BoxConstraints constraints) {
-  //   bool hasItem = (Provider.of<prov.TV>(context).similar != null &&
-  //       Provider.of<prov.TV>(context).similar.length > 0);
-  //   if (!hasItem) {
-  //     return Container();
-  //   } else {
-  //     return Container(
-  //       height: constraints.maxHeight * 0.3,
-  //       child: SimilarMovies(),
-  //     );
-  //   }
-  // }
-
   List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
     // print('all ---------------------> ${details.genreIDs}');
     return [
@@ -495,12 +510,71 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     ];
   }
 
+  Widget _buildToastMessageIcons(Icon icon, String message,
+      [double iconSize = 50]) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        icon,
+        SizedBox(height: 15),
+        Text(
+          message,
+          style: TextStyle(
+            fontFamily: 'Helvatica',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.87),
+          ),
+          textAlign: TextAlign.center,
+        )
+      ],
+    );
+  }
+
+  void _toggleFavorite(bool isInfavorites) {
+    if (isInfavorites) {
+      Provider.of<Lists>(context, listen: false)
+          .removeFavoriteMovie(initData.id);
+
+      // ToastUtils.removeOverlay();
+      ToastUtils.myToastMessage(
+        context: context,
+        alignment: Alignment.center,
+        color: BASELINE_COLOR_TRANSPARENT,
+        duration: Duration(seconds: 2),
+        child: _buildToastMessageIcons(
+            Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
+            'Removed from Favorites'),
+      );
+    } else {
+      Provider.of<Lists>(context, listen: false).addToFavoriteTVs(initData);
+      // ToastUtils.removeOverlay();
+      ToastUtils.myToastMessage(
+        context: context,
+        alignment: Alignment.center,
+        color: Colors.transparent,
+        duration: Duration(seconds: 2),
+        child: _buildToastMessageIcons(
+            Icon(Icons.favorite,
+                color: Theme.of(context).accentColor, size: 80),
+            ''),
+      );
+    }
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Center(
+      child: SpinKitCircle(
+        size: 21,
+        color: Theme.of(context).accentColor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final item = ModalRoute.of(context).settings.arguments as prov.TVItem;
-    // print('id ---------> ${item.id}');
-    // print('id ---------> ${item.id}');
-
+    final initData = ModalRoute.of(context).settings.arguments as InitialData;
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -509,30 +583,42 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
               builder: (context, constraints) {
                 // print('tv details -----------> ${constraints.maxWidth}');
                 return ListView(
-                  padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
-                  physics: BouncingScrollPhysics(),
+                  // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
+                  physics: const BouncingScrollPhysics(),
                   children: [
                     BackgroundImage(
-                        imageUrl: item.posterUrl, constraints: constraints),
-                    TitleAndDetails(item: item, constraints: constraints),
+                        imageUrl: initData.posterUrl, constraints: constraints),
+                    TitleAndDetails(
+                        initData: initData, constraints: constraints),
                     // SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(left: LEFT_PADDING),
                       child: Text('Storyline', style: kTitleStyle),
                     ),
-                    Overview(constraints: constraints, overview: item.overview),
+                    _isLoading
+                        ? Container(
+                            height: constraints.maxHeight * 0.22,
+                            child: _buildLoadingIndicator(context),
+                          )
+                        : Overview(
+                            constraints: constraints,
+                            overview: details.overview),
                     Container(
                       height: constraints.maxHeight * 0.1,
                       child: _buildBottomIcons(),
                     ),
                     SizedBox(height: 15),
                     if (!_isLoading)
-                      ..._buildOtherDetails(constraints, item.id),
+                      ..._buildOtherDetails(constraints, initData.id),
                   ],
                 );
               },
             ),
-            TopBar(title: item.title),
+            Positioned(
+              top: 10,
+              left: 10,
+              child: CustomBackButton(),
+            ),
           ],
         ),
       ),
@@ -543,16 +629,15 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
 class TitleAndDetails extends StatelessWidget {
   const TitleAndDetails({
     Key key,
-    @required this.item,
+    @required this.initData,
     @required this.constraints,
   }) : super(key: key);
 
-  final prov.TVItem item;
+  final InitialData initData;
   final BoxConstraints constraints;
 
   List<Widget> _buildGenres(List<dynamic> genres) {
     if (genres == null || genres.length == 0) return [];
-
     // some genres are not included in tvgenres list
     // but exist in movies genres list
     List<String> genreNames = [];
@@ -590,14 +675,11 @@ class TitleAndDetails extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: item.title,
+              text: initData.title,
               style: kTitleStyle,
               children: [
                 TextSpan(
-                    text: item.date == null
-                        ? 'N/A'
-                        : ' (${item.date.year})',
-                    style: kSubtitle1),
+                    text: ' ${initData.releaseDate.year}', style: kSubtitle1),
               ],
             ),
           ),
@@ -609,11 +691,9 @@ class TitleAndDetails extends StatelessWidget {
             height: 22,
             padding: const EdgeInsets.only(right: LEFT_PADDING),
             child: ListView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.horizontal,
-              children: [
-                ..._buildGenres(item.genreIDs),
-              ],
+              children: [..._buildGenres(initData.genreIDs)],
             ),
           ),
           SizedBox(height: 10),
@@ -622,7 +702,7 @@ class TitleAndDetails extends StatelessWidget {
               Icon(Icons.favorite_border, color: Theme.of(context).accentColor),
               SizedBox(width: 5),
               Text(
-                '${item.voteAverage.toString()} (${item.voteCount.toString()} votes)',
+                '${initData.voteAverage} (${initData.voteCount} votes)',
                 style: kSubtitle1,
               ),
             ],
@@ -646,7 +726,7 @@ class BackgroundImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: constraints.maxHeight * 0.4,
+      height: constraints.maxHeight * 0.5,
       width: constraints.maxWidth,
       child: Stack(
         fit: StackFit.expand,
@@ -654,7 +734,7 @@ class BackgroundImage extends StatelessWidget {
           ClipPath(
             clipper: ImageClipper(),
             child: Container(
-              height: constraints.maxHeight * 0.4,
+              height: constraints.maxHeight * 0.5,
               width: constraints.maxWidth,
               child: imageUrl == null
                   ? PlaceHolderImage('Image Not Available')
@@ -666,7 +746,7 @@ class BackgroundImage extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 10,
+            bottom: 0,
             right: 30,
             child: SvgPicture.asset(
               'assets/icons/play.svg',
@@ -711,12 +791,8 @@ class _OverviewState extends State<Overview>
         padding: const EdgeInsets.only(
             left: LEFT_PADDING, right: LEFT_PADDING, top: 10),
         constraints: !_expanded
-            ? BoxConstraints(
-                maxHeight: widget.constraints.maxHeight * 0.32 - APP_BAR_HEIGHT)
-            : BoxConstraints(
-                minHeight: widget.constraints.maxHeight * 0.32 -
-                    APP_BAR_HEIGHT, // otherwise bottom icons will move up if text length is small
-              ),
+            ? BoxConstraints(maxHeight: widget.constraints.maxHeight * 0.22)
+            : BoxConstraints(minHeight: widget.constraints.maxHeight * 0.22),
         child: GestureDetector(
             onTap: !_expanded
                 ? () {
@@ -750,94 +826,15 @@ class _OverviewState extends State<Overview>
   }
 }
 
-class Cast extends StatefulWidget {
+class Cast extends StatelessWidget {
   final prov.TVItem details;
   Cast({this.details});
   @override
-  _CastState createState() => _CastState();
-}
-
-class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
-  bool _expanded = false;
-  List<CastItem> crew = [];
-  List<CastItem> cast = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // get Crew data
-    print('details crew/ ---------> ${widget.details.crew} ');
-    if (widget.details.crew != null) {
-      widget.details.crew.forEach((element) {
-        print('crew/ ---------> ${element['character']} ');
-        crew.add(CastItem(
-          id: element['id'],
-          name: element['name'],
-          imageUrl: element['profile_path'],
-          job: element['job'],
-        ));
-      });
-    }
-    // Get cast data
-    if (widget.details.cast != null) {
-      widget.details.cast.forEach((element) {
-        print('cast/ ---------> ${element['character']} ');
-        cast.add(CastItem(
-          id: element['id'],
-          name: element['name'],
-          imageUrl: element['profile_path'],
-          character: element['character'],
-        ));
-      });
-    }
-  }
-
-  // Get the name abbreviation for circle avatar in case image is not available
-  String _getName(String str) {
-    String res = '';
-    List<String> name = str.split(' ');
-    res = res + name[0][0].toUpperCase() + name[1][0].toUpperCase();
-    return res;
-  }
-
-  void _onTap() {
-    setState(() {
-      _expanded = true;
-    });
-  }
-
-  // finds whether at index (index) is the last item
-  // and draw bottom border accroding to it
-  bool _isLasItem(int index) {
-    return (!_expanded
-        ? (index == 4 ? true : false)
-        : (index == _calcualteItemCount() - 1 ? true : false));
-  }
-
-  // Calculate number of items in different situations
-  int _calcualteItemCount() {
-    return cast.length > 5
-        ? (_expanded ? (cast.length > 10 ? 10 : cast.length) : 5)
-        : cast.length;
-
-    // if (widget.cast.length > 5) {
-    //   if (_expanded) {
-    //     if (widget.cast.length > 10) {
-    //       return 10;
-    //     } else {
-    //       return widget.cast.length;
-    //     }
-    //   } else
-    //     return 5;
-    // }
-    // return widget.cast.length;
-  }
-
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    // print('Cast ----------------------> ${cast}');
-    // print('crew ----------------------> ${crew}');
+    // super.build(context);
+    final cast = Provider.of<prov.TV>(context).cast;
+    final crew = Provider.of<prov.TV>(context).crew;
 
     CastItem director;
     if (crew.length != 0)
@@ -845,138 +842,34 @@ class _CastState extends State<Cast> with AutomaticKeepAliveClientMixin {
         return element.job == 'Executive Producer';
       }, orElse: () {});
     return Column(
-      children: [       
+      children: [
         if (cast != null && cast.length > 0)
-          
-        Flexible(
-                  child: GridView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: _calcualteItemCount(),
-            itemBuilder: (context, index) {
-              CastItem item = cast[index];
-              return castWid.CastItem(
-                id: item.id,
-                name: item.name,
-                imageUrl: item.imageUrl,
-              );
-            },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              // mainAxisSpacing: 5,
+          Flexible(
+            child: GridView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: cast.length,
+              itemBuilder: (context, index) {
+                CastItem item = cast[index];
+                return castWid.CastItem(
+                 item,
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                // mainAxisSpacing: 5,
+              ),
+              scrollDirection: Axis.horizontal,
             ),
-            scrollDirection: Axis.horizontal,
           ),
-        ),
       ],
     );
-
-    // SingleChildScrollView(
-    //   child: Column(
-    //     mainAxisSize: MainAxisSize.min,
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       // if (director != null)
-    //       //   Padding(
-    //       //     padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-    //       //     child: Text('Directed By', style: kSubtitle1),
-    //       //   ),
-    //       // if (director != null)
-    //       //   Container(
-    //       //     decoration: BoxDecoration(
-    //       //       border: Border(
-    //       //         bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-    //       //         top: BorderSide(width: 0.5, color: LINE_COLOR),
-    //       //       ),
-    //       //       color: ONE_LEVEL_ELEVATION,
-    //       //     ),
-    //       //     child: castWid.CastItem(
-    //       //       item: director
-    //       //       // item: director,
-    //       //       // last: false,
-    //       //       // subtitle: false,
-    //       //     ),
-    //       //   ),
-    //       if (cast != null && cast.length > 0) SizedBox(height: 20),
-    //       if (cast != null && cast.length > 0)
-    //         Padding(
-    //           padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-    //           child: Text('Cast', style: kSubtitle1),
-    //         ),
-    //       if (cast != null && cast.length > 0)
-    //         AnimatedContainer(
-    //           duration: Duration(milliseconds: 300),
-    //           height: _calcualteItemCount() * 60.0 +
-    //               _calcualteItemCount() * 5, // ListTile height
-    //           decoration: BoxDecoration(
-    //             border: Border(
-    //               bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-    //               top: BorderSide(width: 0.5, color: LINE_COLOR),
-    //             ),
-    //             color: ONE_LEVEL_ELEVATION,
-    //           ),
-    //           child: ListView.builder(
-    //             physics: const BouncingScrollPhysics(),
-    //             itemCount: _calcualteItemCount(),
-    //             itemBuilder: (context, index) {
-    //               CastItem item = cast[index];
-    //               return castWid.CastItem(
-    //                 item: item,
-    //               );
-    //             },
-    //             scrollDirection: Axis.horizontal,
-    //           ),
-    //         ),
-    //       if ((cast.length > 5))
-    //         ListTile(
-    //           leading: Text(
-    //             (!_expanded) ? 'More...' : '',
-    //             style: TextStyle(color: Theme.of(context).accentColor),
-    //           ),
-    //           onTap: !_expanded ? _onTap : null,
-    //         ),
-    //     ],
-    //   ),
-    // );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
 }
 
-class SimilarTV extends StatefulWidget {
+class SimilarTV extends StatelessWidget {
   final id;
   SimilarTV(this.id);
   @override
-  _SimilarTVState createState() => _SimilarTVState();
-}
-
-class _SimilarTVState extends State<SimilarTV> {
-  bool _initLoaded = true;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (_initLoaded) {
-      Provider.of<prov.TV>(context, listen: false)
-          .getSimilar(widget.id)
-          .then((value) {
-        setState(() {
-          _isLoading = false;
-          _initLoaded = false;
-        });
-      });
-    }
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }
-
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
@@ -989,48 +882,46 @@ class _SimilarTVState extends State<SimilarTV> {
   @override
   Widget build(BuildContext context) {
     final items = Provider.of<prov.TV>(context, listen: false).similar;
-    print('TV simialr size ----------------------> ${items.length}');
-    return _isLoading
-        ? _buildLoadingIndicator(context)
-        : (items.length == 0)
-            ? Container()
-            : LayoutBuilder(
-                builder: (context, constraints) {
-                  return Container(
-                    height: constraints.maxHeight * 0.5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: LEFT_PADDING),
-                          child: Text('Similar', style: kSubtitle1),
-                        ),
-                        SizedBox(height: 5),
-                        Flexible(
-                          child: GridView.builder(
-                            physics: BouncingScrollPhysics(),
-                            padding:
-                                EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                            itemCount: items.length,
-                            itemBuilder: (context, index) {
-                              return wid.TVItem(
-                                item: items[index],
-                                withoutDetails: true,
-                              );
-                            },
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
-                              childAspectRatio: 3 / 2,
-                              mainAxisSpacing: 10,
-                            ),
-                            scrollDirection: Axis.horizontal,
-                          ),
-                        ),
-                      ],
+    return (items.length == 0)
+        ? Container()
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: constraints.maxHeight * 0.5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: LEFT_PADDING),
+                      child: Text('Similar', style: kSubtitle1),
                     ),
-                  );
-                },
+                    SizedBox(height: 5),
+                    Flexible(
+                      child: GridView.builder(
+                        physics: BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return MovieItem(
+                            item: items[index],
+                            withoutDetails: true,
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 3 / 2,
+                          mainAxisSpacing: 10,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                      ),
+                    ),
+                  ],
+                ),
               );
+            },
+          );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

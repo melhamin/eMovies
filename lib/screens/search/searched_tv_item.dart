@@ -1,42 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
-import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:e_movies/providers/init_data.dart';
 
 class SearchedTVItem extends StatelessWidget {
-  final dynamic item;
+  final TVItem item;
   SearchedTVItem(this.item);
 
-  Route _buildRoute(dynamic item, [bool searchHistoryItem = false]) {
-    // if not search history item create initData for the tv show details screen
-    // Map<String, dynamic> initData = searchHistoryItem
-    //     ? item
-    //     : {
-    //         'id': item.id,
-    //         'title': item.title,
-    //         'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
-    //             ? 'N/A'
-    //             : item.genreIDs[0],
-    //         'posterUrl': item.posterUrl,
-    //         'backdropUrl': item.backdropUrl,
-    //         'mediaType': 'movie',
-    //         'releaseDate': item.date.year.toString() ?? 'N/A',
-    //         'voteAverage': item.voteAverage,
-    //       };
+  Route _buildRoute([bool searchHistoryItem = false]) { 
+    final initData = InitialData.formObject(item)  ;
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: item),
+      settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => TVDetailsScreen(),
-      // {
-      //   if (item is MovieItem) return MovieDetailsScreen();
-      //   if (item is TVItem) return TVDetailsScreen();
-      //   return MovieDetailsScreen();
-      // },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -62,7 +42,7 @@ class SearchedTVItem extends StatelessWidget {
       splashColor: Colors.transparent,
       onTap: () {
         Provider.of<Search>(context, listen: false).addToSearchHistory(item);
-        Navigator.of(context).push(_buildRoute(item));
+        Navigator.of(context).push(_buildRoute());
       },
       child: ListTile(
         isThreeLine: false,

@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
-
-import 'package:e_movies/screens/movie/cast_details_screen.dart';
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/cast.dart' as prov;
-
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/cast.dart';
-import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/screens/movie/cast_details_screen.dart';
+import 'package:e_movies/providers/cast.dart' as prov;
+
 class CastItem extends StatelessWidget {
-  final int id;
-  final String name;
-  final String imageUrl;
-  CastItem({this.id, this.name, this.imageUrl});
+  final dynamic item;
+  CastItem(this.item);
 
       Route _buildRoute() {
       return PageRouteBuilder(
         settings: RouteSettings(
-          arguments: {'id' : id, 'name': name, 'imageUrl': imageUrl},
+          arguments: item,
         ),
         pageBuilder: (context, animation, secondaryAnimation) => CastDetails(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -68,28 +60,28 @@ class CastItem extends StatelessWidget {
           onTap: () => _onTap(context),
                   child: Card(
             elevation: 4,
-            shadowColor: Colors.white24,
+            shadowColor: Colors.transparent,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
             child: CircleAvatar(
               radius: 35,
-              backgroundColor: imageUrl == null
+              backgroundColor: item.imageUrl == null
                   ? Theme.of(context).accentColor
-                  : Colors.black,
-              backgroundImage: imageUrl != null
-                  ? NetworkImage(IMAGE_URL + imageUrl)
+                  : BASELINE_COLOR,
+              backgroundImage: item.imageUrl != null
+                  ? NetworkImage(IMAGE_URL + item.imageUrl)
                   : null,
-              child: imageUrl != null
+              child: item.imageUrl != null
                   ? null
                   : Text(
-                      _getName(name),
+                      _getName(item.name),
                       style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
             ),
           ),
         ),
         SizedBox(height: 2),
-        Text(name,
+        Text(item.name,
             style: TextStyle(
               fontFamily: 'Helvatica',
               // fontWeight: FontWeight.bold,

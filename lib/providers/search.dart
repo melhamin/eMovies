@@ -8,6 +8,7 @@ import 'package:e_movies/providers/movies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:e_movies/providers/init_data.dart';
 
 class ActorItem {
   final int id;
@@ -39,7 +40,7 @@ class Search with ChangeNotifier {
   List<TVItem> _tvShows = [];
   List<ActorItem> _actors = [];
 
-  List<Map<String, dynamic>> _recentSearches = [];
+  List<InitialData> _recentSearches = [];
 
   List<MovieItem> get movies {
     return _movies;
@@ -53,7 +54,7 @@ class Search with ChangeNotifier {
     return _actors;
   }
 
-  List<Map<String, dynamic>> get searchHistory {
+  List<InitialData> get searchHistory {
     return _recentSearches;
   }
 
@@ -139,56 +140,43 @@ class Search with ChangeNotifier {
 
     // check if item is already in the list
     final alreadyExist = _recentSearches.firstWhere((element) { 
-      return element['id'] == item.id;
+      return element.id == item.id;
     }, orElse: () => null);
 
-    print('item exit ----------> $alreadyExist');
+    // print('item exit ----------> $alreadyExist');
     // don't add to the list if already exist
     if(alreadyExist != null) return; 
 
-    _recentSearches.insert(0, {
-      'id': item.id,
-      'title': item.title,
-      'genre': (item.genreIDs.length == 0 || item.genreIDs[0] == null)
-          ? 'N/A'
-          : item.genreIDs[0],
-      // 'genre': item.genreIDs == null ?,
-      'posterUrl': item.posterUrl,
-      'backdropUrl': item.backdropUrl,
-      // 'mediaType': item['mediaType'],
-      'mediaType': 'movie',
-      // 'releaseDate': item.releaseDate.year.toString() ?? 'N/A',
-      'releaseDate': item.date.year.toString(),
-      'voteAverage': item.voteAverage,
-    });
+    _recentSearches.insert(0, InitialData.formObject(item));
     if (_recentSearches.length > 10) {
       _recentSearches.removeAt(_recentSearches.length - 1);
     }
 
+    notifyListeners();
     savePrefs();
   }
 
   void removeSearchHistoryItem(int index) {
     _recentSearches.removeAt(index);
-    savePrefs();
     notifyListeners();
+    savePrefs();
   }
 
   void clearSearchHistory() {
     _recentSearches.clear();
-    savePrefs();
     notifyListeners();
+    savePrefs();
   }
 
   void loadSearchHistory() async {
     SharedPreferences prefs = await _prefs;
-    final data = prefs.get('search_history');
+    final data = prefs.get('search_history');    
 
     if (data != null && data.length > 0) {
       final lists = json.decode(data) as List<dynamic>;
       _recentSearches.clear();
       lists.forEach((element) {
-        _recentSearches.add(element);
+        _recentSearches.add(InitialData.fromJson(element));
       });
     }
     notifyListeners();
@@ -196,6 +184,11 @@ class Search with ChangeNotifier {
 
   void savePrefs() async {
     SharedPreferences prefs = await _prefs;
-    prefs.setString('search_history', json.encode(_recentSearches));
+    var lists = [];
+    _recentSearches.forEach((element) { 
+      lists.add(InitialData.toJson(element));
+    });
+
+    prefs.setString('search_history', json.encode(lists));
   }
 }

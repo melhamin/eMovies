@@ -1,5 +1,6 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,7 @@ enum MovieLoaderStatus {
 
 class _MovieGenreItemState extends State<MovieGenreItem> {
   bool _initLoaded = true;
-  bool _isLoading = false;
-  bool _isFetching = true;
+  bool _isLoading = true;  
   ScrollController scrollController;
   MovieLoaderStatus loaderStatus = MovieLoaderStatus.STABLE;
   CancelableOperation movieOperation;
@@ -32,15 +32,13 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
   int genreId;
 
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState() {    
     super.initState();
-    scrollController = ScrollController();            
+    scrollController = ScrollController();
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
+  void dispose() {    
     scrollController.dispose();
     super.dispose();
   }
@@ -48,16 +46,17 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
+      
+      // clear previous data (if any other genre is opened before)
+      Provider.of<Movies>(context, listen: false)
+          .clearGenre();          
       Provider.of<Movies>(context, listen: false)
           .getGenre(widget.id, 1)
-          .then((value) {
-        setState(() {
-          _initLoaded = false;
-          _isFetching = false;
-        });
-      });      
+          .then((value) {                  
+          _isLoading = false;
+      });
     }    
-    // TODO: implement didChangeDependencies
+          _initLoaded = false;
     super.didChangeDependencies();
   }
 
@@ -91,7 +90,7 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
-        size: 21,
+        size: 30,
         color: Theme.of(context).accentColor,
       ),
     );
@@ -99,42 +98,47 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
 
   @override
   Widget build(BuildContext context) {
-    final movies = Provider.of<Movies>(context).genre;    
+    print('isLoading ---------> $_initLoaded');
+    final movies = Provider.of<Movies>(context).genre;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(          
-          title: Text(MOVIE_GENRES[widget.id], style: kTitleStyle),          
-          centerTitle: true,
-        ),
-        body: _isFetching ? _buildLoadingIndicator(context) :
-        Column(
-          children: [
-            Flexible(
-              child: NotificationListener(
-                onNotification: onNotification,
-                child: GridView.builder(
-                  physics: BouncingScrollPhysics(),
-                  controller: scrollController,
-                  // key: PageStorageKey('GenreItem'),
-                  cacheExtent: 12,
-                  itemCount: movies.length,
-                  itemBuilder: (ctx, i) {
-                    return wid.MovieItem(
-                      item: movies[i],
-                    );
-                  },
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 2 / 3.5,
-                    // crossAxisSpacing: 5,
-                    // mainAxisSpacing: 5,
-                  ),
+        body: NotificationListener(
+          onNotification: onNotification,
+          child: Stack(
+            children: [              
+              GridView.builder(
+                // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
+                physics: const BouncingScrollPhysics(),
+                controller: scrollController,
+                key: const PageStorageKey('TrendingMoviesScreen'),
+                cacheExtent: 12,
+                itemCount: movies.length,
+                itemBuilder: (ctx, i) {
+                  return wid.MovieItem(
+                    item: movies[i],
+                  );
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2 / 3.5,                  
                 ),
               ),
-            ),
-            if (_isLoading) _buildLoadingIndicator(context),
-          ],
-        ),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: CustomBackButton(text: MOVIE_GENRES[widget.id] ),
+              ),
+              if (_isLoading)
+                Positioned.fill(
+                  bottom: 10,                  
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildLoadingIndicator(context),
+                  ),
+                )
+            ],
+          ),
+        ),       
       ),
     );
   }

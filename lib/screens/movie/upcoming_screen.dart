@@ -1,5 +1,6 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/back_button.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -7,12 +8,6 @@ import 'package:provider/provider.dart';
 
 import 'package:e_movies/providers/movies.dart' show Movies;
 import 'package:e_movies/widgets/movie/movie_item.dart';
-
-import 'package:e_movies/widgets/temp.dart' as temp;
-
-import '../../consts/consts.dart';
-import '../../consts/consts.dart';
-import '../../consts/consts.dart';
 
 enum MovieLoaderStatus {
   STABLE,
@@ -41,14 +36,12 @@ class _AllMoviesState extends State<UpcomingScreen>
   var movies;
   int curPage = 1;
 
-  @override
-  // TODO: implement wantKeepAlive
+  @override  
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    scrollController = ScrollController();
-    // TODO: implement initState
+    scrollController = ScrollController();    
     super.initState();
   }
 
@@ -57,8 +50,7 @@ class _AllMoviesState extends State<UpcomingScreen>
     if (_initLoaded) {
       Provider.of<Movies>(context, listen: false).fetchUpcoming(1);
     }
-    _initLoaded = false;
-    // TODO: implement didChangeDependencies
+    _initLoaded = false;    
     super.didChangeDependencies();
   }
 
@@ -97,7 +89,7 @@ class _AllMoviesState extends State<UpcomingScreen>
   Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: SpinKitCircle(
-        size: 21,
+        size: 30,
         color: Theme.of(context).accentColor,
       ),
     );
@@ -109,16 +101,15 @@ class _AllMoviesState extends State<UpcomingScreen>
     var movies = Provider.of<Movies>(context).upcoming;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Coming Soon', style: kTitleStyle),
-        ),
-        body: NotificationListener(
+        // appBar: AppBar(
+        //   centerTitle: true,
+        //   title: Text('Coming Soon', style: kTitleStyle),
+        // ),
+        body:           NotificationListener(
           onNotification: onNotification,
-          child: Column(
+          child: Stack(
             children: [
-              Flexible(
-                child: GridView.builder(
+               GridView.builder(
                   // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
                   physics: const BouncingScrollPhysics(),
                   controller: scrollController,
@@ -137,11 +128,22 @@ class _AllMoviesState extends State<UpcomingScreen>
                     // crossAxisSpacing: 5,
                   ),
                 ),
+                Positioned(
+                top: 10,
+                left: 10,
+                child: CustomBackButton(text: 'Coming Soon'),
               ),
-              if (_isFetching) _buildLoadingIndicator(context),
+              if (_isFetching)
+                Positioned.fill(
+                  bottom: 10,                  
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildLoadingIndicator(context),
+                  ),
+                )
             ],
           ),
-        ),
+        ),        
       ),
     );
   }

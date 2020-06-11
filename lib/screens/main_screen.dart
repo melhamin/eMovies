@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/screens/cinemas_screen.dart';
 import 'package:flutter/material.dart';
 
-import 'package:e_movies/screens/movie/movies_screen.dart';
+import 'package:e_movies/screens/movie/discover_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/screens/search/search_screen.dart';
@@ -31,7 +32,8 @@ class _MainScreenState extends State<MainScreen>
 
     // load lists    
     Future.delayed(Duration.zero).then((value) {
-      Provider.of<Lists>(context, listen: false).loadLists();
+      Provider.of<Lists>(context, listen: false).loadMovieLists();
+      Provider.of<Lists>(context, listen: false).loadTVLists();
     });
     _tabController = TabController(
       vsync: this,
@@ -61,9 +63,9 @@ class _MainScreenState extends State<MainScreen>
         physics: const NeverScrollableScrollPhysics(),
         pageSnapping: false,        
         children: <Widget>[
-          MoviesScreen(),
-          TVScreen(),
+          DiscoverScreen(),
           SearchScreen(),
+          CinemasScreen(),
           MyListsScreen(),
         ],
       ),

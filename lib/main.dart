@@ -1,6 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/screens/main_screen.dart';
-import 'package:e_movies/screens/movie/trending_movies_screen.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -15,6 +14,8 @@ import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/lists.dart';
+
+import 'screens/movie/trending_movies_screen.dart';
 
 
 void main() async {
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.black,
           applyElevationOverlayColor: true,
           fontFamily: 'Helvatica',
-          splashColor: Colors.transparent,
+          splashColor: Colors.transparent,  
+          highlightColor: Colors.transparent,        
           // primarySwatch:,                   
           // accentColor: Colors.amber,
           // splashColor: Colors.transparent,

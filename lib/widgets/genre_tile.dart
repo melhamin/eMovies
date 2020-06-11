@@ -65,12 +65,13 @@ class GenreTile extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
+              Positioned(
+                // alignment: Alignment.bottomCenter,
+                bottom: 0,
                 child: Container(
                   height: constraints.maxHeight * 0.6,
                   width: constraints.maxWidth,
-                  // margin: const EdgeInsets.only(bottom: 1, left: 1),
+                  padding: const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.bottomCenter,

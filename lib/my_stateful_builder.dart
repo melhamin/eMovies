@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_movies/providers/init_data.dart';
 import 'package:flutter/material.dart';
 
 class MyStatefulBuilder extends StatefulWidget {
   final StatefulWidgetBuilder builder;
   // final ValueChanged<String> changeImage;
-  final dynamic items;
+  final List<InitialData> items;
   String imageUrl;
   MyStatefulBuilder({this.builder, this.imageUrl, this.items});
 
@@ -21,9 +22,8 @@ class _MyStatefulBuilderState extends State<MyStatefulBuilder>
 
   @override
   void initState() {
-    super.initState();
-    // print('items------------> ${widget.items}');
-    imageUrl = widget.items[imageIndex]['posterUrl'];
+    super.initState();    
+    imageUrl = widget.items[imageIndex].posterUrl;
     // wait for page navigation the start animation
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       _animationController = AnimationController(
@@ -61,12 +61,12 @@ class _MyStatefulBuilderState extends State<MyStatefulBuilder>
     if (imageIndex < widget.items.length - 1) {
       setState(() {
         imageIndex += 1;
-        imageUrl = widget.items[imageIndex]['posterUrl'];
+        imageUrl = widget.items[imageIndex].posterUrl;
       });
     } else {
       setState(() {
         imageIndex = 0;
-        imageUrl = widget.items[imageIndex]['posterUrl'];
+        imageUrl = widget.items[imageIndex].posterUrl;
       });
     }
   }

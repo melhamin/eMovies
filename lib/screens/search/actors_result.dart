@@ -166,8 +166,7 @@ class _ActorsResultState extends State<ActorsResult> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    print('actors result ---------> build');
+  Widget build(BuildContext context) {  
     final actors = Provider.of<Search>(context).actors;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/providers/search.dart' show Search;
+import 'package:e_movies/providers/init_data.dart';
 
 
 enum LoaderStatus {

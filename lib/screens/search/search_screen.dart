@@ -138,11 +138,28 @@ class _SearchingState extends State<Searching>
     });
   }
 
+  List<Widget> _getTabs() {
+    return [
+      Tab(
+        icon: Text('All', style: kTopBarTextStyle),
+      ),
+      Tab(
+        icon: Text('Movies', style: kTopBarTextStyle),
+      ),
+      Tab(
+        icon: Text('TV shows', style: kTopBarTextStyle),
+      ),
+      Tab(
+        icon: Text('People', style: kTopBarTextStyle),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentPage = Tabs(
+      tabs: _getTabs(),
       controller: _tabController,
-      // currentIndex: currentIndex,
       onTap: _onTap,
     );
 
@@ -150,13 +167,11 @@ class _SearchingState extends State<Searching>
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        // elevation: 10,
         bottom: PreferredSize(
           child: Container(
-            // margin: const EdgeInsets.only(right: 100),
-            // padding: const EdgeInsets.only(bottom: 10),
+            width: double.infinity,
+            margin: const EdgeInsets.only(left: LEFT_PADDING + 5),
             decoration: BoxDecoration(),
-            height: 45,
             child: currentPage,
           ),
           preferredSize: Size.fromHeight(40),
@@ -246,31 +261,15 @@ class NotSearching extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(bottom: 5),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.12), width: 1))
-        ),
-        child: Text(title, style: TextStyle(
-          fontFamily: 'Helvatica',
-          fontSize: 18, 
-          fontWeight: FontWeight.bold,
-          color: Colors.white.withOpacity(0.87)          
-        )),
-        //     if (withSeeAll)
-        //       GestureDetector(
-        //         onTap: onTap,
-        //         child: Row(
-        //           children: [
-        //             Padding(
-        //                 padding: EdgeInsets.only(top: 3),
-        //                 child: Text('See All', style: kSeeAll)),
-        //             SizedBox(width: 3),
-        //             Icon(
-        //               Icons.arrow_forward_ios,
-        //               color: Colors.white.withOpacity(0.6),
-        //               size: 18,
-        //             ),
-        //           ],
-        //         ),
-        //       ),
+            border: Border(
+                bottom: BorderSide(
+                    color: Colors.white.withOpacity(0.12), width: 1))),
+        child: Text(title,
+            style: TextStyle(
+                fontFamily: 'Helvatica',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white.withOpacity(0.87))),
       ),
     );
   }
@@ -334,11 +333,11 @@ class NotSearching extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: kToolbarHeight),
         children: <Widget>[
           _buildSectionTitle(context, 'Movies'),
-
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
+            padding: const EdgeInsets.symmetric(
+                horizontal: LEFT_PADDING, vertical: 10),
             child: Text('Browse All', style: kSubtitle1),
-          ),          
+          ),
           Container(
             height: MediaQuery.of(context).size.height * 0.2,
             child: GridView.builder(
