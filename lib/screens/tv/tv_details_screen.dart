@@ -228,7 +228,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
           context: context,
           alignment: Alignment.center,
           color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: TOAST_DURATION),
           child: _buildToastMessageIcons(
               Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
               'Item added.'));
@@ -237,7 +237,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
           context: context,
           alignment: Alignment.center,
           color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: TOAST_DURATION),
           child: _buildToastMessageIcons(
               Icon(Icons.warning,
                   color: Colors.white.withOpacity(0.87), size: 50),
@@ -542,7 +542,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
         context: context,
         alignment: Alignment.center,
         color: BASELINE_COLOR_TRANSPARENT,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: TOAST_DURATION),
         child: _buildToastMessageIcons(
             Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
             'Removed from Favorites'),
@@ -554,7 +554,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
         context: context,
         alignment: Alignment.center,
         color: Colors.transparent,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: TOAST_DURATION),
         child: _buildToastMessageIcons(
             Icon(Icons.favorite,
                 color: Theme.of(context).accentColor, size: 80),

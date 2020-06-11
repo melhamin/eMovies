@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/providers/cast.dart';
@@ -105,19 +106,22 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         context: context,
         alignment: Alignment.center,
         color: BASELINE_COLOR_TRANSPARENT,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: TOAST_DURATION),
         child: _buildToastMessageIcons(
             Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
             'Removed from Favorites'),
       );
     } else {
       Provider.of<Lists>(context, listen: false).addToFavoriteMovies(initData);
-      // ToastUtils.removeOverlay();
+      // update top genre movies list 
+      Provider.of<Search>(context, listen: false).addToTopMovieGenres(initData);
+      
+
       ToastUtils.myToastMessage(
         context: context,
         alignment: Alignment.center,
         color: Colors.transparent,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: TOAST_DURATION),
         child: _buildToastMessageIcons(
             Icon(Icons.favorite,
                 color: Theme.of(context).accentColor, size: 80),
@@ -478,6 +482,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     // Set _isEmpty to true and clear the textfield
 
     if (result) {      
+      // update top movie genres list
+      Provider.of<Search>(context, listen: false).addToTopMovieGenres(initData);
       Navigator.of(context).pop();      
       _textEditingController.clear();
     } else {
@@ -485,7 +491,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         context: context,
         alignment: Alignment.center,
         color: BASELINE_COLOR_TRANSPARENT,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: TOAST_DURATION),
         child: _buildToastMessageIcons(
             Icon(Icons.warning,
                 color: Colors.white.withOpacity(0.87), size: 50),
@@ -604,7 +610,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
           context: context,
           alignment: Alignment.center,
           color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: TOAST_DURATION),
           child: _buildToastMessageIcons(
               Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
               'Item added.'));
@@ -613,7 +619,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
           context: context,
           alignment: Alignment.center,
           color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: 2),
+          duration: Duration(seconds: TOAST_DURATION),
           child: _buildToastMessageIcons(
               Icon(Icons.warning,
                   color: Colors.white.withOpacity(0.87), size: 50),

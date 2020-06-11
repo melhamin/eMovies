@@ -108,7 +108,7 @@ class _TVshowsListsState extends State<TVshowsLists>
       context: context,
       alignment: Alignment.center,
       color: ONE_LEVEL_ELEVATION,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: TOAST_DURATION),
       child: _buildToastMessageIcons(
           Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
           'Removed list'),

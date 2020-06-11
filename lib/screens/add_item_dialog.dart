@@ -93,7 +93,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
       context: context,
       alignment: Alignment.center,
       color: ONE_LEVEL_ELEVATION,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: TOAST_DURATION),
       child: _buildToastMessageIcons(
           Icon(Icons.warning, color: Colors.white.withOpacity(0.87), size: 60),
           'List Already Exist!'),

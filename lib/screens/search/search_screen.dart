@@ -274,8 +274,13 @@ class NotSearching extends StatelessWidget {
     );
   }
 
+  int getIndex(int id) {
+    return MOVIE_GENRE_DETAILS.indexWhere((element) => element['genreId'] == id);     
+  }
+
   @override
   Widget build(BuildContext context) {
+    final topGenres = Provider.of<Search>(context).topMovieGenres;
     return NestedScrollView(
       headerSliverBuilder: (ctx, i) {
         return [
@@ -333,6 +338,34 @@ class NotSearching extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: kToolbarHeight),
         children: <Widget>[
           _buildSectionTitle(context, 'Movies'),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: LEFT_PADDING, vertical: 10),
+            child: Text('Your top genres', style: kSubtitle1),
+          ),
+          Container(            
+            height: MediaQuery.of(context).size.height * 0.4  - 30, // main and cross axis spacing        
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(), 
+              padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),             
+              itemCount: topGenres.length,
+              itemBuilder: (_, i) {
+                int index = getIndex(topGenres[i]);
+                return GenreTile(
+                  imageUrl: MOVIE_GENRE_DETAILS[index]['imageUrl'],
+                  genreId: MOVIE_GENRE_DETAILS[index]['genreId'],
+                  title: MOVIE_GENRE_DETAILS[index]['title'],
+                  mediaType: 0,
+                );                
+              },     
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 3/2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),         
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: LEFT_PADDING, vertical: 10),

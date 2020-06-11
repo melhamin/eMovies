@@ -20,11 +20,6 @@ class SearchedMovieItem extends StatelessWidget {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),
-      // {
-      //   if (item is MovieItem) return MovieDetailsScreen();
-      //   if (item is TVItem) return TVDetailsScreen();
-      //   return MovieDetailsScreen();
-      // },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

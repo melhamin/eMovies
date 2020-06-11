@@ -43,151 +43,6 @@ class _MyListsScreenState extends State<MyListsScreen>
     super.dispose();
   }
 
-  // /// Presents a modalBottomSheet and lets user to give a name and add new list
-  // void _showAddDialog(BuildContext context) {
-  //   showModalBottomSheet(
-  //     backgroundColor: Colors.transparent,
-  //     isScrollControlled: true,
-  //     context: context,
-  //     builder: (context) => StatefulBuilder(
-  //       builder: (context, thisState) {
-  //         return Container(
-  //           padding: const EdgeInsets.only(left: 8, right: 8),
-  //           decoration: BoxDecoration(
-  //             color: BASELINE_COLOR,
-  //             borderRadius: BorderRadius.only(
-  //               topLeft: Radius.circular(10),
-  //               topRight: Radius.circular(10),
-  //             ),
-  //           ),
-  //           height: MediaQuery.of(context).size.height * 0.85,
-  //           child: ListView(
-  //             children: <Widget>[
-  //               Container(
-  //                 height: 50,
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: <Widget>[
-  //                     IconButton(
-  //                       icon: Icon(
-  //                         Icons.clear,
-  //                         color: Theme.of(context).accentColor,
-  //                       ),
-  //                       onPressed: () {
-  //                         _textEditingController.clear();
-  //                         Navigator.of(context).pop();
-  //                         setState(() {
-  //                           _isEmpty = true;
-  //                         });
-  //                       },
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               SizedBox(height: 40),
-  //               Center(
-  //                 child: Text(
-  //                   'Give your list a name.',
-  //                   style: TextStyle(
-  //                     color: Hexcolor('#DEDEDE'),
-  //                     fontSize: 26,
-  //                     fontWeight: FontWeight.bold,
-  //                     fontFamily: 'Helvatica',
-  //                   ),
-  //                 ),
-  //               ),
-  //               SizedBox(height: 40),
-  //               Center(
-  //                 child: Form(
-  //                   key: _formKey,
-  //                   child: Container(
-  //                     decoration: BoxDecoration(
-  //                       border: Border(
-  //                         bottom: BorderSide(color: Colors.white38),
-  //                       ),
-  //                     ),
-  //                     child: TextFormField(
-  //                         controller: _textEditingController,
-  //                         textAlign: TextAlign.center,
-  //                         autofocus: true,
-  //                         onChanged: (val) {
-  //                           thisState(() {
-  //                             _isEmpty = val.isEmpty ? true : false;
-  //                           });
-  //                         },
-  //                         // autovalidate: true,
-  //                         cursorColor: Theme.of(context).accentColor,
-  //                         style: TextStyle(
-  //                           color: Hexcolor('#DEDEDE'),
-  //                           fontSize: 24,
-  //                           fontWeight: FontWeight.bold,
-  //                           fontFamily: 'Helvatica',
-  //                         ),
-  //                         decoration: InputDecoration(
-  //                           border: InputBorder.none,
-  //                           errorBorder: InputBorder.none,
-  //                           disabledBorder: InputBorder.none,
-  //                           enabledBorder: InputBorder.none,
-  //                           focusedBorder: InputBorder.none,
-  //                           focusedErrorBorder: InputBorder.none,
-  //                           errorStyle: TextStyle(
-  //                             color: Colors.red,
-  //                             fontSize: 16,
-  //                             fontWeight: FontWeight.bold,
-  //                             fontFamily: 'Helvatica',
-  //                           ),
-  //                         ),
-  //                         textInputAction: TextInputAction.go,
-  //                         keyboardAppearance: Brightness.dark,
-  //                         validator: (value) {
-  //                           if (value.isEmpty) return 'Please enter a name.';
-  //                           return null;
-  //                         },
-  //                         onFieldSubmitted: (value) => _addList(context)),
-  //                   ),
-  //                 ),
-  //               ),
-  //               SizedBox(height: 40),
-  //               Center(
-  //                   child: _isEmpty
-  //                       ? FlatButton(
-  //                           child: Text(
-  //                             'Cancel',
-  //                             style: kTitleStyle2,
-  //                           ),
-  //                           onPressed: () {
-  //                             _textEditingController.clear();
-  //                             Navigator.of(context).pop();
-  //                             setState(() {
-  //                               _isEmpty = true;
-  //                             });
-  //                           },
-  //                         )
-  //                       : Padding(
-  //                           padding: const EdgeInsets.only(bottom: 20.0),
-  //                           child: Center(
-  //                             child: Container(
-  //                               width: MediaQuery.of(context).size.width * 0.4,
-  //                               decoration: BoxDecoration(
-  //                                 borderRadius: BorderRadius.circular(100),
-  //                                 color: Theme.of(context).accentColor,
-  //                               ),
-  //                               child: FlatButton(
-  //                                 shape: RoundedRectangleBorder(
-  //                                     borderRadius: BorderRadius.circular(100)),
-  //                                 child: Text('Create', style: kTitleStyle),
-  //                                 onPressed: () => _addList(context),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ))
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 
   void _changeTab(int newIndex) {
     setState(() {
@@ -235,11 +90,11 @@ class _MyListsScreenState extends State<MyListsScreen>
         resizeToAvoidBottomPadding: false,
         body: NestedScrollView(
           headerSliverBuilder: (ctx, _) {
-            return [
+            return [              
               SliverAppBar(
-                backgroundColor: BASELINE_COLOR,
+                backgroundColor: BASELINE_COLOR,                
                 title: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 15.0),
                   child: Text(
                     'My Lists',
                     style: TextStyle(

@@ -127,6 +127,7 @@ const double APP_BAR_HEIGHT = 56;
 const double LEFT_PADDING = 15;
 const AVATAR_RADIUS = 20;
 const LOADING_INDICATOR_SIZE = 21.0;
+const TOAST_DURATION = 2;
 
 // Genres
 const Map<int, String> MOVIE_GENRES = {

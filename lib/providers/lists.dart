@@ -138,7 +138,7 @@ class Lists with ChangeNotifier {
 
   // Favorite movies and other movie lists
   bool addToFavoriteMovies(InitialData item) {
-    _favoriteMovies.insert(0, item);
+    _favoriteMovies.insert(0, item);        
     notifyListeners();
     saveFavoriteMovies();
     return true;

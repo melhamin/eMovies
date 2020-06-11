@@ -147,7 +147,7 @@ class VideoItem {
 
 class Movies with ChangeNotifier {
   // Environemnt Variables
-  // final API_KEY = DotEnv().env['API_KEYY'];
+  // final TMDB_API_KEY = DotEnv().env['API_KEYY'];
 
   List<MovieItem> _trending = [];
   List<MovieItem> _topRated = [];
@@ -209,11 +209,11 @@ class Movies with ChangeNotifier {
 
   // functions
   // Future<void> fetchCategory(String category, int page) async {
-  //   // print('${DotEnv().env['API_KEY']}');
+  //   // print('${DotEnv().env['TMDB_API_KEY']}');
   //   // final url =
-  //   //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+  //   //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=$page';
   //   final url =
-  //       'https://api.themoviedb.org/3/$category/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
+  //       'https://api.themoviedb.org/3/$category/movie/day?api_key=${DotEnv().env['TMDB_API_KEY']}&page=$page';
 
   //   try {
   //     final response = await http.get(url);
@@ -242,7 +242,7 @@ class Movies with ChangeNotifier {
 
   Future<void> fetchInTheaters(int page) async {
     final url =
-        '$BASE_URL/movie/now_playing?api_key=${DotEnv().env['API_KEY']}&page=$page';
+        '$BASE_URL/movie/now_playing?api_key=${DotEnv().env['TMDB_API_KEY']}&page=$page';
 
     try {
       final response = await http.get(url);
@@ -266,11 +266,11 @@ class Movies with ChangeNotifier {
   }
 
   Future<void> fetchTrending(int page) async {
-    // print('${DotEnv().env['API_KEY']}');
+    // print('${DotEnv().env['TMDB_API_KEY']}');
     // final url =
-    //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+    //     '$BASE_URL/movie/popular?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=$page';
     final url =
-        'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['API_KEY']}&page=$page';
+        'https://api.themoviedb.org/3/trending/movie/day?api_key=${DotEnv().env['TMDB_API_KEY']}&page=$page';
 
     try {
       final response = await http.get(url);
@@ -299,7 +299,7 @@ class Movies with ChangeNotifier {
 
   Future<void> fetchUpcoming(int page) async {
     final url =
-        '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['API_KEY']}&page=$page';
+        '$BASE_URL/movie/upcoming?api_key=${DotEnv().env['TMDB_API_KEY']}&page=$page';
 
     try {
       final response = await http.get(url);
@@ -325,7 +325,7 @@ class Movies with ChangeNotifier {
 
   Future<void> fetchForKids(int page) async {
     final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=16';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&sort_by=popularity.desc&page=$page&with_genres=16';
 
     try {
       final response = await http.get(url);
@@ -349,9 +349,9 @@ class Movies with ChangeNotifier {
   }
 
   Future<void> fetchTopRated(int page) async {
-    // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$API_KEY';
+    // final url = 'https://api.themoviedb.org/3/trending/all/week?api_key=$TMDB_API_KEY';
     final url =
-        '$BASE_URL/movie/top_rated?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=$page';
+        '$BASE_URL/movie/top_rated?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=$page';
 
     try {
       final response = await http.get(url);
@@ -377,7 +377,7 @@ class Movies with ChangeNotifier {
 
   Future<void> getMovieDetails(int id) async {
     final url =
-        '$BASE_URL/movie/$id?api_key=${DotEnv().env['API_KEY']}&language=en-US&append_to_response=credits,similar,reviews,images&include_image_language=en,null';
+        '$BASE_URL/movie/$id?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&append_to_response=credits,similar,reviews,images&include_image_language=en,null';
     try {
       final response = await http.get(url);
       // print('MovieDetails ----------->- ${response.body}');
@@ -427,7 +427,7 @@ class Movies with ChangeNotifier {
   }
 
   // Future<void> getSimilar(int id) async {
-  //   final url = 'https://api.themoviedb.org/3/movie/$id/similar?api_key=${DotEnv().env['API_KEY']}&language=en-US&page=1';
+  //   final url = 'https://api.themoviedb.org/3/movie/$id/similar?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=1';
   //   try {
   //     final response = await http.get(url);
   //     print(response.body);
@@ -449,7 +449,7 @@ class Movies with ChangeNotifier {
 
   Future<void> fetchVideos(int id) async {
     final url =
-        '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['API_KEY']}&language=en-US';
+        '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US';
 
     try {
       final response = await http.get(url);
@@ -474,10 +474,10 @@ class Movies with ChangeNotifier {
 
   // Fetch genres
   Future<void> getGenre(int id, int page) async {
-    // print('DotEnv API_KEY---------------> ${DotEnv().env['API_KEY']}');
-    // print('API_KEY---------------> $API_KEY');
+    // print('DotEnv TMDB_API_KEY---------------> ${DotEnv().env['TMDB_API_KEY']}');
+    // print('TMDB_API_KEY---------------> $TMDB_API_KEY');
     final url =
-        '$BASE_URL/discover/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
+        '$BASE_URL/discover/movie?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
     final response = await http.get(url);
     final responseData = json.decode(response.body) as Map<String, dynamic>;
     final moviesData = responseData['results'];
