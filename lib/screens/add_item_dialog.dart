@@ -65,27 +65,29 @@ class _AddItemDialogState extends State<AddItemDialog> {
   void _addList(BuildContext context) {
     if (!_formKey.currentState.validate()) return;
 
+    bool result;
     // add to list according to the meida type
     if (widget.mediaType == MediaType.Movie) {
-      // try adding list. if already exist show warning message
-      if (!Provider.of<Lists>(context, listen: false)
-          .addNewMovieList(_textEditingController.text)) {
-        showWarningDialog();
-      }
+      result = Provider.of<Lists>(context, listen: false)
+          .addNewMovieList(_textEditingController.text);
     } else {
-      if (!Provider.of<Lists>(context, listen: false)
-          .addNewTVList(_textEditingController.text)) {
-        showWarningDialog();
-      }
+      result = Provider.of<Lists>(context, listen: false)
+          .addNewTVList(_textEditingController.text);
     }
-    widget.listKey.currentState.insertItem(0,
-        duration: Duration(milliseconds: 500)); // add item to animated list
-    Navigator.of(context).pop();
 
-    _textEditingController.clear();
-    setState(() {
-      _isEmpty = true;
-    });
+    // if already exist show warning message
+    if (!result)
+      showWarningDialog();
+    else {
+      widget.listKey.currentState.insertItem(0,
+          duration: Duration(milliseconds: 500)); // add item to animated list
+      Navigator.of(context).pop();
+
+      _textEditingController.clear();
+      setState(() {
+        _isEmpty = true;
+      });
+    }
   }
 
   void showWarningDialog() {

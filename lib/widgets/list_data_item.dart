@@ -7,8 +7,7 @@ import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 
-
-/// 
+///
 class ListDataItem extends StatelessWidget {
   final InitialData initData;
   ListDataItem(this.initData);
@@ -16,8 +15,10 @@ class ListDataItem extends StatelessWidget {
   Route _buildRoute() {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
-      pageBuilder: (context, animation, secondaryAnimation) => initData.mediaType == MediaType.Movie ?
-          MovieDetailsScreen() : TVDetailsScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          initData.mediaType == MediaType.Movie
+              ? MovieDetailsScreen()
+              : TVDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -32,6 +33,24 @@ class ListDataItem extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _getGenres(List<dynamic> genreIDs) {
+    String str = '';
+
+    if(genreIDs == null || genreIDs.length == 0) str = 'N/A';
+    else {
+      if(initData.mediaType == MediaType.Movie) str += MOVIE_GENRES[genreIDs[0]];
+      else str += TV_GENRES[genreIDs[0]];
+    }
+    // else {
+    //   int length = genreIDs.length > 3 ? 3 : genreIDs.length;
+    //   for(int i = 0; i < length; i++) {
+    //     if(initData.mediaType == MediaType.Movie) str += MOVIE_GENRES[genreIDs[i]];
+    //     else str += TV_GENRES[genreIDs[i]];
+    //   }
+    // }
+    return str;
   }
 
   @override
@@ -56,11 +75,17 @@ class ListDataItem extends StatelessWidget {
         ),
         title: Text(
           initData.title,
-          style: kTitleStyle2,
+          style: TextStyle(
+            fontFamily: 'Helvatica',
+            fontSize: 16,
+            // fontWeight: FontWeight.bold,
+            color: Colors.white.withOpacity(0.87),
+          ),
         ),
         subtitle: Text(
-          initData.genreIDs == null ? 'N/A' :
-          '${MOVIE_GENRES[initData.genreIDs[0]]}' ,
+          initData.genreIDs == null
+              ? 'N/A'
+              : _getGenres(initData.genreIDs),
           style: kSubtitle1,
         ),
         trailing: Text(

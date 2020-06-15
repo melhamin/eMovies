@@ -28,7 +28,7 @@ class BottomTabs extends StatelessWidget {
             'Discover',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.theaters),
+          icon: Icon(Icons.home),          
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
@@ -36,7 +36,7 @@ class BottomTabs extends StatelessWidget {
             'Search',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.search),
+          icon: Icon(CupertinoIcons.search),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
@@ -44,7 +44,7 @@ class BottomTabs extends StatelessWidget {
             'Cinemas',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.location_on),
+          icon: Icon(CupertinoIcons.location),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(

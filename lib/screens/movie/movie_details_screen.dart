@@ -771,7 +771,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                     ),
                     _isLoading
                         ? Container(
-                            height: constraints.maxHeight * 0.3,
+                            height: constraints.maxHeight * 0.3 - 2,
                             child: _buildLoadingIndicator(context),
                           )
                         : Padding(
@@ -981,10 +981,10 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                 ),
               ),
               Positioned(
-                top: widget.constraints.maxHeight * 0.2,
+                // to the center of background image
+                top: widget.constraints.maxHeight * 0.275 - 100,
                 // right: MediaQuery.of(context).size.width / 2,
                 right: widget.constraints.maxWidth / 2 - 40,
-
                 child: Column(
                   children: [
                     GestureDetector(
@@ -1146,10 +1146,10 @@ class _OverviewState extends State<Overview>
       constraints: _expanded
           ? BoxConstraints(
               minHeight: widget.constraints.maxHeight *
-                  0.30, // otherwise bottom icons will move up if text length is small
+                  0.30 - 2, // otherwise bottom icons will move up if text length is small
             )
           : BoxConstraints(
-              maxHeight: widget.constraints.maxHeight * 0.30,
+              maxHeight: widget.constraints.maxHeight * 0.30 - 2,
             ),
       child: AnimatedSize(
         duration: Duration(milliseconds: 300),

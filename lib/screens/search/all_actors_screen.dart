@@ -42,6 +42,7 @@ class AllActorsScreen extends StatelessWidget {
           leading: BackButton(color: Colors.white.withOpacity(0.87)),
         ),
         body: ListView.builder(
+          key: PageStorageKey('AllActorsScreen'),
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),          
           itemCount: cast.length,
           itemBuilder: (_, i) {

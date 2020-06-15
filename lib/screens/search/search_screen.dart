@@ -166,81 +166,171 @@ class _SearchingState extends State<Searching>
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        bottom: PreferredSize(
-          child: Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(left: LEFT_PADDING + 5),
-            decoration: BoxDecoration(),
-            child: currentPage,
-          ),
-          preferredSize: Size.fromHeight(40),
-        ),
-        backgroundColor: Hexcolor('#151515'),
-        title: Container(
-          height: 35,
-          padding: const EdgeInsets.only(left: 10),
-          decoration: BoxDecoration(
-            color: TWO_LEVEL_ELEVATION,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: TextField(
-            autofocus: true,
-            controller: _searchController,
-            textAlignVertical: TextAlignVertical.center,
-            textInputAction: TextInputAction.go,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Search',
-              hintStyle: TextStyle(
-                color: Colors.white.withOpacity(0.87),
-                fontSize: 18,
-                fontFamily: 'Helvatica',
-              ),
-            ),
-            style: TextStyle(
-              fontFamily: 'Helvatica',
-              fontSize: 18,
-              // fontWeight: FontWeight.bold,
-              height: 0.9,
-              color: Colors.white.withOpacity(0.87),
-            ),
-            onChanged: (value) {
-              // set _isFetching = true to show loading indcator
-              setState(() {
-                _isFetching = true;
-              });
-              // Provider.of<Search>(context, listen: false)
-              //     .searchMovies(value, 1)
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: Container(
+                      height: 35,
+                      padding: const EdgeInsets.only(left: 10),
+                      decoration: BoxDecoration(
+                        color: TWO_LEVEL_ELEVATION,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        autofocus: true,
+                        cursorColor: Theme.of(context).accentColor,
+                        controller: _searchController,
+                        textAlignVertical: TextAlignVertical.center,
+                        textInputAction: TextInputAction.go,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Search',
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.87),
+                            fontSize: 18,
+                            fontFamily: 'Helvatica',
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontFamily: 'Helvatica',
+                          fontSize: 18,
+                          // fontWeight: FontWeight.bold,
+                          height: 0.9,
+                          color: Colors.white.withOpacity(0.87),
+                        ),
+                        onChanged: (value) {
+                          // set _isFetching = true to show loading indcator
+                          setState(() {
+                            _isFetching = true;
+                          });
+                          // Provider.of<Search>(context, listen: false)
+                          //     .searchMovies(value, 1)
 
-              _fetch(value).then((value) {
-                setState(() {
-                  _isFetching = false;
-                });
-              });
-              //  Provider.of<Search>(context, listen: false)
-              //     .searchTVShows(value, 1);
-              //     Provider.of<Search>(context, listen: false)
-              //     .searchPerson(value, 1);
-            },
+                          _fetch(value).then((value) {
+                            setState(() {
+                              _isFetching = false;
+                            });
+                          });
+                          //  Provider.of<Search>(context, listen: false)
+                          //     .searchTVShows(value, 1);
+                          //     Provider.of<Search>(context, listen: false)
+                          //     .searchPerson(value, 1);
+                        },
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: FlatButton(
+                      child: Text('Cancel', style: kTopBarTextStyle,),
+                      onPressed: () {
+                        setState(() {
+                          widget.toggleSearch();
+                          // _searchQuery = '';
+                          _searchController.text = '';
+                        });
+                        Provider.of<Search>(context, listen: false)
+                            .clearMovies();
+                        Provider.of<Search>(context, listen: false)
+                            .clearPeople();
+                        Provider.of<Search>(context, listen: false)
+                            .clearSeries();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              PreferredSize(
+                child:
+                  currentPage,
+                preferredSize: Size.fromHeight(40),
+              ),
+            ],
           ),
         ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Cancel', style: kTopBarTextStyle),
-            onPressed: () {
-              setState(() {
-                widget.toggleSearch();
-                // _searchQuery = '';
-                _searchController.text = '';
-              });
-              Provider.of<Search>(context, listen: false).clearMovies();
-              Provider.of<Search>(context, listen: false).clearPeople();
-              Provider.of<Search>(context, listen: false).clearSeries();
-            },
-          ),
-        ],
       ),
+//      AppBar(
+//        bottom: PreferredSize(
+//          child: Container(
+//            width: double.infinity,
+//            margin: const EdgeInsets.only(left: LEFT_PADDING + 5),
+//            decoration: BoxDecoration(),
+//            child: currentPage,
+//          ),
+//          preferredSize: Size.fromHeight(40),
+//        ),
+//        backgroundColor: Hexcolor('#151515'),
+//        title: Container(
+//          height: 35,
+//          padding: const EdgeInsets.only(left: 10),
+//          decoration: BoxDecoration(
+//            color: TWO_LEVEL_ELEVATION,
+//            borderRadius: BorderRadius.circular(10),
+//          ),
+//          child: TextField(
+//            autofocus: true,
+//            controller: _searchController,
+//            textAlignVertical: TextAlignVertical.center,
+//            textInputAction: TextInputAction.go,
+//            decoration: InputDecoration(
+//              border: InputBorder.none,
+//              hintText: 'Search',
+//              hintStyle: TextStyle(
+//                color: Colors.white.withOpacity(0.87),
+//                fontSize: 18,
+//                fontFamily: 'Helvatica',
+//              ),
+//            ),
+//            style: TextStyle(
+//              fontFamily: 'Helvatica',
+//              fontSize: 18,
+//              // fontWeight: FontWeight.bold,
+//              height: 0.9,
+//              color: Colors.white.withOpacity(0.87),
+//            ),
+//            onChanged: (value) {
+//              // set _isFetching = true to show loading indcator
+//              setState(() {
+//                _isFetching = true;
+//              });
+//              // Provider.of<Search>(context, listen: false)
+//              //     .searchMovies(value, 1)
+//
+//              _fetch(value).then((value) {
+//                setState(() {
+//                  _isFetching = false;
+//                });
+//              });
+//              //  Provider.of<Search>(context, listen: false)
+//              //     .searchTVShows(value, 1);
+//              //     Provider.of<Search>(context, listen: false)
+//              //     .searchPerson(value, 1);
+//            },
+//          ),
+//        ),
+//        actions: <Widget>[
+//          FlatButton(
+//            child: Text('Cancel', style: kTopBarTextStyle),
+//            onPressed: () {
+//              setState(() {
+//                widget.toggleSearch();
+//                // _searchQuery = '';
+//                _searchController.text = '';
+//              });
+//              Provider.of<Search>(context, listen: false).clearMovies();
+//              Provider.of<Search>(context, listen: false).clearPeople();
+//              Provider.of<Search>(context, listen: false).clearSeries();
+//            },
+//          ),
+//        ],
+//      ),
       body: _buildTabContent(),
     );
   }
@@ -286,10 +376,12 @@ class NotSearching extends StatelessWidget {
         return [
           SliverAppBar(
             backgroundColor: BASELINE_COLOR,
+            centerTitle: false,
             title: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Text(
                 'Search',
+                textAlign: TextAlign.left,
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -371,28 +463,26 @@ class NotSearching extends StatelessWidget {
                 horizontal: LEFT_PADDING, vertical: 10),
             child: Text('Browse All', style: kSubtitle1),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-              physics: const BouncingScrollPhysics(),
-              itemCount: MOVIE_GENRE_DETAILS.length,
-              itemBuilder: (ctx, i) {
-                return GenreTile(
-                  imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
-                  genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
-                  title: MOVIE_GENRE_DETAILS[i]['title'],
-                  mediaType: 0,
-                );
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 2 / 3,
-              ),
-              scrollDirection: Axis.horizontal,
+          GridView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: MOVIE_GENRE_DETAILS.length,
+            itemBuilder: (ctx, i) {
+              return GenreTile(
+                imageUrl: MOVIE_GENRE_DETAILS[i]['imageUrl'],
+                genreId: MOVIE_GENRE_DETAILS[i]['genreId'],
+                title: MOVIE_GENRE_DETAILS[i]['title'],
+                mediaType: 0,
+              );
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 3/2,
             ),
+            scrollDirection: Axis.vertical,
           ),
         ],
       ),

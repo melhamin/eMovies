@@ -92,7 +92,9 @@ class _MyListsScreenState extends State<MyListsScreen>
           headerSliverBuilder: (ctx, _) {
             return [              
               SliverAppBar(
-                backgroundColor: BASELINE_COLOR,                
+                backgroundColor: BASELINE_COLOR,
+                centerTitle: false,
+
                 title: Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Text(

@@ -67,11 +67,11 @@ class MovieGenreTile extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 15,
-                left: 15,
+                bottom: 10,
+                left: 10,
                 child: Text(
                   title,
-                  style: kTitleStyle,
+                  style: kTitleStyle2,
                 ),
               ),
             ],
@@ -82,7 +82,4 @@ class MovieGenreTile extends StatelessWidget {
     );
   }
 
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
 }

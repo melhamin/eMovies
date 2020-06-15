@@ -11,8 +11,8 @@ import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 
 class MovieItem extends StatelessWidget {
-  final  item;
-  final bool withoutDetails;  
+  final item;
+  final bool withoutDetails;
   final bool isRound;
   final double radius;
   final double elevation;
@@ -39,12 +39,12 @@ class MovieItem extends StatelessWidget {
     return date == null ? 'N/A' : date.year.toString();
   }
 
-  Route _buildRoute() {    
+  Route _buildRoute() {
     final initData = InitialData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
-      pageBuilder: (context, animation, secondaryAnimation) => item is prov.MovieItem ?
-          MovieDetailsScreen() : TVDetailsScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          item is prov.MovieItem ? MovieDetailsScreen() : TVDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -72,7 +72,9 @@ class MovieItem extends StatelessWidget {
             Navigator.of(context).push(_buildRoute());
           },
           child: ClipRRect(
-            borderRadius: isRound ?  BorderRadius.circular(radius?? 20) : BorderRadius.circular(0),
+            borderRadius: isRound
+                ? BorderRadius.circular(radius ?? 20)
+                : BorderRadius.circular(0),
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
@@ -92,9 +94,9 @@ class MovieItem extends StatelessWidget {
                       ),
                 if (!withoutDetails)
                   Positioned.fill(
-                    bottom: -2,                    
+                    bottom: -2,
                     child: Container(
-                      height: constraints.maxHeight * 0.45,                      
+                      height: constraints.maxHeight * 0.45,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -110,7 +112,7 @@ class MovieItem extends StatelessWidget {
                   ),
                 if (!withoutDetails)
                   Positioned(
-                    bottom: 10,                    
+                    bottom: 10,
                     child: Container(
                       width: constraints.maxWidth,
                       padding: const EdgeInsets.only(right: 2, left: 5),
@@ -124,7 +126,7 @@ class MovieItem extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Helvatica',
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              // fontWeight: FontWeight.bold,
                               color: Colors.white.withOpacity(0.87),
                             ),
                           ),
@@ -135,8 +137,7 @@ class MovieItem extends StatelessWidget {
                           Container(
                             width: constraints.maxWidth,
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
@@ -147,13 +148,13 @@ class MovieItem extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5.0, vertical: 2),
                                     child: Text(
-                                      getGenreName()?? 'N/A',
+                                      getGenreName() ?? 'N/A',
                                       style: kSubtitle1,
                                     ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 10),
+                                  padding: const EdgeInsets.only(right: 5),
                                   child: Row(
                                     children: [
                                       Text(
@@ -162,8 +163,7 @@ class MovieItem extends StatelessWidget {
                                       ),
                                       SizedBox(width: 2),
                                       Icon(Icons.favorite_border,
-                                          color:
-                                              Theme.of(context).accentColor),
+                                          color: Theme.of(context).accentColor),
                                     ],
                                   ),
                                 ),

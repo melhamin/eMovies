@@ -12,7 +12,7 @@ class MyListsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final  data = list.items;
+    final data = list.items;
     return InkWell(
       onTap: onTap,
       splashColor: Colors.black,
@@ -54,7 +54,7 @@ class MyListsItem extends StatelessWidget {
                           },
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,                          
+                            crossAxisCount: 2,
                             childAspectRatio: 1,
                           ),
                           scrollDirection: Axis.horizontal,
@@ -62,7 +62,7 @@ class MyListsItem extends StatelessWidget {
             ),
             Flexible(
               child: Align(
-                alignment: Alignment.centerLeft ,
+                alignment: Alignment.centerLeft,
                 child: Padding(
                     padding: const EdgeInsets.only(left: 10, top: 15),
                     child: Column(

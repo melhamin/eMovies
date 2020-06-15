@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
 
 import 'package:e_movies/screens/movie/cast_details_screen.dart' show CastDetails;
 import 'package:e_movies/screens/movie/movie_details_screen.dart' show MovieDetailsScreen;
@@ -14,11 +15,17 @@ import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/lists.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 import 'screens/movie/trending_movies_screen.dart';
 
 
 void main() async {
+//  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//    statusBarColor: Colors.black,
+//    statusBarBrightness: Brightness.light,
+//    statusBarIconBrightness: Brightness.light,
+//  ));
   await DotEnv().load('.env');  
   runApp(MyApp());
 }
@@ -27,6 +34,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.black);    
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//        statusBarColor: Colors.white,
+//            systemNavigationBarIconBrightness: Brightness.light,
+//    ));
     return MultiProvider(
       providers: [        
         ChangeNotifierProvider.value(value: Movies()),        

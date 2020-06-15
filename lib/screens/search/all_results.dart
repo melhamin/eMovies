@@ -119,6 +119,7 @@ class _AllResultsState extends State<AllResults> {
   Widget _buildRecentSearches(BuildContext context) {
     final searchHistory = Provider.of<Search>(context).searchHistory;
     return ListView(
+      key: PageStorageKey('All Results'),
       padding: const EdgeInsets.only(bottom: kToolbarHeight),
       physics: const BouncingScrollPhysics(
           parent: const AlwaysScrollableScrollPhysics()),

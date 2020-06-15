@@ -89,7 +89,7 @@ class _TVShowsResultState extends State<TVShowsResult> {
               : NotificationListener(
                   onNotification: onNotification,
                   child: ListView.builder(
-                    key: PageStorageKey('MoviesResult'),
+                    key: PageStorageKey('TVShowResults'),
                     // controller: _scrollController,
                     padding: const EdgeInsets.only(
                         bottom: kToolbarHeight, left: 10, right: 10, top: 10),

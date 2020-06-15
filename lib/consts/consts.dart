@@ -97,7 +97,7 @@ TextStyle kBTStyle = TextStyle(
 TextStyle kListsItemTitleStyle = TextStyle(
   fontFamily: 'Helvatica',
   fontSize: 18,
-  fontWeight: FontWeight.bold,
+  // fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),
 );
 
@@ -174,6 +174,11 @@ const MOVIE_GENRE_DETAILS = [
     'imageUrl': 'assets/images/movies/comedy.jpg',
     'title': 'Comedy',
     'genreId': 35,
+  },
+  {
+    'imageUrl': 'assets/images/movies/fantasy.jpg',
+    'title': 'Fantasy',
+    'genreId': 14,
   },
   {
     'imageUrl': 'assets/images/movies/crime.jpeg',

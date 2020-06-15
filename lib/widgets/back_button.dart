@@ -15,22 +15,28 @@ class CustomBackButton extends StatelessWidget {
               border: Border.all(color: Colors.white30, width: 2),
               color: Colors.black54,
             ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white.withOpacity(0.87),
-                  size: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(text,
-                      style: TextStyle(
-                          fontFamily: 'Helvatica',
-                          fontSize: 20,
-                          color: Colors.white.withOpacity(0.87))),
-                ),
-              ],
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white.withOpacity(0.87),
+                    size: 20,
+                  ),
+                  VerticalDivider(
+                    color: Colors.white30,
+                    thickness: 2,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(text,
+                        style: TextStyle(
+                            fontFamily: 'Helvatica',
+                            fontSize: 20,
+                            color: Colors.white.withOpacity(0.87))),
+                  ),
+                ],
+              ),
             ),
           ),
     );

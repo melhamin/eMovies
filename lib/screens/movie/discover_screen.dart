@@ -10,6 +10,7 @@ import 'package:e_movies/widgets/movie/in_theaters.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
@@ -94,7 +95,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
               style: TextStyle(
                 fontFamily: 'Helvatica',
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                // fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87),
               )),
           if (withSeeAll)
@@ -159,6 +160,9 @@ class _MoviesScreenState extends State<DiscoverScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.white
+    ));
     // Movies
     final trending = Provider.of<Movies>(context).trending;
     final upcoming = Provider.of<Movies>(context).upcoming;
@@ -176,180 +180,186 @@ class _MoviesScreenState extends State<DiscoverScreen>
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
-        body: LayoutBuilder(
-          builder: (ctx, constraints) {
-            //  height of each section
-            double sectionHeight = constraints.maxHeight * SECTION_HEIGHT;
-            double inTheatersGridHeight = constraints.maxHeight * 0.3;
-            double popularPeopleHeight = constraints.maxHeight * 0.15;
-            double forKidsHeight = constraints.maxHeight * 0.2;
-            return Stack(
-              children: [
-                ListView(
-                  controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  padding:
-                      const EdgeInsets.only(bottom: kToolbarHeight, top: 20),
-                  children: <Widget>[
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                      child: Text('Discover',
-                          style: TextStyle(
-                            fontFamily: 'Helvatica',
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white.withOpacity(0.87),
-                          )),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      height: inTheatersGridHeight,
-                      child: InTheatersGrid(),
-                    ),
-                    _buildSectionTitle('Trending', () {
-                      Navigator.of(context)
-                          .push(_buildRoute(TrendingMoviesScreen()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: trending,
-                                storageKey: 'Movie-Trending',
-                              )),
-                    _buildSectionTitle('Coming Soon', () {
-                      Navigator.of(context).push(_buildRoute(UpcomingScreen()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: upcoming,
-                                storageKey: 'Movie-Upcoming',
-                              )),
-
-                    _buildSectionTitle('For Kids', () {
-                      Navigator.of(context)
-                          .push(_buildRoute(MovieGenreItem(16)));
-                    }),
-                    Container(
-                        height: forKidsHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: forKids,
-                                storageKey: 'Movie-For_Kids',
-                                isRound: true,
-                              )),
-                    _buildSectionTitle('Top Rated', () {
-                      Navigator.of(context).push(_buildRoute(TopRated()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: topRated,
-                                storageKey: 'Movie-Top_Rated',
-                              )),
-
-                    _buildSectionTitle('Popular Actors', () {
-                      Navigator.of(context)
-                          .push(_buildRoute(MovieGenreItem(16)));
-                    }),
-                    Container(
-                        height: popularPeopleHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : _buildPopularActors(popularPeople)),
-
-                    // TV shows
-                    _buildSectionTitle('Popular', () {
-                      Navigator.of(context)
-                          .push(_buildRoute(TrendingTVScreen()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: tvPopular,
-                                storageKey: 'TV-Popular',
-                              )),
-                    _buildSectionTitle('On Air Today', () {
-                      Navigator.of(context).push(_buildRoute(OnAirScreen()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: tvOnAirToday,
-                                storageKey: 'TV-On-Air-Today',
-                              )),
-                    _buildSectionTitle('For Kids', () {
-                      Navigator.of(context)
-                          .push(_buildRoute(TVGenreItemScreen(10762)));
-                    }),
-                    Container(
-                        height: constraints.maxHeight * 0.2,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: forKidsTV,
-                                storageKey: 'TV-For_Kids',
-                                isRound: true,
-                              )),
-                    _buildSectionTitle('Top Rated', () {
-                      Navigator.of(context).push(_buildRoute(TopRatedScreen()));
-                    }),
-                    Container(
-                        height: sectionHeight,
-                        child: _isFetching
-                            ? SpinKitCircle(
-                                color: Theme.of(context).accentColor,
-                                size: 21,
-                              )
-                            : Grid(
-                                items: tvTopRated,
-                                storageKey: 'TV-Top-Rated',
-                              )),
-                    // Text(_scrollController.position.pixels.toString(), style: kTitleStyle2,)
-                  ],
-                ),
-                DynamicTopBar(
-                    scrollController: _scrollController,
-                    constraints: constraints)
-              ],
-            );
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onPanDown: (_) {
+            FocusScope.of(context).requestFocus(FocusNode());
           },
+                  child: LayoutBuilder(
+            builder: (ctx, constraints) {
+              //  height of each section
+              double sectionHeight = constraints.maxHeight * SECTION_HEIGHT;
+              double inTheatersGridHeight = constraints.maxHeight * 0.3;
+              double popularPeopleHeight = constraints.maxHeight * 0.15;
+              double forKidsHeight = constraints.maxHeight * 0.2;
+              return Stack(
+                children: [
+                  ListView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    padding:
+                        const EdgeInsets.only(bottom: kToolbarHeight, top: 20),
+                    children: <Widget>[
+                      Container(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                        child: Text('Discover',
+                            style: TextStyle(
+                              fontFamily: 'Helvatica',
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white.withOpacity(0.87),
+                            )),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        height: inTheatersGridHeight,
+                        child: InTheatersGrid(),
+                      ),
+                      _buildSectionTitle('Trending', () {
+                        Navigator.of(context)
+                            .push(_buildRoute(TrendingMoviesScreen()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: trending,
+                                  storageKey: 'Movie-Trending',
+                                )),
+                      _buildSectionTitle('Coming Soon', () {
+                        Navigator.of(context).push(_buildRoute(UpcomingScreen()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: upcoming,
+                                  storageKey: 'Movie-Upcoming',
+                                )),
+
+                      _buildSectionTitle('For Kids', () {
+                        Navigator.of(context)
+                            .push(_buildRoute(MovieGenreItem(16)));
+                      }),
+                      Container(
+                          height: forKidsHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: forKids,
+                                  storageKey: 'Movie-For_Kids',
+                                  isRound: true,
+                                )),
+                      _buildSectionTitle('Top Rated', () {
+                        Navigator.of(context).push(_buildRoute(TopRated()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: topRated,
+                                  storageKey: 'Movie-Top_Rated',
+                                )),
+
+                      _buildSectionTitle('Popular Actors', () {
+                        Navigator.of(context)
+                            .push(_buildRoute(MovieGenreItem(16)));
+                      }),
+                      Container(
+                          height: popularPeopleHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : _buildPopularActors(popularPeople)),
+
+                      // TV shows
+                      _buildSectionTitle('Popular', () {
+                        Navigator.of(context)
+                            .push(_buildRoute(TrendingTVScreen()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: tvPopular,
+                                  storageKey: 'TV-Popular',
+                                )),
+                      _buildSectionTitle('On Air Today', () {
+                        Navigator.of(context).push(_buildRoute(OnAirScreen()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: tvOnAirToday,
+                                  storageKey: 'TV-On-Air-Today',
+                                )),
+                      _buildSectionTitle('For Kids', () {
+                        Navigator.of(context)
+                            .push(_buildRoute(TVGenreItemScreen(10762)));
+                      }),
+                      Container(
+                          height: constraints.maxHeight * 0.2,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: forKidsTV,
+                                  storageKey: 'TV-For_Kids',
+                                  isRound: true,
+                                )),
+                      _buildSectionTitle('Top Rated', () {
+                        Navigator.of(context).push(_buildRoute(TopRatedScreen()));
+                      }),
+                      Container(
+                          height: sectionHeight,
+                          child: _isFetching
+                              ? SpinKitCircle(
+                                  color: Theme.of(context).accentColor,
+                                  size: 21,
+                                )
+                              : Grid(
+                                  items: tvTopRated,
+                                  storageKey: 'TV-Top-Rated',
+                                )),
+                      // Text(_scrollController.position.pixels.toString(), style: kTitleStyle2,)
+                    ],
+                  ),
+                  DynamicTopBar(
+                      scrollController: _scrollController,
+                      constraints: constraints)
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -397,7 +407,7 @@ class DynamicTopBar extends StatelessWidget {
               ? Container()
               : Container(
                   height: 50,
-                  color: Colors.black54,
+                  color: BASELINE_COLOR,
                   child: Center(
                     child: Text(
                       getTitle(),

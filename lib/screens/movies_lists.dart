@@ -15,25 +15,35 @@ class MoviesLists extends StatefulWidget {
   _MoviesListsState createState() => _MoviesListsState();
 }
 
-class _MoviesListsState extends State<MoviesLists> {
+class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClientMixin {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
   bool _isEditing = false;
+  bool _initLoaded = true;
 
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
     _listKey = GlobalKey<AnimatedListState>(debugLabel: 'MoviesListsKey');
-    // animated lists
-    _loadLists();
+    // animated lists    
   }
 
   @override
   void dispose() {
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if(_initLoaded) {
+      _loadLists();
+      _initLoaded = false;
+    }
+    _initLoaded = false;
+    super.didChangeDependencies();
   }
 
   /// Builds route with animation to selected list item.
@@ -88,7 +98,7 @@ class _MoviesListsState extends State<MoviesLists> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         icon,
-        SizedBox(height: 15),
+        SizedBox(height: 10),
         Text(
           message,
           style: TextStyle(
@@ -111,9 +121,9 @@ class _MoviesListsState extends State<MoviesLists> {
       alignment: Alignment.center,
       color: ONE_LEVEL_ELEVATION,
       duration: Duration(seconds: TOAST_DURATION),
-      child: _buildToastMessageIcons(
+      child: _buildToastMessageIcons(        
           Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
-          'Removed list'),
+          'Removed\n$title'),
     );
   }
 
@@ -210,12 +220,7 @@ class _MoviesListsState extends State<MoviesLists> {
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontFamily: 'Helvatica',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Hexcolor('#DEDEDE'),
-                  ),
+                  style: kListsItemTitleStyle,
                 ),
               ),
             ),
@@ -320,7 +325,8 @@ class _MoviesListsState extends State<MoviesLists> {
       ],
     );
   }
+  
 
-  // @override
-  // bool get wantKeepAlive => true;
+  @override
+  bool get wantKeepAlive => true;
 }

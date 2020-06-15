@@ -16,41 +16,23 @@ class VideoPage extends StatefulWidget {
 
 class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   YoutubePlayerController _controller;
-  PlayerState _playerState;
-  YoutubeMetaData _youtubeMetaData;
 
   bool _initLoaded = true;
   bool _isFetching = true;
   bool _isEmpty = false;
 
-  String url = '';
-
   List<VideoItem> _videos;
 
   @override
   void initState() {
-    super.initState();    
-    
-    _controller = YoutubePlayerController(
-      initialVideoId: url,
-      flags: YoutubePlayerFlags(
-        mute: false,
-        autoPlay: false,
-        disableDragSeek: false,
-        loop: false,
-        isLive: false,
-        forceHideAnnotation: false,
-        forceHD: false,
-        enableCaption: true,
-      ),
-    );
+    super.initState();
   }
 
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
       final id = ModalRoute.of(context).settings.arguments as int;
-      // print('id --------> $id');
+      print('id --------> $id');
       Provider.of<Movies>(context, listen: false).fetchVideos(id).then((value) {
         setState(() {
           _videos = Provider.of<Movies>(context, listen: false).videos;
@@ -58,24 +40,41 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
           _isFetching = false;
           _initLoaded = false;
 
-          if (_videos == null || _videos.isEmpty) {
+          // get the first video to set as initial video
+          VideoItem trailerVideo;
+
+          if (_videos.isEmpty) {
             _isEmpty = true;
           } else {
-            url = _videos[0].key;
-          }
+            trailerVideo = _videos[0];
+            _controller = YoutubePlayerController(
+              initialVideoId: trailerVideo.key,
+              flags: YoutubePlayerFlags(
+                mute: false,
+                autoPlay: false,
+                disableDragSeek: false,
+                loop: false,
+                isLive: false,
+                forceHideAnnotation: true,
+                forceHD: false,
+                enableCaption: true,
+              ),
+            );
+          }          
         });
       });
     }
+
     super.didChangeDependencies();
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
+  void dispose() {    
     super.dispose();
   }
 
   void _onTap(String key) {
+    print('ontap ------------------> clicked');
     _controller.load(key);
   }
 
@@ -99,7 +98,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                           ? Center(
                               child: Text(
                                 'No Video Availabe!',
-                                style: kTitleStyle,
+                                style: Theme.of(context).textTheme.headline5,
                               ),
                             )
                           : ListView.separated(

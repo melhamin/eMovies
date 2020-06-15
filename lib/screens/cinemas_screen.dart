@@ -18,19 +18,7 @@ class _CinemasScreenState extends State<CinemasScreen> with AutomaticKeepAliveCl
     super.build(context);
     return Scaffold(
     body: 
-      Center(child: Column(
-        children: [
-          Text('Coming soon...', style: kTitleStyle),
-          IconButton(
-            icon: Icon(Icons.delete),
-            color: Colors.red,
-            iconSize: 40,
-            onPressed: () {
-              Provider.of<Search>(context, listen: false).clearPrefs();
-            },
-          ),
-        ],
-      ),
+      Center(child: Text('Coming soon...', style: kTitleStyle),
       ),
     );
   }
