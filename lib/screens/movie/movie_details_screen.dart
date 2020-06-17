@@ -1,13 +1,17 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/cast_model.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/review_model.dart';
 import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
-import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/expandable_text.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
@@ -21,11 +25,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-import 'package:e_movies/widgets/movie/movie_item.dart' as wid;
+import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
+import 'package:e_movies/widgets/movie/cast_item.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
+import 'package:e_movies/widgets/review_item.dart';
 
 import 'package:e_movies/my_toast_message.dart';
 
@@ -39,8 +44,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isInitLoaded = true;
   bool _isLoading = true;
-  InitialData initData;
-  MovieItem film;
+  InitData initData;
+  MovieModel film;
 
   TextEditingController _textEditingController;
 
@@ -79,7 +84,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   @override
   void didChangeDependencies() {
     if (_isInitLoaded) {
-      final initData = ModalRoute.of(context).settings.arguments as InitialData;
+      final initData = ModalRoute.of(context).settings.arguments as InitData;
       // print('movie----------> $initData');
       Provider.of<Movies>(context, listen: false)
           .getMovieDetails(initData.id)
@@ -113,9 +118,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       );
     } else {
       Provider.of<Lists>(context, listen: false).addToFavoriteMovies(initData);
-      // update top genre movies list 
+      // update top genre movies list
       Provider.of<Search>(context, listen: false).addToTopMovieGenres(initData);
-      
 
       ToastUtils.myToastMessage(
         context: context,
@@ -131,10 +135,9 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   }
 
   Widget _buildBottomIcons() {
-    final isInFavorites =
-        Provider.of<Lists>(context).isFavoriteMovie(initData);
+    final isInFavorites = Provider.of<Lists>(context).isFavoriteMovie(initData);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       decoration: BoxDecoration(
           color: ONE_LEVEL_ELEVATION,
           borderRadius: BorderRadius.only(
@@ -144,31 +147,31 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: Icon(
+          GestureDetector(
+            child: Icon(
               isInFavorites ? Icons.favorite : Icons.favorite_border,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
-            onPressed: () => _toggleFavorite(isInFavorites),
+            onTap: () => _toggleFavorite(isInFavorites),
           ),
-          IconButton(
-            icon: Icon(
+          GestureDetector(
+            child: Icon(
               Icons.add,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
-            onPressed: () {
+            onTap: () {
               _showAddToList(context, initData);
             },
           ),
-          IconButton(
-            icon: Icon(
+          GestureDetector(
+            child: Icon(
               Icons.share,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
-            onPressed: () {},
+            onTap: () {},
           )
         ],
       ),
@@ -210,7 +213,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   //   );
   // }
 
-  Widget _buildImages(MovieItem film) {
+  Widget _buildImages(MovieModel film) {
     List<String> images = [];
     if (film.images != null) {
       film.images.forEach((element) {
@@ -266,7 +269,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     return res;
   }
 
-  Widget _buildDetails(MovieItem film) {
+  Widget _buildDetails(MovieModel film) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -338,15 +341,18 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   }
 
   Widget _buildSimilarMovies(BoxConstraints constraints) {
-    bool hasItem =
-        (Provider.of<Movies>(context, listen: false).similar != null &&
-            Provider.of<Movies>(context, listen: false).similar.length > 0);
-    if (!hasItem) {
+    List<MovieModel> similar = [];
+    if (film.similar != null) {
+      film.similar.forEach((element) {
+        similar.add(MovieModel.fromJson(element));
+      });
+    }
+    if (similar.isEmpty) {
       return Container();
     } else {
       return Container(
         height: constraints.maxHeight * 0.3,
-        child: SimilarMovies(),
+        child: SimilarMovies(similar),
       );
     }
   }
@@ -371,6 +377,71 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
+  List<Widget> _buildCast() {
+    List<CastModel> cast = [];    
+    if (film.cast != null) {
+      film.cast.forEach((element) {
+        cast.add(CastModel(
+          id: element['id'],
+          name: element['name'],
+          character: element['character'],
+          imageUrl: element['profile_path'],
+          job: element['job'],
+        ));
+      });
+    }
+    return [
+      Padding(
+        padding: const EdgeInsets.only(
+            left: LEFT_PADDING, bottom: 5, right: LEFT_PADDING),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Cast', style: kSubtitle1),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(_buildRoute(CastDetailsScreen(cast)));
+              },
+              child: Row(
+                children: [
+                  Text('Details', style: kSeeAll),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white.withOpacity(0.6),
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        color: ONE_LEVEL_ELEVATION,
+        height: 110,
+        child: Cast(cast: cast),
+      ),
+    ];
+  }
+
+  List<Widget> _buildReviews() {
+    List<ReviewModel> reviews = [];
+    if(film.reviews != null) {
+      film.reviews.forEach((element) { 
+        reviews.add(ReviewModel.fromJson(element));
+      });
+    }
+    return [
+      if(reviews.isNotEmpty)
+      Padding(
+        padding: EdgeInsets.only(left: LEFT_PADDING, bottom: 5, top: 30),
+        child: Text('Reviews', style: kSubtitle1),
+      ),      
+      Reviews(reviews),
+    ];
+  }
+
   // Builds parts that needs detailed film to be fetched
   List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
     // print('DetailsPage ---------------------> ${film.videos}');
@@ -381,39 +452,11 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       SizedBox(height: 20),
       _buildDetails(film),
       SizedBox(height: 30),
-      
-      Padding(
-        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5, right: LEFT_PADDING),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Cast', style: kSubtitle1),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(_buildRoute(AllActorsScreen()));
-              },
-              child: Row(
-                children: [
-                  Text('Details', style: kSeeAll),
-                  Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.6), size: 16,),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      Container(
-        color: ONE_LEVEL_ELEVATION,
-        height: constraints.maxHeight * 0.15,
-        child: Cast(details: film),
-      ),
+      ..._buildCast(),
       SizedBox(height: 30),
-      _buildSimilarMovies(constraints),
-      // Container(
-      //   height: constraints.maxHeight * 0.3,
-      //   child: SimilarMovies(id),
-      // ),
-      SizedBox(height: 5),
+      _buildSimilarMovies(constraints),      
+      ..._buildReviews(),      
+      SizedBox(height: 10),
     ];
   }
 
@@ -481,10 +524,10 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         .addNewMovieList(_textEditingController.text);
     // Set _isEmpty to true and clear the textfield
 
-    if (result) {      
+    if (result) {
       // update top movie genres list
       Provider.of<Search>(context, listen: false).addToTopMovieGenres(initData);
-      Navigator.of(context).pop();      
+      Navigator.of(context).pop();
       _textEditingController.clear();
     } else {
       ToastUtils.myToastMessage(
@@ -601,7 +644,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
-  void _addNewItemtoList(BuildContext context, int index, InitialData item) {
+  void _addNewItemtoList(BuildContext context, int index, InitData item) {
     final result = Provider.of<Lists>(context, listen: false)
         .addNewMovieToList(index, item);
     if (result) {
@@ -627,7 +670,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     }
   }
 
-  void _showAddToList(BuildContext context, InitialData initData) {
+  void _showAddToList(BuildContext context, InitData initData) {
     final lists = Provider.of<Lists>(context, listen: false).moviesLists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
@@ -739,7 +782,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    initData = ModalRoute.of(context).settings.arguments as InitialData;
+    initData = ModalRoute.of(context).settings.arguments as InitData;
     // print('initData------------> $initData');
     // if(!_isLoading)
     // print('details -----------> ${film.genreIDs}');
@@ -767,7 +810,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                         left: LEFT_PADDING,
                         right: LEFT_PADDING,
                       ),
-                      child: Text('Storyline', style: kTitleStyle),
+                      child: Text('Storyline', style: kTitleStyle2),
                     ),
                     _isLoading
                         ? Container(
@@ -826,8 +869,8 @@ class BackgroundAndTitle extends StatefulWidget {
     @required this.isLoading,
   }) : super(key: key);
 
-  final InitialData initData;
-  final MovieItem film;
+  final InitData initData;
+  final MovieModel film;
   final BoxConstraints constraints;
   final bool isLoading;
 
@@ -905,7 +948,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
 
   Route _buildRoute(Widget toPage) {
     return PageRouteBuilder(
-      settings: RouteSettings(arguments: widget.film.id),
+      settings: RouteSettings(arguments: [widget.film.id, MediaType.Movie]),
       pageBuilder: (context, animation, secondaryAnimation) => toPage,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
@@ -1129,7 +1172,7 @@ class Overview extends StatefulWidget {
     @required this.constraints,
   }) : super(key: key);
 
-  final MovieItem initData;
+  final MovieModel initData;
   final BoxConstraints constraints;
 
   @override
@@ -1137,70 +1180,103 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview>
-    with SingleTickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin {
   bool _expanded = false;
+
+  void onTap() => setState(() => _expanded = true);
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
+    super.build(context);
+    RegExp pattern = new RegExp(r'\n', caseSensitive: false);
+    final overview = widget.initData.overview.replaceAll(pattern, '');
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 500),
       constraints: _expanded
           ? BoxConstraints(
-              minHeight: widget.constraints.maxHeight *
-                  0.30 - 2, // otherwise bottom icons will move up if text length is small
+              maxHeight: 400,
+              minHeight: widget.constraints.maxHeight * 0.3 - 2,
             )
           : BoxConstraints(
-              maxHeight: widget.constraints.maxHeight * 0.30 - 2,
+              minHeight: widget.constraints.maxHeight * 0.3 - 2,
+              maxHeight: widget.constraints.maxHeight * 0.3 - 2,
             ),
-      child: AnimatedSize(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
-        vsync: this,
-        child: _expanded
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: Text(
-                  widget.initData.overview,
-                  // initData.overview,
-                  style: kBodyStyle,
-                  // softWrap: true,
-
-                  // maxLines: _expanded ? 2 ^ 64 : null,
-                  // overflow: TextOverflow.ellipsis,
-                ),
-              )
-            : SizedBox.expand(
-                child: Container(
-                  child: GestureDetector(
-                    onTap: widget.initData.overview.length > 200
-                        ? () {
-                            setState(() {
-                              _expanded = !_expanded;
-                            });
-                          }
-                        : null,
-                    child: RichText(
-                      text: TextSpan(
-                          text: widget.initData.overview.length < 200
-                              ? widget.initData.overview
-                              : widget.initData.overview.substring(0, 200) +
-                                  '...',
-                          style: kBodyStyle,
-                          children: [
-                            if (!_expanded &&
-                                widget.initData.overview.length > 200)
-                              TextSpan(
-                                  text: 'More',
-                                  style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                  ))
-                          ]),
-                    ),
-                  ),
-                ),
-              ),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: SizedBox(
+          child: ExpandableText(
+            overview,
+            style: kBodyStyle,
+            onTap: onTap,
+            trimExpandedText: '',
+            trimCollapsedText: '...More',
+            trimLines: 7,
+          ),
+        ),
       ),
     );
+    //  ConstrainedBox(
+    //   constraints: _expanded
+    //       ? BoxConstraints(
+    //           minHeight: widget.constraints.maxHeight *
+    //               0.30 - 2, // otherwise bottom icons will move up if text length is small
+    //         )
+    //       : BoxConstraints(
+    //           maxHeight: widget.constraints.maxHeight * 0.30 - 2,
+    //         ),
+    //   child: AnimatedSize(
+    //     duration: Duration(milliseconds: 300),
+    //     curve: Curves.easeIn,
+    //     vsync: this,
+    //     child: _expanded
+    //         ? Padding(
+    //             padding: const EdgeInsets.only(bottom: 5),
+    //             child: Text(
+    //               widget.initData.overview,
+    //               // initData.overview,
+    //               style: kBodyStyle,
+    //               // softWrap: true,
+
+    //               // maxLines: _expanded ? 2 ^ 64 : null,
+    //               // overflow: TextOverflow.ellipsis,
+    //             ),
+    //           )
+    //         : SizedBox.expand(
+    //             child: Container(
+    //               child: GestureDetector(
+    //                 onTap: widget.initData.overview.length > 200
+    //                     ? () {
+    //                         setState(() {
+    //                           _expanded = !_expanded;
+    //                         });
+    //                       }
+    //                     : null,
+    //                 child: RichText(
+    //                   text: TextSpan(
+    //                       text: widget.initData.overview.length < 200
+    //                           ? widget.initData.overview
+    //                           : widget.initData.overview.substring(0, 200) +
+    //                               '...',
+    //                       style: kBodyStyle,
+    //                       children: [
+    //                         if (!_expanded &&
+    //                             widget.initData.overview.length > 200)
+    //                           TextSpan(
+    //                               text: 'More',
+    //                               style: TextStyle(
+    //                                 color: Theme.of(context).accentColor,
+    //                               ))
+    //                       ]),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //   ),
+    // );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class RatingItem extends StatelessWidget {
@@ -1226,18 +1302,16 @@ class RatingItem extends StatelessWidget {
 }
 
 class Cast extends StatelessWidget {
-  final MovieItem details;
-  Cast({this.details});
+  final List<CastModel> cast;
+  Cast({this.cast});
 
   @override
   Widget build(BuildContext context) {
-    final cast = Provider.of<Movies>(context).cast;
-    // super.build(context);
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: cast.length,
       itemBuilder: (ctx, i) {
-        return castWid.CastItem(
+        return CastItem(
           cast[i],
         );
       },
@@ -1251,46 +1325,62 @@ class Cast extends StatelessWidget {
 }
 
 class SimilarMovies extends StatelessWidget {
+  final List<MovieModel> similar;
+  SimilarMovies(this.similar);
   @override
   Widget build(BuildContext context) {
-    final movies = Provider.of<Movies>(context, listen: false).similar;
-    return (movies.length == 0)
-        ? Container()
-        : LayoutBuilder(
-            builder: (context, constraints) {
-              return Container(
-                height: constraints.maxHeight * 0.5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: LEFT_PADDING),
-                      child: Text('Similar Movies', style: kSubtitle1),
-                    ),
-                    SizedBox(height: 5),
-                    Flexible(
-                      child: GridView.builder(
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                        itemCount: movies.length,
-                        itemBuilder: (context, index) {
-                          return wid.MovieItem(
-                            item: movies[index],
-                            withoutDetails: true,
-                          );
-                        },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          childAspectRatio: 3 / 2,
-                          mainAxisSpacing: 10,
-                        ),
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    ),
-                  ],
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: LEFT_PADDING),
+          child: Text('Similar Movies', style: kSubtitle1),
+        ),
+        SizedBox(height: 5),
+        Flexible(
+          child: GridView.builder(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+            itemCount: similar.length,
+            itemBuilder: (context, index) {
+              return MovieItem(
+                item: similar[index],
+                withoutDetails: true,
               );
             },
-          );
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              childAspectRatio: 3 / 2,
+              mainAxisSpacing: 10,
+            ),
+            scrollDirection: Axis.horizontal,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class Reviews extends StatelessWidget {
+  final List<ReviewModel> reviews;
+  Reviews(this.reviews);
+  @override
+  Widget build(BuildContext context) {
+    // final reviews = Provider.of<Movies>(context).reviews;
+    return ListView.separated(
+      separatorBuilder: (_, i) => SizedBox(height: 10),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: reviews.length,
+      itemBuilder: (_, i) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          color: ONE_LEVEL_ELEVATION,
+          child: ReviewItem(
+            item: reviews[i],
+          ),
+        );
+      },
+    );
   }
 }

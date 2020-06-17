@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 ///
 class ListDataItem extends StatelessWidget {
-  final InitialData initData;
+  final InitData initData;
   ListDataItem(this.initData);
 
   Route _buildRoute() {

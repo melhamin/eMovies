@@ -1,15 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/actor_model.dart';
 import 'package:e_movies/screens/movie/cast_details_screen.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 
 class SearchedActorItem extends StatelessWidget {
-  final ActorItem item;
+  final ActorModel item;
   SearchedActorItem(this.item);
 
-  Route _buildRoute(ActorItem item) {
+  Route _buildRoute(ActorModel item) {
    
     return PageRouteBuilder(
       settings: RouteSettings(arguments: item),

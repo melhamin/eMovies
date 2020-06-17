@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:e_movies/models/cast_model.dart';
+import 'package:e_movies/models/tv_model.dart';
+import 'package:e_movies/models/video_model.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,177 +10,61 @@ import 'package:http/http.dart' as http;
 
 import 'package:e_movies/consts/consts.dart';
 
-class TVItem {
-  final int id;
-  final String title;
-  final String posterUrl;
-  final String backdropUrl;
-  final String overview;
-  final DateTime date;
-  final List<dynamic> genreIDs;
-  final String originalLanguage;
-  final String status;
-  final double voteAverage;
-  final int voteCount;
-  final String mediaType;
 
-  List<dynamic> createdBy;
-  List<dynamic> seasons;
-  bool inProduction;
-  DateTime lastAirDate;
-  List<dynamic> networks;
-  List<dynamic> episodRuntime;
-  String homepage;
-  double popularity;
-
-  List<dynamic> images;
-  List<dynamic> videos;
-  List<dynamic> reviews;
-  // List<dynamic> productionCompanies;
-  // List<dynamic> productionContries;
-  List<dynamic> cast;
-  List<dynamic> crew;
-  List<dynamic> recommendations;
-  List<dynamic> similar;
-
-  String character; // for cast details page movies
-
-  TVItem({
-    @required this.id,
-    @required this.title,
-    @required this.posterUrl,
-    this.backdropUrl,
-    @required this.genreIDs,
-    @required this.overview,
-    @required this.date,
-    @required this.originalLanguage,
-    @required this.voteAverage,
-    @required this.voteCount,
-    this.crew,
-    this.seasons,
-    this.episodRuntime,
-    this.images,
-    this.videos,
-    this.createdBy,
-    this.inProduction,
-    this.homepage,
-    this.lastAirDate,
-    this.cast,
-    this.status,
-    this.mediaType,
-    // this.productionCompanies,
-    // this.productionContries,
-    this.networks,
-    this.popularity,
-    this.recommendations,
-    this.similar,
-    this.reviews,
-    this.character,
-  });
-
-  static TVItem fromJson(json) {
-    return TVItem(
-      id: json['id'],
-      title: json['name'] ??= json['name'],
-      genreIDs: json['genre_ids'] ??= json['genres'],
-      // genreIDs: null,
-      posterUrl: json['backdrop_path'] == null
-          ? null
-          : '$IMAGE_URL/${json['poster_path']}',
-      backdropUrl: json['backdrop_path'] == null
-          ? ''
-          : '$IMAGE_URL/${json['backdrop_path']}',
-      overview: json['overview'],
-      date: (json['first_air_date'] == null || json['first_air_date'] == '')
-          ? null
-          : DateTime.parse(json['first_air_date']),
-
-      lastAirDate:
-          (json['last_air_date'] == null || json['last_air_date'] == '')
-              ? null
-              : DateTime.parse(json['last_air_date']),
-      // : json['release_date'],
-      // ? DateTime.tryParse(json['release_date'])
-      // : null,
-      episodRuntime: json['episode_run_time'],
-      seasons: json['seasons'],
-      originalLanguage: json['original_language'],
-      status: json['status'],
-      voteAverage:
-          json['vote_average'] == null ? 0 : json['vote_average'] + 0.0,
-      videos: json['videos'] == null ? null : json['videos']['results'],
-      images: json['images'] == null ? null : json['images']['backdrops'],
-      voteCount: json['vote_count'],
-      homepage: json['homepage'],
-      cast: json['credits'] == null ? null : json['credits']['cast'],
-      crew: json['credits'] == null ? null : json['credits']['crew'],
-      reviews: json['reviews'] == null ? null : json['reviews']['results'],
-      inProduction: json['in_production'],
-      networks: json['networks'],
-      createdBy: json['created_by'],
-      // productionCompanies: json['production_companies'],
-      // productionContries: json['production_countries'],
-      similar: json['similar'] == null ? [] : json['similar']['results'],
-      recommendations: json['recommendations'] == null
-          ? []
-          : json['recommendations']['results'],
-      popularity: json['popularity'] == null ? 0 : json['popularity'] + 0.0,
-      // popularity: 9.3
-      character: json['character'],
-      mediaType: 'tv',
-    );
-  }
-}
 
 class TV with ChangeNotifier {
-  List<TVItem> _trending = [];
-  List<TVItem> _onAirToday = [];
-  List<TVItem> _topRated = [];
-  List<TVItem> _forKids = [];
-  List<TVItem> _genre = [];
+  List<TVModel> _trending = [];
+  List<TVModel> _onAirToday = [];
+  List<TVModel> _topRated = [];
+  List<TVModel> _forKids = [];
+  List<TVModel> _genre = [];
 
-  TVItem _details;
-  List<TVItem> _similar = [];
-  List<CastItem> _cast = [];
-  List<CastItem> _crew = [];
+  TVModel _details;
+  List<TVModel> _similar = [];
+  List<VideoModel> _videos = [];
+  // List<CastModel> _cast = [];
+  // List<CastModel> _crew = [];
 
   // Getters
 
-  TVItem get details {
+  TVModel get details {
     return _details;
   }
 
-  List<TVItem> get trending {
+  List<TVModel> get trending {
     return _trending;
   }
 
-  List<TVItem> get onAirToday {
+  List<TVModel> get onAirToday {
     return _onAirToday;
   }
 
-  List<TVItem> get topRated {
+  List<TVModel> get topRated {
     return _topRated;
   }
 
-  List<TVItem> get forKids {
+  List<TVModel> get forKids {
     return _forKids;
   }
 
-  List<TVItem> get genre {
+  List<TVModel> get genre {
     return _genre;
   }
 
-  List<TVItem> get similar {
+  List<TVModel> get similar {
     return _similar;
   }
 
-  List<CastItem> get cast {
-    return _cast;
-  }
+  List<VideoModel> get videos {
+    return _videos;
+  } 
+  // List<CastModel> get cast {
+  //   return _cast;
+  // }
 
-  List<CastItem> get crew {
-    return _cast;
-  }
+  // List<CastModel> get crew {
+  //   return _cast;
+  // }
 
   // Functions
 
@@ -194,7 +81,7 @@ class TV with ChangeNotifier {
       }
 
       data.forEach((element) {
-        _trending.add(TVItem.fromJson(element));
+        _trending.add(TVModel.fromJson(element));
       });
 
       // print(_popular);
@@ -220,7 +107,7 @@ class TV with ChangeNotifier {
       }
 
       data.forEach((element) {
-        _onAirToday.add(TVItem.fromJson(element));
+        _onAirToday.add(TVModel.fromJson(element));
       });
 
       // print(_popular);
@@ -247,7 +134,7 @@ class TV with ChangeNotifier {
       }
 
       data.forEach((element) {
-        _topRated.add(TVItem.fromJson(element));
+        _topRated.add(TVModel.fromJson(element));
       });
 
       // print(_popular);
@@ -259,51 +146,82 @@ class TV with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> getVideos(int id) async {
+    // final url =
+        // '$BASE_URL/tv/$id/videos?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US';
+        // 'https://api.themoviedb.org/3'
+    final url = 'https://api.themoviedb.org/3/tv/$id/videos?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US';
+    try {
+      final response = await http.get(url);
+      print('response --------> ${response.body}');
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final videoData = responseData['results'];
+
+      _videos.clear();
+
+      videoData.forEach((element) {
+        _videos.add(VideoModel.fromJson(element));
+      });
+      // print(_videos);
+    } catch (error) {
+      print('fetchVideos error ----------------------> $error');
+      throw error;
+    }
+  }
+
   Future<void> getDetails(int id) async {
     final url =
-        '$BASE_URL/tv/$id?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,images,similar&include_image_language=en,null';
+        '$BASE_URL/tv/$id?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&append_to_response=credits,Cimages,Cvideos,images,similar,reviews&include_image_language=en,null';
     try {
       final response = await http.get(url);
       // print('getDetails credits ------------------------->');
-      print('response ---------> ${response.body}');
+      // print('response ---------> ${response.body}');
       final responseData = json.decode(response.body) as Map<String, dynamic>;
       // final data = responseData['results'];
       // print('details --------------->  ${data}');
       // print('getDetails credits -------------------------> ${responseData['credits']['crew']}');
-      _details = TVItem.fromJson(responseData);
+      _details = TVModel.fromJson(responseData);
+      // print('reviews ---------> ${responseData['reviews']}');
+      // print('id----------> ${responseData['id']}');
 
       // get cast and crew details
 
-      // final crewData = responseData[]
+      // // final crewData = responseData[]
+      // cast.clear();
+      // crew.clear();
+      // if (details.cast != null) {
+      //   print('cast ------> ${details.cast}');
+      //   details.cast.forEach((element) {
+      //     // print('crew/ ---------> ${element['character']} ');
+      //     _cast.add(CastItem(
+      //       id: element['id'],
+      //       name: element['name'],
+      //       character: element['character'],
+      //       imageUrl: element['profile_path'],
+      //       job: element['job'],
+      //     ));
+      //   });
+      // }
 
-      if (details.cast != null) {
-        details.cast.forEach((element) {
-          // print('crew/ ---------> ${element['character']} ');
-          _cast.add(CastItem(
-            id: element['id'],
-            name: element['name'],
-            imageUrl: element['profile_path'],
-            job: element['job'],
-          ));
-        });
-      }
+      // if (details.crew != null) {
+      //   // print('crew ------> ${details.crew}');
+      //   details.crew.forEach((element) {
+      //     // print('crew/ ---------> ${element['character']} ');
+      //     _crew.add(CastItem(
+      //       id: element['id'],
+      //       name: element['name'],
+      //       imageUrl: element['profile_path'],
+      //       job: element['job'],
+      //     ));
+      //   });
+      // }
 
-      if (details.crew != null) {
-        details.crew.forEach((element) {
-          // print('crew/ ---------> ${element['character']} ');
-          _crew.add(CastItem(
-            id: element['id'],
-            name: element['name'],
-            imageUrl: element['profile_path'],
-            job: element['job'],
-          ));
-        });
-      }
+      
 
       // get similar movies
-      final similarMovies = responseData['similar']['results'];
-      similarMovies.forEach((element) {
-        _similar.add(TVItem.fromJson(element));
+      final similarTVs = responseData['similar']['results'];
+      similarTVs.forEach((element) {
+        _similar.add(TVModel.fromJson(element));
       });
     } catch (error) {
       print('TV - getDetails error -----------> $error ');
@@ -327,7 +245,7 @@ class TV with ChangeNotifier {
       }
 
       data.forEach((element) {
-        _forKids.add(TVItem.fromJson(element));
+        _forKids.add(TVModel.fromJson(element));
       });
     } catch (error) {
       print('TV - forKids error -------------> $error');
@@ -350,31 +268,16 @@ class TV with ChangeNotifier {
       }
 
       data.forEach((element) {
-        _genre.add(TVItem.fromJson(element));
+        _genre.add(TVModel.fromJson(element));
       });
     } catch (error) {
       print('TV - getGenre error -------------> $error');
     }
   }
 
-  // Future<void> getSimilar(int id) async {
-  //   final url =
-  //       'https://api.themoviedb.org/3/tv/$id/similar?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=1';
-  //   try {
-  //     final response = await http.get(url);
-  //     // print(response.body);
+  void clearGenre() {
+    _genre.clear();
+    notifyListeners();
+  }
 
-  //     final responseData = json.decode(response.body) as Map<String, dynamic>;
-  //     final data = responseData['results'];
-  //     // print('toprated ------------> $data');
-
-  //     _similar.clear();
-
-  //     data.forEach((element) {
-  //       _similar.add(TVItem.fromJson(element));
-  //     });
-  //   } catch (error) {
-  //     print('TV - getGenre error -------------> $error');
-  //   }
-  // }
 }

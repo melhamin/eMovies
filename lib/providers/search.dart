@@ -1,69 +1,56 @@
 import 'dart:convert';
 
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/actor_model.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/tv_model.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/tv.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:e_movies/providers/movies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:e_movies/providers/init_data.dart';
-
-class ActorItem {
-  final int id;
-  final String name;
-  final String department;
-  final String imageUrl;
-
-  ActorItem({
-    this.id,
-    this.name,
-    this.imageUrl,
-    this.department,
-  });
-
-  static ActorItem fromJson(json) {
-    return ActorItem(
-      id: json['id'],
-      name: json['name'],
-      imageUrl: json['profile_path'],
-      department: json['known_for_department'],
-    );
-  }
-}
 
 class Search with ChangeNotifier {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   static const SEARCH_HISTORY = 'search_history';
   static const TOP_MOVIE_GENRES = 'top_movie_genres';
+  static const TOP_TV_GENRES = 'top_movie_genres';
 
-  List<MovieItem> _movies = [];
-  List<TVItem> _tvShows = [];
-  List<ActorItem> _actors = [];
+  List<MovieModel> _movies = [];
+  List<TVModel> _tvShows = [];
+  List<ActorModel> _actors = [];
 
-  List<InitialData> _recentSearches = [];
+  List<InitData> _recentSearches = [];
   List<int> _myTopMovieGenres = [];
+  List<int> _myTopTVGenres = [];
 
-  List<MovieItem> get movies {
+  List<MovieModel> get movies {
     return _movies;
   }
 
-  List<TVItem> get tvShows {
+  List<TVModel> get tvShows {
     return _tvShows;
   }
 
-  List<ActorItem> get actors {
+  List<ActorModel> get actors {
     return _actors;
   }
 
-  List<InitialData> get searchHistory {
+  List<InitData> get searchHistory {
     return _recentSearches;
   }
 
   List<int> get topMovieGenres {
     return _myTopMovieGenres;
+  }
+
+  List<int> get topTVGenres {
+    return _myTopTVGenres;
   }
 
   void clearMovies() => _movies.clear();
@@ -84,7 +71,7 @@ class Search with ChangeNotifier {
         if (page == 1) _movies.clear();
 
         data.forEach((element) {
-          _movies.add(MovieItem.fromJson(element));
+          _movies.add(MovieModel.fromJson(element));
         });
 
         // print(_movies);
@@ -111,7 +98,7 @@ class Search with ChangeNotifier {
         if (page == 1) _tvShows.clear();
 
         data.forEach((element) {
-          _tvShows.add(TVItem.fromJson(element));
+          _tvShows.add(TVModel.fromJson(element));
         });
       } catch (error) {
         print('searchTVShows error  --------------------> $error');
@@ -135,7 +122,7 @@ class Search with ChangeNotifier {
         if (page == 1) _actors.clear();
 
         data.forEach((element) {
-          _actors.add(ActorItem.fromJson(element));
+          _actors.add(ActorModel.fromJson(element));
         });
       } catch (error) {
         print('searchPerson error  --------------------> $error');
@@ -154,12 +141,39 @@ class Search with ChangeNotifier {
     // don't add to the list if already exist
     if (alreadyExist != null) return;
 
-    _recentSearches.insert(0, InitialData.formObject(item));
+    _recentSearches.insert(0, InitData.formObject(item));
     if (_recentSearches.length > 10) {
       _recentSearches.removeAt(_recentSearches.length - 1);
     }
 
     // add to myTopMovieGenres
+    if (item is MovieModel) {
+      item.genreIDs.forEach((elem) {
+        int currentValue = myTopMovieGenres[elem.toString()];
+        myTopMovieGenres.update(elem.toString(), (value) {
+          // print('elem -----> $elem, value --------> $value');
+          return currentValue + 1; // add one to current value
+        });
+        saveTopMovieGenres(); // save to prefs
+        loadTopMovieGenres();
+      });
+    } else {
+      item.genreIDs.forEach((elem) {
+        int currentValue = myTopTVGenres[elem.toString()];
+        myTopTVGenres.update(elem.toString(), (value) {
+          // print('elem -----> $elem, value --------> $value');
+          return currentValue + 1; // add one to current value
+        });
+        saveTopTVGenres(); // save to prefs
+        loadTopTVGenres();
+      });
+    }
+
+    savePrefs();
+    notifyListeners();
+  }
+
+  void addToTopMovieGenres(InitData item) {
     item.genreIDs.forEach((elem) {
       int currentValue = myTopMovieGenres[elem.toString()];
       myTopMovieGenres.update(elem.toString(), (value) {
@@ -169,20 +183,18 @@ class Search with ChangeNotifier {
       saveTopMovieGenres(); // save to prefs
       loadTopMovieGenres();
     });
-
     notifyListeners();
-    savePrefs();
   }
 
-  void addToTopMovieGenres(InitialData item) {
+  void addToTopTVGenres(InitData item) {
     item.genreIDs.forEach((elem) {
-      int currentValue = myTopMovieGenres[elem.toString()];
-      myTopMovieGenres.update(elem.toString(), (value) {
+      int currentValue = myTopTVGenres[elem.toString()];
+      myTopTVGenres.update(elem.toString(), (value) {
         // print('elem -----> $elem, value --------> $value');
         return currentValue + 1; // add one to current value
       });
-      saveTopMovieGenres(); // save to prefs
-      loadTopMovieGenres();
+      saveTopTVGenres(); // save to prefs
+      loadTopTVGenres();
     });
     notifyListeners();
   }
@@ -207,12 +219,9 @@ class Search with ChangeNotifier {
       final lists = json.decode(historyData) as List<dynamic>;
       _recentSearches.clear();
       lists.forEach((element) {
-        _recentSearches.add(InitialData.fromJson(element));
+        _recentSearches.add(InitData.fromJson(element));
       });
-    }
-
-    loadTopMovieGenres();
-
+    }  
     notifyListeners();
   }
 
@@ -244,14 +253,40 @@ class Search with ChangeNotifier {
     notifyListeners();
   }
 
+  void loadTopTVGenres() async {
+    SharedPreferences prefs = await _prefs;
+    final topTVGenres = prefs.get(TOP_TV_GENRES);
+    if (topTVGenres != null) myTopTVGenres = json.decode(topTVGenres);
+    // get top 4 genres
+    final list = myTopTVGenres.values.toList();
+    final keys = [];
+    myTopTVGenres.forEach((key, value) {
+      keys.add(int.parse(key));
+    });
+    // intialize list to hold first four indexes
+    final List<int> temp = [0, 1, 2, 3];
+    for (int i = 4; i < list.length; i++) {
+      int t = list[i];
+      // check if t is bigger than list at index index
+      int res = temp.indexWhere((index) => t > list[index]);
+      // if is bigger then change elemnt at index res to new value t
+      if (res != -1) temp[res] = i;
+    }
+    // update my top genres list
+    _myTopTVGenres.clear();
+    temp.forEach((element) {
+      _myTopTVGenres.add(keys[element]);
+    });
+
+    notifyListeners();
+  }
+
   void savePrefs() async {
     SharedPreferences prefs = await _prefs;
     var lists = [];
     _recentSearches.forEach((element) {
-      lists.add(InitialData.toJson(element));
+      lists.add(InitData.toJson(element));
     });
-
-    print(myTopMovieGenres);
 
     prefs.setString(SEARCH_HISTORY, json.encode(lists));
   }
@@ -261,10 +296,15 @@ class Search with ChangeNotifier {
     prefs.setString(TOP_MOVIE_GENRES, json.encode(myTopMovieGenres));
   }
 
+  void saveTopTVGenres() async {
+    SharedPreferences prefs = await _prefs;
+    prefs.setString(TOP_TV_GENRES, json.encode(myTopTVGenres));
+  }
+
   void clearPrefs() async {
-    // SharedPreferences prefs = await _prefs;
-    // prefs.clear();
-    // notifyListeners();
+    SharedPreferences prefs = await _prefs;
+    prefs.clear();
+    notifyListeners();
   }
 
   //
@@ -287,6 +327,27 @@ class Search with ChangeNotifier {
     '10770': 0,
     '53': 0,
     '10752': 0,
+    '37': 0,
+  };
+
+  Map<String, dynamic> myTopTVGenres = {
+    '10759': 0,
+    '16': 0,
+    '35': 0,
+    '80': 0,
+    '99': 0,
+    '18': 0,
+    '10751': 0,
+    '10762': 0,
+    '10763': 0,
+    '9648': 0,
+    '10764': 0,
+    '10765': 0,
+    '878': 0,
+    '10770': 0,
+    '10767': 0,
+    '10766': 0,
+    '10768': 0,
     '37': 0,
   };
 }

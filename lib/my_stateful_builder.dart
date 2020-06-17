@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
 import 'package:flutter/material.dart';
 
 class MyStatefulBuilder extends StatefulWidget {
   final StatefulWidgetBuilder builder;
   // final ValueChanged<String> changeImage;
-  final List<InitialData> items;
+  final List<InitData> items;
   String imageUrl;
   MyStatefulBuilder({this.builder, this.imageUrl, this.items});
 
@@ -56,7 +56,7 @@ class _MyStatefulBuilderState extends State<MyStatefulBuilder>
     super.dispose();
   }
 
-  /// Changes image url to the image url of next lists' first item
+  /// Changes imageUrl to the url of lists' next item
   void _changeImage() {
     if (imageIndex < widget.items.length - 1) {
       setState(() {

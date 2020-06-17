@@ -1,13 +1,12 @@
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/my_toast_message.dart';
-import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/screens/add_item_dialog.dart';
 import 'package:e_movies/screens/list_item_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 class TVshowsLists extends StatefulWidget {
@@ -15,20 +14,18 @@ class TVshowsLists extends StatefulWidget {
   _TVshowsListsState createState() => _TVshowsListsState();
 }
 
-class _TVshowsListsState extends State<TVshowsLists>
-    {
+class _TVshowsListsState extends State<TVshowsLists> {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
-  bool _isEditing = false;  
+  bool _isEditing = false;
+  bool _initLoaded = true;
 
   @override
   void initState() {
-    super.initState();    
-    _textEditingController = TextEditingController();    
+    super.initState();
+    _textEditingController = TextEditingController();
     _listKey = GlobalKey<AnimatedListState>(debugLabel: 'TVListsKey');
-    // animated lists
-    _loadLists();
   }
 
   @override
@@ -38,13 +35,24 @@ class _TVshowsListsState extends State<TVshowsLists>
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    if (_initLoaded) {
+      // animated lists
+      _loadLists();
+    }
+      _initLoaded = false;
+    super.didChangeDependencies();
+  }
+
   /// Builds route with animation to selected list item.
   /// [list] Selected list item
-  Route _buildRoute(String title, MediaType mediaType, [bool isFavorites = false]) {
+  Route _buildRoute(String title, MediaType mediaType,
+      [bool isFavorites = false]) {
     // print('list --------------> $list');
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => 
-          (ListItemScreen(title: title, mediaType: MediaType.TV, isFavorites: isFavorites)),
+      pageBuilder: (context, animation, secondaryAnimation) => (ListItemScreen(
+          title: title, mediaType: MediaType.TV, isFavorites: isFavorites)),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left
@@ -178,7 +186,8 @@ class _TVshowsListsState extends State<TVshowsLists>
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       context: context,
-      builder: (context) => AddItemDialog(listKey: _listKey, mediaType: MediaType.TV),
+      builder: (context) =>
+          AddItemDialog(listKey: _listKey, mediaType: MediaType.TV),
     );
   }
 
@@ -207,12 +216,7 @@ class _TVshowsListsState extends State<TVshowsLists>
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontFamily: 'Helvatica',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Hexcolor('#DEDEDE'),
-                  ),
+                  style: kListsItemTitleStyle,
                 ),
               ),
             ),
@@ -246,7 +250,8 @@ class _TVshowsListsState extends State<TVshowsLists>
             child: MyListsItem(
                 list: list,
                 onTap: () {
-                  Navigator.of(context).push(_buildRoute(list.title, MediaType.TV));
+                  Navigator.of(context)
+                      .push(_buildRoute(list.title, MediaType.TV));
                 }),
           ),
           if (_isEditing)
@@ -267,7 +272,7 @@ class _TVshowsListsState extends State<TVshowsLists>
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     final tvLists = Provider.of<Lists>(context).tvLists;
     final favoriteTVs = Provider.of<Lists>(context).favoriteTVs;
     return ListView(
@@ -287,7 +292,8 @@ class _TVshowsListsState extends State<TVshowsLists>
             'Favorites',
             Icon(Icons.favorite_border,
                 size: 40, color: Theme.of(context).accentColor), () {
-          Navigator.of(context).push(_buildRoute('Favorites', MediaType.TV,  true));
+          Navigator.of(context)
+              .push(_buildRoute('Favorites', MediaType.TV, true));
         }),
         SizedBox(height: 10),
         AnimatedList(
@@ -311,7 +317,4 @@ class _TVshowsListsState extends State<TVshowsLists>
       ],
     );
   }
-
-  // @override
-  // bool get wantKeepAlive => true;
 }

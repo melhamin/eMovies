@@ -1,19 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/tv_model.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/providers/search.dart';
-import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:e_movies/providers/init_data.dart';
 
 class SearchedTVItem extends StatelessWidget {
-  final TVItem item;
+  final TVModel item;
   SearchedTVItem(this.item);
 
   Route _buildRoute([bool searchHistoryItem = false]) { 
-    final initData = InitialData.formObject(item)  ;
+    final initData = InitData.formObject(item)  ;
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => TVDetailsScreen(),

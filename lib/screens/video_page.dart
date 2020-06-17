@@ -1,12 +1,15 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/video_model.dart';
 import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/providers/tv.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import 'package:e_movies/widgets/video_item.dart' as wid;
+import 'package:e_movies/widgets/video_item.dart';
 
 class VideoPage extends StatefulWidget {
   static const routeName = '/video-page';
@@ -21,7 +24,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   bool _isFetching = true;
   bool _isEmpty = false;
 
-  List<VideoItem> _videos;
+  List<VideoModel> _videos;
 
   @override
   void initState() {
@@ -31,50 +34,90 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      final id = ModalRoute.of(context).settings.arguments as int;
-      print('id --------> $id');
-      Provider.of<Movies>(context, listen: false).fetchVideos(id).then((value) {
-        setState(() {
-          _videos = Provider.of<Movies>(context, listen: false).videos;
-          // print('first video----------------> ${_videos[0].name}');
-          _isFetching = false;
-          _initLoaded = false;
+      final args = ModalRoute.of(context).settings.arguments as List;
+      // print('id --------> $id');
+      final int id = args[0];
+      final MediaType mediaType = args[1];
 
-          // get the first video to set as initial video
-          VideoItem trailerVideo;
+      // print('id ----------> $id\ntype -------------> $mediaType');
 
-          if (_videos.isEmpty) {
-            _isEmpty = true;
-          } else {
-            trailerVideo = _videos[0];
-            _controller = YoutubePlayerController(
-              initialVideoId: trailerVideo.key,
-              flags: YoutubePlayerFlags(
-                mute: false,
-                autoPlay: false,
-                disableDragSeek: false,
-                loop: false,
-                isLive: false,
-                forceHideAnnotation: true,
-                forceHD: false,
-                enableCaption: true,
-              ),
-            );
-          }          
+      if (mediaType == MediaType.Movie) {
+        Provider.of<Movies>(context, listen: false)
+            .fetchVideos(id)
+            .then((value) {
+          setState(() {
+            _videos = Provider.of<Movies>(context, listen: false).videos;
+            // print('first video----------------> ${_videos[0].name}');
+            _isFetching = false;
+            _initLoaded = false;
+
+            // get the first video to set as initial video
+            VideoModel trailerVideo;
+
+            if (_videos.isEmpty) {
+              _isEmpty = true;
+            } else {
+              trailerVideo = _videos[0];
+              _controller = YoutubePlayerController(
+                initialVideoId: trailerVideo.key,
+                flags: YoutubePlayerFlags(
+                  mute: false,
+                  autoPlay: false,
+                  disableDragSeek: false,
+                  loop: false,
+                  isLive: false,
+                  forceHideAnnotation: true,
+                  forceHD: false,
+                  enableCaption: true,
+                ),
+              );
+            }
+          });
         });
-      });
+      } else {
+        Provider.of<TV>(context, listen: false).getVideos(id).then((value) {
+          setState(() {
+            _videos = Provider.of<TV>(context, listen: false).videos;
+            // print('first video----------------> ${_videos[0].name}');
+            _isFetching = false;
+            _initLoaded = false;
+
+            // get the first video to set as initial video
+            VideoModel trailerVideo;
+
+            if (_videos.isEmpty) {
+              _isEmpty = true;
+            } else {
+              trailerVideo = _videos[0];
+              _controller = YoutubePlayerController(
+                initialVideoId: trailerVideo.key,
+                flags: YoutubePlayerFlags(
+                  mute: false,
+                  autoPlay: false,
+                  disableDragSeek: false,
+                  loop: false,
+                  isLive: false,
+                  forceHideAnnotation: true,
+                  forceHD: false,
+                  enableCaption: true,
+                ),
+              );
+            }
+          });
+        });
+      }
     }
 
     super.didChangeDependencies();
   }
 
   @override
-  void dispose() {    
+  void dispose() {
     super.dispose();
   }
 
   void _onTap(String key) {
-    print('ontap ------------------> clicked');
+    // print('ontap ------------------> clicked');
     _controller.load(key);
   }
 
@@ -91,47 +134,44 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                 child: SpinKitCircle(
                     size: 21, color: Theme.of(context).accentColor))
             : LayoutBuilder(
-                builder: (context, constraints) {
-                  return Stack(
-                    children: <Widget>[
-                      _isEmpty
-                          ? Center(
-                              child: Text(
-                                'No Video Availabe!',
-                                style: Theme.of(context).textTheme.headline5,
+                builder: (ctx, constraints) {
+                  return _videos.isEmpty
+                      ? Center(
+                          child:
+                              Text('No video available!', style: kTitleStyle),
+                        )
+                      : Column(
+                          children: [
+                            Container(
+                              // color: Colors.red,
+                              // height: constraints.maxHeight * 0.45,
+                              child: YoutubePlayer(
+                                controller: _controller,
+                                progressIndicatorColor:
+                                    Theme.of(context).accentColor,
                               ),
-                            )
-                          : ListView.separated(
-                              shrinkWrap: true,
-                              padding: EdgeInsets.only(
-                                  top: constraints.maxHeight * 0.3 + 10),
-                              physics: BouncingScrollPhysics(
-                                  parent: AlwaysScrollableScrollPhysics()),
-                              itemCount: _videos.length,
-                              separatorBuilder: (context, index) {
-                                return Divider();
-                              },
-                              itemBuilder: (context, index) {
-                                return wid.VideoItem(
-                                  videoDetails: _videos[index],
-                                  onTap: _onTap,
-                                );
-                              },
                             ),
-                      Container(
-                        // color: Colors.red,
-                        height: constraints.maxHeight * 0.3,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: YoutubePlayer(
-                            controller: _controller,
-                            progressIndicatorColor:
-                                Theme.of(context).accentColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                            SizedBox(height: 10),
+                            Flexible(
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(
+                                    parent:
+                                        const AlwaysScrollableScrollPhysics()),
+                                itemCount: _videos.length,
+                                separatorBuilder: (context, index) {
+                                  return SizedBox(height: 10);
+                                },
+                                itemBuilder: (context, index) {
+                                  return VideoItem(
+                                    videoDetails: _videos[index],
+                                    onTap: _onTap,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        );
                 },
               ),
       ),

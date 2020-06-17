@@ -47,6 +47,8 @@ class _TVGenreItemScreenState extends State<TVGenreItemScreen> {
   void didChangeDependencies() {
     if (_initLoaded) {
       Provider.of<TV>(context, listen: false)
+          .clearGenre();
+      Provider.of<TV>(context, listen: false)
           .getGenre(widget.id, 1)
           .then((value) {
         setState(() {

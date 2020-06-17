@@ -1,3 +1,4 @@
+import 'package:e_movies/models/cast_model.dart';
 import 'package:e_movies/providers/cast.dart' as castProv;
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/screens/movie/movie_genre_item_screen.dart';
@@ -139,7 +140,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
     );
   }
 
-  Widget _buildPopularActors(List<castProv.CastItem> popularPeople) {
+  Widget _buildPopularActors(List<CastModel> popularPeople) {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       physics: const BouncingScrollPhysics(),

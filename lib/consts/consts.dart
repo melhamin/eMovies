@@ -12,7 +12,7 @@ TextStyle kTitleStyle = TextStyle(
 TextStyle kTitleStyle2 = TextStyle(
   fontFamily: 'Helvatica',
   fontWeight: FontWeight.bold,
-  fontSize: 16,
+  fontSize: 18,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kBodyStyle = TextStyle(

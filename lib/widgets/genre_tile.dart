@@ -1,3 +1,4 @@
+import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/tv/tv_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -8,8 +9,7 @@ class GenreTile extends StatelessWidget {
   final String title;
   final String imageUrl;
   final int genreId;
-  final int
-      mediaType; // whether item is movie or tv show so navigate to corresponding screen(0 for movies, 1 for tv show)
+  final MediaType mediaType;
 
   GenreTile({this.title, this.imageUrl, this.genreId, this.mediaType});
 
@@ -18,7 +18,7 @@ class GenreTile extends StatelessWidget {
       // settings: RouteSettings(arguments: genreId),
       pageBuilder: (context, animation,
               secondaryAnimation) => // navigates to corresponding screen according to media type parameter(0 for movies, 1 for tv show)
-          mediaType == 0 ? MovieGenreItem(genreId) : TVGenreItemScreen(genreId),
+          mediaType == MediaType.Movie ? MovieGenreItem(genreId) : TVGenreItemScreen(genreId),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

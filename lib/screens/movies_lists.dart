@@ -1,13 +1,12 @@
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/my_toast_message.dart';
-import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/screens/add_item_dialog.dart';
 import 'package:e_movies/screens/list_item_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
 class MoviesLists extends StatefulWidget {
@@ -15,7 +14,7 @@ class MoviesLists extends StatefulWidget {
   _MoviesListsState createState() => _MoviesListsState();
 }
 
-class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClientMixin {
+class _MoviesListsState extends State<MoviesLists> {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
@@ -38,10 +37,10 @@ class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClient
 
   @override
   void didChangeDependencies() {
-    if(_initLoaded) {
-      _loadLists();
-      _initLoaded = false;
+    if(_initLoaded) {      
+      _loadLists();      
     }
+    print('change -----------> ');
     _initLoaded = false;
     super.didChangeDependencies();
   }
@@ -184,6 +183,16 @@ class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClient
     );
   }
 
+  // void add() {
+  //   _listKey.currentState.insertItem(0,
+  //         duration: Duration(milliseconds: 500)); // add item to animated list      
+  // }
+
+
+  // static void insertToAnimatedList() {
+  //   add();
+  // }
+
   /// Presents a modalBottomSheet and lets user to give a name and add new list
   void _showAddDialog(BuildContext context) {
     showModalBottomSheet(
@@ -279,8 +288,9 @@ class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
-    final moviesLists = Provider.of<Lists>(context).moviesLists;
-    final favoriteMovies = Provider.of<Lists>(context).favoriteMovies;
+    // super.build(context);
+    final moviesLists = Provider.of<Lists>(context).moviesLists;    
+    // final favoriteMovies = Provider.of<Lists>(context).favoriteMovies;
     return ListView(
       key: PageStorageKey('moviesLists'),
       padding: const EdgeInsets.only(bottom: kToolbarHeight),
@@ -308,7 +318,7 @@ class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClient
           shrinkWrap: true,
           key: _listKey,
           itemBuilder: (ctx, i, animation) {
-            print('moviesLists[i] ---------> ${moviesLists[i]}');
+            // print('moviesLists[i] ---------> ${moviesLists[i]}');
             return SlideTransition(
               position: CurvedAnimation(
                 curve: Curves.easeOut,
@@ -325,8 +335,4 @@ class _MoviesListsState extends State<MoviesLists> with AutomaticKeepAliveClient
       ],
     );
   }
-  
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -41,6 +41,14 @@ class BottomTabs extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           title: Text(
+            'Lists',
+            style: kBottomBarTextStyle,
+          ),
+          icon: Icon(Icons.list),
+          backgroundColor: Theme.of(context).primaryColor,
+        ),
+        BottomNavigationBarItem(
+          title: Text(
             'Cinemas',
             style: kBottomBarTextStyle,
           ),
@@ -49,12 +57,13 @@ class BottomTabs extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           title: Text(
-            'Lists',
+            'Account',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.list),
+          icon: Icon(Icons.account_circle),
           backgroundColor: Theme.of(context).primaryColor,
         ),
+        
           ],
         ),
     );

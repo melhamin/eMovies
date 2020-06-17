@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';

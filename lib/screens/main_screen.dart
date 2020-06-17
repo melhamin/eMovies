@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/screens/account_screen.dart';
 import 'package:e_movies/screens/cinemas_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -34,10 +36,13 @@ class _MainScreenState extends State<MainScreen>
     Future.delayed(Duration.zero).then((value) {
       Provider.of<Lists>(context, listen: false).loadMovieLists();
       Provider.of<Lists>(context, listen: false).loadTVLists();
+      Provider.of<Search>(context, listen: false).loadTopMovieGenres();
+      Provider.of<Search>(context, listen: false).loadTopTVGenres();
+
     });
     _tabController = TabController(
       vsync: this,
-      length: 4,
+      length: 5,
       initialIndex: _selectedIndex,
     );
     _pageController = PageController(initialPage: _selectedIndex, keepPage: true);
@@ -65,8 +70,9 @@ class _MainScreenState extends State<MainScreen>
         children: <Widget>[
           DiscoverScreen(),
           SearchScreen(),
-          CinemasScreen(),
           MyListsScreen(),
+          CinemasScreen(),
+          AccountScreen(),
         ],
       ),
     );

@@ -1,17 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/actor_model.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/screens/search/searched_movie_item.dart';
 import 'package:e_movies/screens/search/searched_tv_item.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart';
-import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-import 'package:e_movies/providers/init_data.dart';
 
 import 'package:e_movies/screens/my_lists_screen.dart';
 
@@ -37,7 +39,7 @@ class _AllResultsState extends State<AllResults> {
     super.didChangeDependencies();
   }
 
-  Route _buildRoute(InitialData initData, [bool searchHistoryItem = false]) {
+  Route _buildRoute(InitData initData, [bool searchHistoryItem = false]) {
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -63,7 +65,7 @@ class _AllResultsState extends State<AllResults> {
   }
 
   Widget _buildSearchHistoryItem(
-      BuildContext context, InitialData item, int index) {
+      BuildContext context, InitData item, int index) {
     return InkWell(
       highlightColor: Colors.black,
       splashColor: Colors.transparent,
@@ -217,7 +219,7 @@ class _AllResultsState extends State<AllResults> {
     );
   }
 
-  Widget _buildActors(List<ActorItem> items) {
+  Widget _buildActors(List<ActorModel> items) {
     return GridView.builder(
       // padding:  EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
       physics: const BouncingScrollPhysics(),
@@ -241,7 +243,7 @@ class _AllResultsState extends State<AllResults> {
       shrinkWrap: true,
       itemCount: items.length > 15 ? 15 : items.length,
       itemBuilder: (ctx, i) {
-        return (items[i] is MovieItem)
+        return (items[i] is MovieModel)
             ? SearchedMovieItem(
                 items[i],
               )

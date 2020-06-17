@@ -1,4 +1,6 @@
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/person_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -6,12 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
-import 'package:e_movies/providers/movies.dart';
+import 'package:e_movies/screens/movie/movie_details_screen.dart' show MovieDetailsScreen;
 import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/widgets/top_bar.dart';
-import 'package:e_movies/providers/cast.dart' as prov;
 import 'package:e_movies/providers/cast.dart';
 
 class CastDetails extends StatefulWidget {
@@ -50,7 +49,7 @@ class _CastDetailsState extends State<CastDetails>
     if (_isInitLoaded) {
       final item = ModalRoute.of(context).settings.arguments as dynamic;
       final id = item.id;
-      Provider.of<prov.Cast>(context, listen: false)
+      Provider.of<Cast>(context, listen: false)
           .getPersonDetails(id)
           .then((value) {
         setState(() {
@@ -83,7 +82,7 @@ class _CastDetailsState extends State<CastDetails>
     );
   }
 
-  Widget _buildTabs(prov.Person item) {
+  Widget _buildTabs(PersonModel item) {
     return TabBarView(
       controller: _tabController,
       children: [
@@ -98,8 +97,8 @@ class _CastDetailsState extends State<CastDetails>
     // super.build(context);
     final item = ModalRoute.of(context).settings.arguments as dynamic;
     final mediaQueryHeight = MediaQuery.of(context).size.height;
-    prov.Person person;
-    if (!_isLoading) person = Provider.of<prov.Cast>(context).person;
+    PersonModel person;
+    if (!_isLoading) person = Provider.of<Cast>(context).person;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -152,7 +151,7 @@ class _CastDetailsState extends State<CastDetails>
 }
 
 class Biography extends StatelessWidget {
-  final prov.Person item;
+  final PersonModel item;
   final bool isLoading;
   Biography({this.item, this.isLoading});
 
@@ -195,12 +194,12 @@ class Biography extends StatelessWidget {
 }
 
 class Movies extends StatelessWidget {
-  final prov.Person item;
+  final PersonModel item;
   final bool isLoading;
   Movies({this.item, this.isLoading});
 
-  Route _buildRoute(MovieItem item) {
-    final initData = InitialData.formObject(item);
+  Route _buildRoute(MovieModel item) {
+    final initData = InitData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(
         arguments: initData,
@@ -223,7 +222,7 @@ class Movies extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, MovieItem item) {
+  void _onTap(BuildContext context, MovieModel item) {
     Navigator.of(context).push(_buildRoute(item));
   }
 

@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/movies.dart' as prov;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
@@ -40,11 +41,11 @@ class MovieItem extends StatelessWidget {
   }
 
   Route _buildRoute() {
-    final initData = InitialData.formObject(item);
+    final initData = InitData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) =>
-          item is prov.MovieItem ? MovieDetailsScreen() : TVDetailsScreen(),
+          item is MovieModel ? MovieDetailsScreen() : TVDetailsScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = const Offset(
             1, 0); // if x > 0 and y = 0 transition is from right to left

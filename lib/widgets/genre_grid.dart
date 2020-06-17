@@ -22,7 +22,7 @@ class GenreGrid extends StatelessWidget {
             imageUrl: itemsList[i]['imageUrl'],
             genreId: itemsList[i]['genreId'],
             title: itemsList[i]['title'],
-            mediaType: mediaType,
+            // mediaType: mediaType,
           );
         },        
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

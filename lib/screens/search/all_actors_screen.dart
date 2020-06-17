@@ -1,14 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/cast_model.dart';
 import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/movies.dart' as prov;
 import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/screens/movie/cast_details_screen.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
+import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AllActorsScreen extends StatelessWidget {
+class CastDetailsScreen extends StatelessWidget {
+  
+  final List<CastModel> cast;
+  CastDetailsScreen(this.cast);
+
   Route _buildRoute(dynamic item) {
     return PageRouteBuilder(
       settings: RouteSettings(
@@ -32,17 +40,15 @@ class AllActorsScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final cast = Provider.of<prov.Movies>(context).cast;
+  Widget build(BuildContext context) {    
+    print('cast 1 -------> ${cast[0].character}');
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Cast Details', style: kTitleStyle),
-          centerTitle: true,
-          leading: BackButton(color: Colors.white.withOpacity(0.87)),
-        ),
-        body: ListView.builder(
+      child: Scaffold(       
+        body: Stack(
+          children: [
+            ListView.builder(
           key: PageStorageKey('AllActorsScreen'),
+          padding: const EdgeInsets.only(top: 40),
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),          
           itemCount: cast.length,
           itemBuilder: (_, i) {
@@ -78,6 +84,13 @@ class AllActorsScreen extends StatelessWidget {
               ),
             );
           },
+        ),
+        Positioned(
+          left: 10,
+          top: 10,
+          child: CustomBackButton(text: 'Cast Details',),
+        ),
+          ],
         ),
       ),
     );

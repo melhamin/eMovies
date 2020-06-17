@@ -3,9 +3,11 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
@@ -143,7 +145,7 @@ class _InTheatersGridState extends State<InTheatersGrid>
 }
 
 class GridItem extends StatefulWidget {
-  final MovieItem item;
+  final MovieModel item;
   GridItem(this.item);
 
   @override
@@ -204,7 +206,7 @@ class _GridItemState extends State<GridItem>
   }
 
   Route _buildRoute() {
-   final initData = InitialData.formObject(widget.item);
+   final initData = InitData.formObject(widget.item);
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) =>

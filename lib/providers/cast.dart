@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:e_movies/models/cast_model.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/person_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -6,67 +9,28 @@ import 'package:http/http.dart' as http;
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 
-class CastItem {
-  final int id;
-  final String name;
-  final String imageUrl;
 
-  String character;
-  String job;
 
-  CastItem({
-    @required this.id,
-    @required this.name,
-    @required this.imageUrl,
-    this.character,
-    this.job,
-  });
 
-  static CastItem fromJson(json) {
-    return CastItem(
-      id: json['id'],
-      name: json['name'],
-      imageUrl: json['profile_path'],
-      character: json['character'] ?? 'N/A',
-      job: json['job'] ?? 'N/A',
-    );
-  }
-}
-
-class Person {
-  final String name;
-  final DateTime birthday;
-  final String placeOfBirth;
-  final String biography;
-  final movies;  
-
-  Person({
-    this.name,
-    this.birthday,
-    this.placeOfBirth,
-    this.biography,
-    this.movies,
-  });
-}
 
 class Cast with ChangeNotifier {
 
   final TMDB_API_KEY = DotEnv().env['TMDB_API_KEY'];
 
-  Person person;
-  List<MovieItem> _movies = [];
-  List<CastItem> _popularPeople = [];
+  PersonModel person;
+  List<MovieModel> _movies = [];
+  List<CastModel> _popularPeople = [];
 
 
-  Person get getPerson {
+  PersonModel get getPerson {
     return person;
   }
 
-  List<MovieItem> get getMovies {
+  List<MovieModel> get getMovies {
     return [..._movies];
   }
 
-  List<CastItem> get popularPeople {
+  List<CastModel> get popularPeople {
     return [..._popularPeople];
   }
 
@@ -86,12 +50,12 @@ class Cast with ChangeNotifier {
 
       _movies.clear();
       fetchedMovies.forEach((element) {
-        _movies.add(MovieItem.fromJson(element));
+        _movies.add(MovieModel.fromJson(element));
         // print('added element id ------------------> ${element['id']}');
       });
       
       
-      person = Person(
+      person = PersonModel(
         name: personData['name'],
         birthday: DateTime.parse(personData['birthday']),
         biography: personData['biography'],
@@ -119,7 +83,7 @@ class Cast with ChangeNotifier {
       // print('results -----------> $data');
 
       data.forEach((element) {
-        _popularPeople.add(CastItem.fromJson(element));
+        _popularPeople.add(CastModel.fromJson(element));
       }); 
 
       // print('done---------> $_popularPeople');

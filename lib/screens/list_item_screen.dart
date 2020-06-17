@@ -1,5 +1,5 @@
+import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/my_stateful_builder.dart';
-import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/my_app_bar.dart';
@@ -98,7 +98,7 @@ class _ListItemScreenState extends State<ListItemScreen>
     );
   }
 
-  List<InitialData> getListItems() {
+  List<InitData> getListItems() {
     var items;
     if (widget.mediaType == MediaType.Movie) {
       if (widget.isFavorites)

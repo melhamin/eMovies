@@ -1,7 +1,8 @@
+import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 
-class InitialData {
+class InitData {
   int id;
   String title;
   List genreIDs;
@@ -12,7 +13,7 @@ class InitialData {
   int voteCount;
   MediaType mediaType;
 
-  InitialData({
+  InitData({
     this.id,
     this.title,
     this.genreIDs,
@@ -24,22 +25,22 @@ class InitialData {
     this.voteCount,
   });
 
-  static InitialData formObject(data) {
-    return InitialData(
+  static InitData formObject(data) {
+    return InitData(
       id: data.id,
       title: data.title ?? 'N/A',
       genreIDs: data.genreIDs,
       posterUrl: data.posterUrl,
       backdropUrl: data.backdropUrl,
-      mediaType: data is MovieItem ? MediaType.Movie : MediaType.TV,
+      mediaType: data is MovieModel ? MediaType.Movie : MediaType.TV,
       releaseDate: data.date,
       voteAverage: data.voteAverage,
       voteCount: data.voteCount,
     );
   }
 
-  static InitialData fromJson(json) {
-    return InitialData(
+  static InitData fromJson(json) {
+    return InitData(
       id: json['id'],
       title: json['title'],
       genreIDs: json['genreIDs'],

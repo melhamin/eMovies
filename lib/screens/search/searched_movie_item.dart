@@ -1,12 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/screens/movie/movie_details_screen.dart';
-import 'package:e_movies/screens/tv/tv_details_screen.dart';
-import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/search.dart';
-import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/providers/init_data.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +14,7 @@ class SearchedMovieItem extends StatelessWidget {
 
   Route _buildRoute(dynamic item, [bool searchHistoryItem = false]) {
     // if not search history item create initData for the tv show details screen
-    InitialData initData = InitialData.formObject(item);
+    InitData initData = InitData.formObject(item);
     return PageRouteBuilder(
       settings: RouteSettings(arguments: initData),
       pageBuilder: (context, animation, secondaryAnimation) => MovieDetailsScreen(),

@@ -1,21 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/cast_model.dart';
+import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/review_model.dart';
+import 'package:e_movies/models/tv_model.dart';
 import 'package:e_movies/my_toast_message.dart';
-import 'package:e_movies/providers/cast.dart';
-import 'package:e_movies/providers/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
+import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/widgets/back_button.dart';
-import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
-import 'package:e_movies/providers/tv.dart' as prov;
+import 'package:e_movies/widgets/expandable_text.dart';
+import 'package:e_movies/widgets/movie/cast_item.dart';
+import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/widgets/review_item.dart';
 import 'package:e_movies/widgets/route_builder.dart';
-import 'package:e_movies/widgets/top_bar.dart';
-import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
+import 'package:e_movies/screens/search/all_actors_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -32,12 +39,10 @@ class TVDetailsScreen extends StatefulWidget {
 class _TVDetailsScreenState extends State<TVDetailsScreen> {
   bool _initLoaded = true;
   bool _isLoading = true;
-  InitialData initData;
-  prov.TVItem details;
+  InitData initData;
+  TVModel details;
 
   // prov.TVItem initData;
-  List<CastItem> cast = [];
-  List<CastItem> crew = [];
 
   TextEditingController _textEditingController;
 
@@ -50,13 +55,13 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   @override
   void didChangeDependencies() {
     if (_initLoaded) {
-      initData = ModalRoute.of(context).settings.arguments as InitialData;
-      Provider.of<prov.TV>(context, listen: false)
+      initData = ModalRoute.of(context).settings.arguments as InitData;
+      Provider.of<TV>(context, listen: false)
           .getDetails(initData.id)
           .then((value) {
         setState(() {
           // Get film item
-          details = Provider.of<prov.TV>(context, listen: false).details;
+          details = Provider.of<TV>(context, listen: false).details;
           _isLoading = false;
           _initLoaded = false;
         });
@@ -219,7 +224,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
-  void _addNewItemtoList(BuildContext context, int index, InitialData item) {
+  void _addNewItemtoList(BuildContext context, int index, InitData item) {
     final result =
         Provider.of<Lists>(context, listen: false).addNewTVToList(index, item);
     if (result) {
@@ -245,7 +250,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     }
   }
 
-  void _showAddToList(BuildContext context, InitialData initData) {
+  void _showAddToList(BuildContext context, InitData initData) {
     final lists = Provider.of<Lists>(context, listen: false).tvLists;
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
@@ -345,7 +350,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
   Widget _buildBottomIcons() {
     final isInFavorites = Provider.of<Lists>(context).isFavoriteTV(initData);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       decoration: BoxDecoration(
           color: ONE_LEVEL_ELEVATION,
           borderRadius: BorderRadius.only(
@@ -357,19 +362,19 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
         children: [
           IconButton(
             icon: Icon(
-              isInFavorites ? Icons.favorite : Icons.favorite_border,
+              isInFavorites ? Icons.favorite_border: Icons.favorite_border,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
             onPressed: () => _toggleFavorite(isInFavorites),
           ),
-          IconButton(
-            icon: Icon(
+          GestureDetector(
+            child: Icon(
               Icons.add,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
-            onPressed: () => _showAddToList(context, initData),
+            onTap: () => _showAddToList(context, initData),
           ),
           IconButton(
             icon: Icon(
@@ -384,7 +389,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
-  Widget _buildImages(prov.TVItem item) {
+  Widget _buildImages(TVModel item) {
     List<String> images = [];
     if (item.images != null) {
       item.images.forEach((element) {
@@ -440,7 +445,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     return res;
   }
 
-  Widget _buildDetails(prov.TVItem item) {
+  Widget _buildDetails(TVModel item) {
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -482,6 +487,107 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
     );
   }
 
+  Route _buildRoute(Widget toPage, [dynamic args]) {
+    return PageRouteBuilder(
+      settings: RouteSettings(arguments: args),
+      pageBuilder: (context, animation, secondaryAnimation) => toPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+        var tween = Tween(begin: begin, end: end);
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildCast() {
+    List<CastModel> cast = [];
+    if (details.cast != null) {
+      details.cast.forEach((element) {
+        cast.add(CastModel(
+          id: element['id'],
+          name: element['name'],
+          character: element['character'],
+          imageUrl: element['profile_path'],
+          job: element['job'],
+        ));
+      });
+    }
+    return [
+      Padding(
+        padding: const EdgeInsets.only(
+            left: LEFT_PADDING, bottom: 5, right: LEFT_PADDING),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Cast', style: kSubtitle1),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(_buildRoute(CastDetailsScreen(cast)));
+              },
+              child: Row(
+                children: [
+                  Text('Details', style: kSeeAll),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white.withOpacity(0.6),
+                    size: 16,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        color: ONE_LEVEL_ELEVATION,
+        height: 110,
+        child: Cast(cast: cast),
+      ),
+    ];
+  }
+
+  Widget _buildSimilar(BoxConstraints constraints) {
+    // get similar movies
+    List<TVModel> similar = [];
+    if (details.similar != null) {
+      details.similar.forEach((element) {
+        similar.add(TVModel.fromJson(element));
+      });
+    }
+    return similar.isEmpty
+        ? Container()
+        : Container(
+            height: constraints.maxHeight * 0.3,
+            child: SimilarTV(similar),
+          );
+  }
+
+  List<Widget> _buildReviews() {
+    List<ReviewModel> reviews = [];
+    if(details.reviews != null) {
+      details.reviews.forEach((element) { 
+        reviews.add(ReviewModel.fromJson(element));
+      });
+    }
+    return [
+      if(reviews.isNotEmpty)
+      Padding(
+        padding: EdgeInsets.only(left: LEFT_PADDING, bottom: 5, top: 30),
+        child: Text('Reviews', style: kSubtitle1),
+      ),      
+      Reviews(reviews),
+    ];
+  }
+
   List<Widget> _buildOtherDetails(BoxConstraints constraints, int id) {
     // print('all ---------------------> ${details.genreIDs}');
     return [
@@ -491,21 +597,10 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
       SizedBox(height: 15),
       _buildDetails(details),
       SizedBox(height: 30),
-      Padding(
-        padding: const EdgeInsets.only(left: LEFT_PADDING, bottom: 5),
-        child: Text('Cast', style: kSubtitle1),
-      ),
-      Container(
-        color: ONE_LEVEL_ELEVATION,
-        height: 110,
-        child: Cast(details: details),
-      ),
+      ..._buildCast(),
       SizedBox(height: 20),
-      // _buildSimilar(constraints),
-      Container(
-        height: constraints.maxHeight * 0.3,
-        child: SimilarTV(id),
-      ),
+      _buildSimilar(constraints),
+      ..._buildReviews(),
       SizedBox(height: 5),
     ];
   }
@@ -574,7 +669,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final initData = ModalRoute.of(context).settings.arguments as InitialData;
+    final initData = ModalRoute.of(context).settings.arguments as InitData;
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -587,22 +682,26 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     BackgroundImage(
-                        imageUrl: initData.posterUrl, constraints: constraints),
+                        id: initData.id, imageUrl: initData.posterUrl, constraints: constraints),
                     TitleAndDetails(
                         initData: initData, constraints: constraints),
                     // SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.only(left: LEFT_PADDING),
-                      child: Text('Storyline', style: kTitleStyle),
+                      child: Text('Storyline', style: kTitleStyle2),
                     ),
                     _isLoading
                         ? Container(
                             height: constraints.maxHeight * 0.22,
                             child: _buildLoadingIndicator(context),
                           )
-                        : Overview(
-                            constraints: constraints,
-                            overview: details.overview),
+                        : Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: LEFT_PADDING),
+                            child: Overview(
+                                constraints: constraints,
+                                overview: details.overview),
+                          ),
                     Container(
                       height: constraints.maxHeight * 0.1,
                       child: _buildBottomIcons(),
@@ -633,7 +732,7 @@ class TitleAndDetails extends StatelessWidget {
     @required this.constraints,
   }) : super(key: key);
 
-  final InitialData initData;
+  final InitData initData;
   final BoxConstraints constraints;
 
   List<Widget> _buildGenres(List<dynamic> genres) {
@@ -718,10 +817,32 @@ class BackgroundImage extends StatelessWidget {
     Key key,
     @required this.imageUrl,
     @required this.constraints,
+    this.id,
   }) : super(key: key);
 
+  final int id;
   final String imageUrl;
-  final BoxConstraints constraints;
+  final BoxConstraints constraints;  
+
+  Route _buildRoute(Widget toPage) {
+    return PageRouteBuilder(
+      settings: RouteSettings(arguments: [id, MediaType.TV]),
+      pageBuilder: (context, animation, secondaryAnimation) => toPage,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = const Offset(
+            1, 0); // if x > 0 and y = 0 transition is from right to left
+        var end =
+            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+        var tween = Tween(begin: begin, end: end);
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -748,11 +869,17 @@ class BackgroundImage extends StatelessWidget {
           Positioned(
             bottom: 0,
             right: 30,
-            child: SvgPicture.asset(
-              'assets/icons/play.svg',
-              color: Theme.of(context).accentColor,
-              height: 80,
-            ),
+            child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(_buildRoute(VideoPage()));
+                      },
+                      // child: Image.asset('assets/icons/play.gif'),
+                      child: SvgPicture.asset(
+                        'assets/icons/play.svg',
+                        color: Theme.of(context).accentColor,
+                        height: 80,
+                      ),
+                    ),
           ),
         ],
       ),
@@ -775,72 +902,93 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview>
-    with SingleTickerProviderStateMixin {
+    with AutomaticKeepAliveClientMixin {
   bool _expanded = false;
+
+  void onTap() => setState(() => _expanded = true);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     RegExp pattern = new RegExp(r'\n', caseSensitive: false);
     final overview = widget.overview.replaceAll(pattern, '');
-    return AnimatedSize(
+    return AnimatedContainer(
       duration: Duration(milliseconds: 300),
-      vsync: this,
-      curve: Curves.easeIn,
-      child: Container(
-        // color: Colors.blue,
-        padding: const EdgeInsets.only(
-            left: LEFT_PADDING, right: LEFT_PADDING, top: 10),
-        constraints: !_expanded
-            ? BoxConstraints(maxHeight: widget.constraints.maxHeight * 0.22)
-            : BoxConstraints(minHeight: widget.constraints.maxHeight * 0.22),
-        child: GestureDetector(
-            onTap: !_expanded
-                ? () {
-                    setState(() {
-                      _expanded = true;
-                    });
-                  }
-                : null, // only expandable when not expanded yet
-            child: !_expanded
-                ? SizedBox.expand(
-                    child: RichText(
-                      text: TextSpan(
-                        style: kBodyStyle,
-                        text: overview.length > 230
-                            ? overview.substring(0, 230) + '...'
-                            : overview,
-                        children: [
-                          if (!_expanded && overview.length > 230)
-                            TextSpan(
-                              text: 'More',
-                              style: TextStyle(
-                                  color: Theme.of(context).accentColor),
-                            ),
-                        ],
-                      ),
-                    ),
-                  )
-                : Text(overview, style: kBodyStyle)),
+      constraints: _expanded
+          ? BoxConstraints(
+              maxHeight: 400,
+              minHeight: widget.constraints.maxHeight * 0.22,
+            )
+          : BoxConstraints(
+              minHeight: widget.constraints.maxHeight * 0.22,
+              maxHeight: widget.constraints.maxHeight * 0.22,
+            ),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: SizedBox(
+          child: ExpandableText(
+            overview,
+            style: kBodyStyle,
+            onTap: onTap,
+            trimExpandedText: '',
+            trimCollapsedText: '...More',
+            trimLines: 5,
+          ),
+        ),
       ),
     );
+    // return AnimatedSize(
+    //   duration: Duration(milliseconds: 300),
+    //   vsync: this,
+    //   curve: Curves.easeIn,
+    //   child: Container(
+    //     // color: Colors.blue,
+    //     padding: const EdgeInsets.only(
+    //         left: LEFT_PADDING, right: LEFT_PADDING, top: 10),
+    //     constraints: !_expanded
+    //         ? BoxConstraints(maxHeight: widget.constraints.maxHeight * 0.22)
+    //         : BoxConstraints(minHeight: widget.constraints.maxHeight * 0.22),
+    //     child: GestureDetector(
+    //         onTap: !_expanded
+    //             ? () {
+    //                 setState(() {
+    //                   _expanded = true;
+    //                 });
+    //               }
+    //             : null, // only expandable when not expanded yet
+    //         child: !_expanded
+    //             ? SizedBox.expand(
+    //                 child: RichText(
+    //                   text: TextSpan(
+    //                     style: kBodyStyle,
+    //                     text: overview.length > 230
+    //                         ? overview.substring(0, 230) + '...'
+    //                         : overview,
+    //                     children: [
+    //                       if (!_expanded && overview.length > 230)
+    //                         TextSpan(
+    //                           text: 'More',
+    //                           style: TextStyle(
+    //                               color: Theme.of(context).accentColor),
+    //                         ),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               )
+    //             : Text(overview, style: kBodyStyle)),
+    //   ),
+    // );
   }
+
+  @override  
+  bool get wantKeepAlive => true;
 }
 
 class Cast extends StatelessWidget {
-  final prov.TVItem details;
-  Cast({this.details});
-  @override
+  final List<CastModel> cast;
+  Cast({this.cast});
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
-    final cast = Provider.of<prov.TV>(context).cast;
-    final crew = Provider.of<prov.TV>(context).crew;
-
-    CastItem director;
-    if (crew.length != 0)
-      director = crew.firstWhere((element) {
-        return element.job == 'Executive Producer';
-      }, orElse: () {});
     return Column(
       children: [
         if (cast != null && cast.length > 0)
@@ -849,9 +997,9 @@ class Cast extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               itemCount: cast.length,
               itemBuilder: (context, index) {
-                CastItem item = cast[index];
-                return castWid.CastItem(
-                 item,
+                CastModel item = cast[index];
+                return CastItem(
+                  item,
                 );
               },
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -867,22 +1015,12 @@ class Cast extends StatelessWidget {
 }
 
 class SimilarTV extends StatelessWidget {
-  final id;
-  SimilarTV(this.id);
-  @override
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 21,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  final List<TVModel> similar;
+  SimilarTV(this.similar);
 
   @override
   Widget build(BuildContext context) {
-    final items = Provider.of<prov.TV>(context, listen: false).similar;
-    return (items.length == 0)
+    return (similar.length == 0)
         ? Container()
         : LayoutBuilder(
             builder: (context, constraints) {
@@ -900,10 +1038,10 @@ class SimilarTV extends StatelessWidget {
                       child: GridView.builder(
                         physics: BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-                        itemCount: items.length,
+                        itemCount: similar.length,
                         itemBuilder: (context, index) {
                           return MovieItem(
-                            item: items[index],
+                            item: similar[index],
                             withoutDetails: true,
                           );
                         },
@@ -920,8 +1058,28 @@ class SimilarTV extends StatelessWidget {
               );
             },
           );
-  }
+  }  
+}
 
+class Reviews extends StatelessWidget {
+  final List<ReviewModel> reviews;
+  Reviews(this.reviews);
   @override
-  bool get wantKeepAlive => true;
+  Widget build(BuildContext context) {    
+    return ListView.separated(
+      separatorBuilder: (_, i) => SizedBox(height: 10),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: reviews.length,
+      itemBuilder: (_, i) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          color: ONE_LEVEL_ELEVATION,
+          child: ReviewItem(
+            item: reviews[i],
+          ),
+        );
+      },
+    );
+  }
 }

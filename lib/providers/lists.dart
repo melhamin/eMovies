@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:e_movies/providers/init_data.dart';
+import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ListItemModel {
   String title;
-  List<InitialData> items;
+  List<InitData> items;
 
   ListItemModel(String title) {
     this.title = title;
@@ -16,15 +16,15 @@ class ListItemModel {
 
   ListItemModel.fromJson(json) {
     this.title = json['title'];
-    List<InitialData> temp = [];    
+    List<InitData> temp = [];    
 
     for (int i = 0; i < json['data'].length; i++) {
-      temp.add(InitialData.fromJson(json['data'][i]));
+      temp.add(InitData.fromJson(json['data'][i]));
     }
     this.items = temp;    
   }
 
-  List<InitialData> get getItems {
+  List<InitData> get getItems {
     return items;
   }
 
@@ -34,12 +34,12 @@ class ListItemModel {
     String res = '';
     var aa = [];
     items.forEach((element) {
-      aa.add(InitialData.toJson(element));
+      aa.add(InitData.toJson(element));
     });
     return aa.toString();
   }
 
-  void addItem(InitialData newItem) {
+  void addItem(InitData newItem) {
     items.insert(0, newItem);
   }
 
@@ -54,7 +54,7 @@ class ListItemModel {
   List<Map<String, dynamic>> toMap() {
     List<Map<String, dynamic>> temp = [];
     items.forEach((item) {
-      temp.add(InitialData.toJson(item));
+      temp.add(InitData.toJson(item));
     });    
 
     return temp;
@@ -78,18 +78,18 @@ class Lists with ChangeNotifier {
 
   // Movies
   List<ListItemModel> _moviesLists = [];
-  List<InitialData> _favoriteMovies = [];
+  List<InitData> _favoriteMovies = [];
 
   // Tv shows
   List<ListItemModel> _tvLists = [];
-  List<InitialData> _favoriteTVs = [];
+  List<InitData> _favoriteTVs = [];
 
   // Movies getter
   List<ListItemModel> get moviesLists {
     return _moviesLists;
   }
 
-  List<InitialData> get favoriteMovies {
+  List<InitData> get favoriteMovies {
     return _favoriteMovies;
   }
 
@@ -98,7 +98,7 @@ class Lists with ChangeNotifier {
     return _tvLists;
   }
 
-  List<InitialData> get favoriteTVs {
+  List<InitData> get favoriteTVs {
     return _favoriteTVs;
   }
 
@@ -115,7 +115,7 @@ class Lists with ChangeNotifier {
       if (favorites != null && favorites.isNotEmpty) {
         _favoriteMovies.clear();
         favorites.forEach((element) {
-          _favoriteMovies.add(InitialData.fromJson(element));
+          _favoriteMovies.add(InitData.fromJson(element));
         });
       }
     }
@@ -137,14 +137,14 @@ class Lists with ChangeNotifier {
   }
 
   // Favorite movies and other movie lists
-  bool addToFavoriteMovies(InitialData item) {
+  bool addToFavoriteMovies(InitData item) {
     _favoriteMovies.insert(0, item);        
     notifyListeners();
     saveFavoriteMovies();
     return true;
   }
 
-  bool isFavoriteMovie(InitialData item) {
+  bool isFavoriteMovie(InitData item) {
     var temp = _favoriteMovies.firstWhere((element) => element.id == item.id,
         orElse: () => null);
     return temp != null;
@@ -156,7 +156,7 @@ class Lists with ChangeNotifier {
     saveFavoriteMovies();
   }
 
-  bool addNewMovieToList(int listIndex, InitialData item) {
+  bool addNewMovieToList(int listIndex, InitData item) {
     final temp = _moviesLists[listIndex]
         .items
         .firstWhere((element) => element.id == item.id, orElse: () => null);
@@ -205,7 +205,7 @@ class Lists with ChangeNotifier {
     SharedPreferences prefs = await _prefs;
     var favorites = [];
     _favoriteMovies.forEach((element) {
-      favorites.add(InitialData.toJson(element));
+      favorites.add(InitData.toJson(element));
     });
     prefs.setString(FAVORITE_MOVIES, json.encode(favorites));
   }
@@ -245,7 +245,7 @@ class Lists with ChangeNotifier {
       if (favorites != null && favorites.isNotEmpty) {
         _favoriteTVs.clear();
         favorites.forEach((element) {
-          _favoriteTVs.add(InitialData.fromJson(element));
+          _favoriteTVs.add(InitData.fromJson(element));
         });
       }
     }
@@ -268,14 +268,14 @@ class Lists with ChangeNotifier {
 
 
   // Favorite movies and other movie lists
-  bool addToFavoriteTVs(InitialData item) {
+  bool addToFavoriteTVs(InitData item) {
     _favoriteTVs.insert(0, item);
     notifyListeners();
     saveFavoriteTVs();
     return true;
   }
 
-  bool isFavoriteTV(InitialData item) {
+  bool isFavoriteTV(InitData item) {
     var temp = _favoriteTVs.firstWhere((element) => element.id == item.id,
         orElse: () => null);
     return temp != null;
@@ -295,7 +295,7 @@ class Lists with ChangeNotifier {
     notifyListeners();
   }
 
-  bool addNewTVToList(int listIndex, InitialData item) {
+  bool addNewTVToList(int listIndex, InitData item) {
     final temp = _tvLists[listIndex]
         .items
         .firstWhere((element) => element.id == item.id, orElse: () => null);
@@ -335,7 +335,7 @@ class Lists with ChangeNotifier {
     SharedPreferences prefs = await _prefs;
     var favorites = [];
     _favoriteTVs.forEach((element) {
-      favorites.add(InitialData.toJson(element));
+      favorites.add(InitData.toJson(element));
     });
     prefs.setString(FAVORITE_TVS, json.encode(favorites));
   }
