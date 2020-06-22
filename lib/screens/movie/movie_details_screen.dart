@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -782,8 +783,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    initData = ModalRoute.of(context).settings.arguments as InitData;
-    // print('initData------------> $initData');
+    initData = ModalRoute.of(context).settings.arguments as InitData;    
+    // print('initData------------> ${InitData.toJson(initData)}');
     // if(!_isLoading)
     // print('details -----------> ${film.genreIDs}');
     return SafeArea(
@@ -810,7 +811,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                         left: LEFT_PADDING,
                         right: LEFT_PADDING,
                       ),
-                      child: Text('Storyline', style: kTitleStyle2),
+                      child: Text('Storyline', style: kTitleStyle3),
                     ),
                     _isLoading
                         ? Container(
@@ -934,16 +935,19 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
   }
 
   String _getYearAndDuration() {
-    String str = '';
-    if (widget.film.date == null) {
-      str += 'N/A';
-    } else {
-      str += widget.film.date.year.toString();
-    }
-    if (widget.film.duration != null) {
-      str = str + ' \u2022 ' + widget.film.duration.toString() + ' min';
-    }
-    return str;
+    return widget.isLoading
+        ? _getYear() + ' \u2022 ' + '00 mins'
+        : _getYear() + ' \u2022 ' + '${_getDuration()} mins';
+  }
+
+  dynamic _getDuration() {
+    return widget.film.duration ?? 'N/A';
+  }
+
+  String _getYear() {
+    return widget.initData.releaseDate != null
+        ? widget.initData.releaseDate.year.toString()
+        : 'N/A';
   }
 
   Route _buildRoute(Widget toPage) {
@@ -1117,23 +1121,6 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                         SizedBox(height: 10),
                         Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: kTextBorderColor, width: 2)),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 1),
-                                child: Text(
-                                  // 'Action',
-                                  _getGenre(),
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white54),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
                             Text(
                               _getRating(),
                               style: kSubtitle1,
@@ -1141,14 +1128,29 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                             SizedBox(width: 5),
                             Icon(Icons.favorite_border,
                                 color: Theme.of(context).accentColor),
+                            SizedBox(width: 10),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 1),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(
+                                      color: kTextBorderColor, width: 2)),
+                              child: Text(
+                                // 'Action',
+                                _getGenre(),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white54),
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 10),
-                        if (!widget.isLoading)
-                          Text(
-                            _getYearAndDuration(),
-                            style: kSubtitle1,
-                          ),
+                        // if (!widget.isLoading)
+                        Text(
+                          _getYearAndDuration(),
+                          style: kSubtitle1,
+                        ),
                       ],
                     ),
                   ),
@@ -1185,9 +1187,21 @@ class _OverviewState extends State<Overview>
 
   void onTap() => setState(() => _expanded = true);
 
+  int getLength() {
+    double maxHeight = widget.constraints.maxHeight * 0.3 - 2;
+    double maxWidth = widget.constraints.maxWidth - 2 * LEFT_PADDING;// padding of two sides
+    // divide available width by 6(width of a character)
+    int charInOneLine = (maxWidth ~/ 6);
+    // divide number of lines by 32(font with size 16 and lineHeight 1.5, which is 32)
+    int noOfLines = maxHeight ~/ 32;
+
+    return charInOneLine * noOfLines;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    print('length --------> ${getLength()}');
     RegExp pattern = new RegExp(r'\n', caseSensitive: false);
     final overview = widget.initData.overview.replaceAll(pattern, '');
     return AnimatedContainer(
@@ -1195,7 +1209,7 @@ class _OverviewState extends State<Overview>
       constraints: _expanded
           ? BoxConstraints(
               maxHeight: 400,
-              minHeight: widget.constraints.maxHeight * 0.3 - 2,
+              minHeight: widget.constraints.maxHeight * 0.3 - 2,              
             )
           : BoxConstraints(
               minHeight: widget.constraints.maxHeight * 0.3 - 2,
@@ -1210,7 +1224,9 @@ class _OverviewState extends State<Overview>
             onTap: onTap,
             trimExpandedText: '',
             trimCollapsedText: '...More',
-            trimLines: 7,
+            // trimLines: 7,     
+            trimLength: getLength(),
+            trimMode: TrimMode.Length,       
           ),
         ),
       ),

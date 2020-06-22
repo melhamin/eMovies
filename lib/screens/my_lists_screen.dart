@@ -43,7 +43,6 @@ class _MyListsScreenState extends State<MyListsScreen>
     super.dispose();
   }
 
-
   void _changeTab(int newIndex) {
     setState(() {
       currentIndex = newIndex;
@@ -53,19 +52,14 @@ class _MyListsScreenState extends State<MyListsScreen>
 
   List<Widget> _getTabs() {
     return [
-      Tab(
-        child: Text('Movies', style: kTopBarTextStyle),
-      ),
-      Tab(
-        icon: Text('TV Shows', style: kTopBarTextStyle),
-      ),
+      Tab(child: Text('Movies')),
+      Tab(icon: Text('TV Shows')),
     ];
   }
 
   Widget _buildTabContent() {
     return TabBarView(
       controller: _tabController,
-      
       children: [
         MoviesLists(),
         TVshowsLists(),
@@ -90,11 +84,10 @@ class _MyListsScreenState extends State<MyListsScreen>
         resizeToAvoidBottomPadding: false,
         body: NestedScrollView(
           headerSliverBuilder: (ctx, _) {
-            return [              
+            return [
               SliverAppBar(
                 backgroundColor: BASELINE_COLOR,
                 centerTitle: false,
-
                 title: Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Text(
@@ -141,7 +134,3 @@ class _MyListsScreenState extends State<MyListsScreen>
     );
   }
 }
-
-
-
-

@@ -9,17 +9,15 @@ class Tabs extends StatelessWidget {
   Tabs({this.tabs, this.controller, this.onTap, this.isScrollable = true});
   @override
   Widget build(BuildContext context) {
-    return TabBar(      
-       isScrollable: isScrollable,      
-      indicatorSize: TabBarIndicatorSize.tab,
-      indicatorPadding: EdgeInsets.only(right: 35),
-      labelPadding: EdgeInsets.only(right: 35),
-      controller: controller,
-      unselectedLabelColor: Colors.black,
-      unselectedLabelStyle: TextStyle(
-          fontFamily: 'Helvatica', fontSize: 16, color: Colors.white12),
-      onTap: onTap,      
-      tabs: tabs                    
-    );
+    return TabBar(
+        isScrollable: isScrollable,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorPadding: EdgeInsets.only(right: 35),
+        labelPadding: EdgeInsets.only(right: 35),
+        controller: controller,
+        labelStyle: kSelectedTabStyle,        
+        unselectedLabelStyle: kUnselectedTabStyle,
+        onTap: onTap,
+        tabs: tabs);
   }
 }

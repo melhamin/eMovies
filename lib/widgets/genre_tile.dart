@@ -67,7 +67,7 @@ class GenreTile extends StatelessWidget {
               ),
               Positioned(
                 // alignment: Alignment.bottomCenter,
-                bottom: 0,
+                bottom: -2,
                 child: Container(
                   height: constraints.maxHeight * 0.6,
                   width: constraints.maxWidth,
@@ -84,8 +84,8 @@ class GenreTile extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 15,
-                left: 15,
+                bottom: 10,
+                left: 10,
                 child: Text(
                   title,
                   style: kTitleStyle2,
@@ -100,8 +100,4 @@ class GenreTile extends StatelessWidget {
       },
     );
   }
-
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
 }

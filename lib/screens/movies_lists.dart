@@ -25,7 +25,7 @@ class _MoviesListsState extends State<MoviesLists> {
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
-    _listKey = GlobalKey<AnimatedListState>(debugLabel: 'MoviesListsKey');
+    _listKey = GlobalKey<AnimatedListState>();
     // animated lists    
   }
 
@@ -183,16 +183,6 @@ class _MoviesListsState extends State<MoviesLists> {
     );
   }
 
-  // void add() {
-  //   _listKey.currentState.insertItem(0,
-  //         duration: Duration(milliseconds: 500)); // add item to animated list      
-  // }
-
-
-  // static void insertToAnimatedList() {
-  //   add();
-  // }
-
   /// Presents a modalBottomSheet and lets user to give a name and add new list
   void _showAddDialog(BuildContext context) {
     showModalBottomSheet(
@@ -287,10 +277,8 @@ class _MoviesListsState extends State<MoviesLists> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // super.build(context);
-    final moviesLists = Provider.of<Lists>(context).moviesLists;    
-    // final favoriteMovies = Provider.of<Lists>(context).favoriteMovies;
+  Widget build(BuildContext context) {    
+    final moviesLists = Provider.of<Lists>(context).moviesLists;        
     return ListView(
       key: PageStorageKey('moviesLists'),
       padding: const EdgeInsets.only(bottom: kToolbarHeight),
@@ -299,8 +287,7 @@ class _MoviesListsState extends State<MoviesLists> {
       children: <Widget>[
         _buildCustomTiles(context, 'Create List',
             Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
-            () {
-          // Provider.of<Lists>(context, listen: false).deleteAllPrefs();
+            () {          
           _showAddDialog(context);
         }),
         SizedBox(height: 5),

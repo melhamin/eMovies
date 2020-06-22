@@ -25,11 +25,12 @@ class _AddItemDialogState extends State<AddItemDialog> {
 
   bool _initLoaded = true;
 
-  FocusNode _focusNode = FocusNode();
+  FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     _formKey = GlobalKey<FormState>();
     _textEditingController = TextEditingController();
   }

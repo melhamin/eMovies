@@ -282,29 +282,28 @@ class _GridItemState extends State<GridItem>
                       ),
                       SizedBox(height: 5),
                       Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.white.withOpacity(0.4),
-                                    width: 2)),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 1),
-                              child: Text(_getGenre(), style: kBodyStyle2),
-                            ),
-                          ),
+                        children: [                          
                           SizedBox(width: 5),
                           Text(
                             _getRating(),
                             style: kBodyStyle2,
                           ),
-                          SizedBox(width: 5),
+                          SizedBox(width: 3),
                           Icon(
                             Icons.favorite_border,
                             color: Theme.of(context).accentColor,
                             size: 30,
+                          ),
+                      SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 1),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    color: Colors.white.withOpacity(0.4),
+                                    width: 2)),
+                            child: Text(_getGenre(), style: kBodyStyle2),
                           ),
                         ],
                       ),

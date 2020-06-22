@@ -126,46 +126,39 @@ class MovieItem extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Helvatica',
-                              fontSize: 16,
-                              // fontWeight: FontWeight.bold,
+                              fontSize: 16,                              
                               color: Colors.white.withOpacity(0.87),
                             ),
-                          ),
-                          // Text(
-                          //   _formatDate(item.date),
-                          //   style: kSubtitle1,
-                          // ),
+                          ),                         
                           Container(
                             width: constraints.maxWidth,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border:
-                                          Border.all(color: Colors.white38)),
-                                  child: Padding(
+                                Row(
+                                  children: [
+                                    Text(
+                                      _getRatings(item.voteAverage),
+                                      style: kSubtitle1,
+                                    ),
+                                    SizedBox(width: 2),
+                                    Icon(Icons.favorite_border,
+                                        color: Theme.of(context).accentColor),
+                                  ],
+                                ),
+                                FittedBox(
+                                  child: Container(
+                                    margin: const EdgeInsets.only(right: 3),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5.0, vertical: 2),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border:
+                                            Border.all(color: Colors.white38)),
                                     child: Text(
                                       getGenreName() ?? 'N/A',
                                       style: kSubtitle1,
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 5),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        _getRatings(item.voteAverage),
-                                        style: kSubtitle1,
-                                      ),
-                                      SizedBox(width: 2),
-                                      Icon(Icons.favorite_border,
-                                          color: Theme.of(context).accentColor),
-                                    ],
                                   ),
                                 ),
                               ],

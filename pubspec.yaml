@@ -24,8 +24,7 @@ dependencies:
   provider: ^4.0.4
   cached_network_image: ^2.0.0
   intl: ^0.16.1
-  rating_bar: ^0.2.0  
-  transparent_image: ^1.0.0 
+  rating_bar: ^0.2.0    
   flutter_spinkit: "^4.1.2"   
   hexcolor: ^1.0.1
   youtube_player_flutter: ^6.1.0+7 
@@ -35,6 +34,9 @@ dependencies:
   shared_preferences: ^0.5.7+2
   simple_animations: ^2.2.1
   flutter_statusbarcolor: ^0.2.3
+  firebase_core: ^0.4.5
+  firebase_database: ^3.1.6
+  cloud_firestore: ^0.13.7
   # webview_flutter: ^0.3.22+1
 
   
@@ -62,12 +64,9 @@ flutter:
     - .env
     
     - assets/images/background_image_1.jpg
-    - assets/images/movie_list_image.jpg
-    - assets/images/logo.png
-    - assets/images/poster_placeholder.png        
-    - assets/images/placeholder.png   
-    - assets/icons/play.svg
-    - assets/icons/play.gif
+    - assets/images/placeholder.png
+    - assets/images/logo.png        
+    - assets/icons/play.svg    
 
     - assets/images/movies/action.jpg
     - assets/images/movies/adventure.jpg
@@ -126,20 +125,7 @@ flutter:
       fonts:
         - asset: assets/fonts/helvatica/Helvetica.ttf
         # - asset: assets/fonts/Roboto-Medium.ttf 
-
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Italic.ttf
-        - asset: assets/fonts/Roboto-Medium.ttf 
-
-    - family: RobotoCondensed
-      fonts:
-        - asset: assets/fonts/roboto_condensed/RobotoCondensed-Regular.ttf          
-        # - asset: assets/fonts/Roboto-Medium.ttf          
-    - family: OpenSans
-      fonts:
-        - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
-        # - asset: assets/fonts/Roboto-Medium.ttf          
+    
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

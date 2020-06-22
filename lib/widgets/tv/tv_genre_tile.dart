@@ -71,7 +71,7 @@ class TVGenreTile extends StatelessWidget {
                 left: 15,
                 child: Text(
                   title,
-                  style: kTitleStyle,
+                  style: kTitleStyle2,
                 ),
               ),
             ],
@@ -81,8 +81,4 @@ class TVGenreTile extends StatelessWidget {
       },
     );
   }
-
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
 }

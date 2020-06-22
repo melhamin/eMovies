@@ -221,7 +221,7 @@ class Search with ChangeNotifier {
       lists.forEach((element) {
         _recentSearches.add(InitData.fromJson(element));
       });
-    }  
+    }
     notifyListeners();
   }
 
@@ -247,6 +247,7 @@ class Search with ChangeNotifier {
     // update my top genres list
     _myTopMovieGenres.clear();
     temp.forEach((element) {
+      if(myTopMovieGenres.values.elementAt(element) >= 5)
       _myTopMovieGenres.add(keys[element]);
     });
 
@@ -263,18 +264,22 @@ class Search with ChangeNotifier {
     myTopTVGenres.forEach((key, value) {
       keys.add(int.parse(key));
     });
-    // intialize list to hold first four indexes
+    // intialize list to hold first four indices
     final List<int> temp = [0, 1, 2, 3];
+    // go through all other elments and check if anyone is bigger 
     for (int i = 4; i < list.length; i++) {
       int t = list[i];
-      // check if t is bigger than list at index index
+      // check if t is bigger than list at index (index)
       int res = temp.indexWhere((index) => t > list[index]);
       // if is bigger then change elemnt at index res to new value t
       if (res != -1) temp[res] = i;
     }
+    // print('tv top -----------> $myTopTVGenres');
     // update my top genres list
     _myTopTVGenres.clear();
     temp.forEach((element) {
+      // print('element --------> $element');
+      if(myTopTVGenres.values.elementAt(element) >= 5)
       _myTopTVGenres.add(keys[element]);
     });
 
@@ -339,12 +344,11 @@ class Search with ChangeNotifier {
     '18': 0,
     '10751': 0,
     '10762': 0,
-    '10763': 0,
+    '878': 0,
     '9648': 0,
+    '10763': 0,
     '10764': 0,
     '10765': 0,
-    '878': 0,
-    '10770': 0,
     '10767': 0,
     '10766': 0,
     '10768': 0,
