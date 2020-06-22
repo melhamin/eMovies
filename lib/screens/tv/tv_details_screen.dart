@@ -486,23 +486,10 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
   }
 
   Route _buildRoute(Widget toPage, [dynamic args]) {
-    return PageRouteBuilder(
+    return MaterialPageRoute(
+      builder: (context) => toPage,
       settings: RouteSettings(arguments: args),
-      pageBuilder: (context, animation, secondaryAnimation) => toPage,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+    );      
   }
 
   List<Widget> _buildCast() {    
@@ -837,23 +824,10 @@ class BackgroundImage extends StatelessWidget {
   final BoxConstraints constraints;
 
   Route _buildRoute(Widget toPage) {
-    return PageRouteBuilder(
-      settings: RouteSettings(arguments: [id, MediaType.TV]),
-      pageBuilder: (context, animation, secondaryAnimation) => toPage,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+    return MaterialPageRoute(
+      builder: (context) => toPage,
+      settings: RouteSettings(arguments: [id, MediaType.TV])
+    );      
   }
 
   @override

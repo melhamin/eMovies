@@ -18,6 +18,8 @@ class CastDetailsScreen extends StatelessWidget {
   CastDetailsScreen(this.cast);
 
   Route _buildRoute(dynamic item) {
+
+    
     return PageRouteBuilder(
       settings: RouteSettings(
         arguments: item,

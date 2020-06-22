@@ -149,7 +149,7 @@ class _ListItemScreenState extends State<ListItemScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     final items = getListItems();
     return SafeArea(
       child: Scaffold(

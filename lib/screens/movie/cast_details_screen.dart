@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart' show MovieDetailsScreen;
+import 'package:e_movies/screens/movie/movie_details_screen.dart'
+    show MovieDetailsScreen;
 import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/providers/cast.dart';
@@ -62,10 +63,10 @@ class _CastDetailsState extends State<CastDetails>
   }
 
   Widget _buildTabBar() {
-    return NavBar(      
+    return NavBar(
       tabController: _tabController,
       tabs: [
-        Tab(          
+        Tab(
           child: Align(
             alignment: Alignment.center,
             child: Text('Biography', style: kTitleStyle2),
@@ -200,26 +201,9 @@ class Movies extends StatelessWidget {
 
   Route _buildRoute(MovieModel item) {
     final initData = InitData.formObject(item);
-    return PageRouteBuilder(
-      settings: RouteSettings(
-        arguments: initData,
-      ),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          MovieDetailsScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+    return MaterialPageRoute(
+        builder: (context) => MovieDetailsScreen(),
+        settings: RouteSettings(arguments: initData));   
   }
 
   void _onTap(BuildContext context, MovieModel item) {

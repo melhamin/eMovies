@@ -50,23 +50,27 @@ class _TVshowsListsState extends State<TVshowsLists> {
   Route _buildRoute(String title, MediaType mediaType,
       [bool isFavorites = false]) {
     // print('list --------------> $list');
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => (ListItemScreen(
-          title: title, mediaType: MediaType.TV, isFavorites: isFavorites)),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
+    return MaterialPageRoute(
+      builder: (context) => ListItemScreen(title: title, mediaType: mediaType, isFavorites: isFavorites),
+      
     );
+    // return PageRouteBuilder(
+    //   pageBuilder: (context, animation, secondaryAnimation) => (ListItemScreen(
+    //       title: title, mediaType: MediaType.TV, isFavorites: isFavorites)),
+    //   transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //     var begin = const Offset(
+    //         1, 0); // if x > 0 and y = 0 transition is from right to left
+    //     var end =
+    //         Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+    //     var tween = Tween(begin: begin, end: end);
+    //     var offsetAnimation = animation.drive(tween);
+
+    //     return SlideTransition(
+    //       position: offsetAnimation,
+    //       child: child,
+    //     );
+    //   },
+    // );
   }
 
   /// Inserts, already loaded lists from shared preferences, to AnimatedList

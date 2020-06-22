@@ -13,26 +13,12 @@ class ListDataItem extends StatelessWidget {
   ListDataItem(this.initData);
 
   Route _buildRoute() {
-    return PageRouteBuilder(
-      settings: RouteSettings(arguments: initData),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          initData.mediaType == MediaType.Movie
+    return MaterialPageRoute(
+      builder: (context) => initData.mediaType == MediaType.Movie
               ? MovieDetailsScreen()
               : TVDetailsScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+      settings: RouteSettings(arguments: initData)
+    );      
   }
 
   String _getGenres(List<dynamic> genreIDs) {
