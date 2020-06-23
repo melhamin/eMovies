@@ -76,6 +76,9 @@ class Lists with ChangeNotifier {
   static const TV_LISTS = 'TVLists';
   static const FAVORITE_TVS = 'FavoriteTVs';
 
+  bool movieListsUpdated = false;
+  bool tvListsUpdated = false;
+
   // Movies
   List<ListItemModel> _moviesLists = [];
   List<InitData> _favoriteMovies = [];
@@ -100,6 +103,28 @@ class Lists with ChangeNotifier {
 
   List<InitData> get favoriteTVs {
     return _favoriteTVs;
+  }
+
+  // for updating movies animated list when item added from outside the lists screeen
+  bool get isMovieListsUpdated {
+    return movieListsUpdated;
+  }
+
+  void toggleMovieListsUpdated() {
+    movieListsUpdated = false;
+    notifyListeners();
+    // print('toggle --------> $movieListsUpdated');
+  }
+
+  void toggleTVListsUpdated() {
+    tvListsUpdated = false;
+    notifyListeners();
+    // print('toggle --------> $movieListsUpdated');
+  }
+
+  // for updating tv animated list when item added from outside the lists screeen
+  bool get isTVListsUpdated {
+    return tvListsUpdated;
   }
 
 
@@ -168,14 +193,22 @@ class Lists with ChangeNotifier {
     return true;
   }
 
-  bool addNewMovieList(String title) {
+  bool addNewMovieList(String title, [bool toggleListsUpdated = false]) {
     // check if item already exists in the list    
     final temp = _moviesLists.firstWhere((element) => element.title == title,
         orElse: () => null);
     if (temp != null) return false;
 
     _moviesLists.insert(0, ListItemModel(title));
+
+    // if lists are updated from outside the lists screen toggle movieListsUpdated to insert new
+    // item to the animated list
+    if(toggleListsUpdated) movieListsUpdated = true;
     notifyListeners();
+    // print('add ---------> $movieListsUpdated');
+    // set is back to false so that it adds only once
+    // movieListsUpdated = false;
+    // toggle();
     saveMovieLists();
     return true;
   }
@@ -307,13 +340,20 @@ class Lists with ChangeNotifier {
     return true;
   }
 
-  bool addNewTVList(String title) {
+  bool addNewTVList(String title, [bool toggleListsUpdated = false]) {
     final temp = _tvLists.firstWhere((element) => element.title == title,
         orElse: () => null);
     if (temp != null) return false;
 
     _tvLists.insert(0, ListItemModel(title));
+
+ // if lists are updated from outside the lists screen toggle movieListsUpdated to insert new
+    // item to the animated list
+    if(toggleListsUpdated) tvListsUpdated = true;
     notifyListeners();
+
+    // set is back to false so that it adds only once
+    tvListsUpdated = false;    
     saveTVLists();
     return true;
   }

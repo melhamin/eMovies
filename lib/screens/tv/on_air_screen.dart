@@ -115,7 +115,7 @@ class _AllMoviesState extends State<OnAirScreen> {
             children: [
                GridView.builder(
                   // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                  physics: const BouncingScrollPhysics(),
+                  
                   controller: scrollController,
                   key: const PageStorageKey('UpcomingScreen'),
                   cacheExtent: 12,
@@ -158,7 +158,7 @@ class _AllMoviesState extends State<OnAirScreen> {
         //         Flexible(
         //           child: GridView.builder(
         //             // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-        //             physics: const BouncingScrollPhysics(),
+        //             
         //             controller: scrollController,
         //             key: PageStorageKey('OnAirScreen'),
         //             cacheExtent: 12,

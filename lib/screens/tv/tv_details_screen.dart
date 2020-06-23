@@ -210,7 +210,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                     }, true),
                     _buildDialogButtons('Create', () {
                       Provider.of<Lists>(context, listen: false)
-                          .addNewTVList(_textEditingController.text);
+                          .addNewTVList(_textEditingController.text, true);
                       _textEditingController.clear();
                       Navigator.of(context).pop();
                     }),
@@ -309,8 +309,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
             Container(
               height: MediaQuery.of(context).size.height * 0.75,
               child: ListView.builder(
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(top: 20, right: LEFT_PADDING),
                 itemCount:
                     lists.length + 1, // since first element is New List button
@@ -362,7 +361,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
         children: [
           IconButton(
             icon: Icon(
-              isInFavorites ? Icons.favorite_border : Icons.favorite_border,
+              isInFavorites ? Icons.favorite: Icons.favorite_border,
               color: Theme.of(context).accentColor,
               size: 35,
             ),
@@ -398,8 +397,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     }
 
     return item.images.length > 0
-        ? GridView.builder(
-            physics: BouncingScrollPhysics(),
+        ? GridView.builder(            
             padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             // controller: _scrollController,
             itemCount: images.length,
@@ -670,7 +668,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                 return ListView(
                   // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
                   addAutomaticKeepAlives: true,
-                  physics: const BouncingScrollPhysics(),
+                  
                   children: [
                     BackgroundImage(
                         id: initData.id,
@@ -995,7 +993,7 @@ class Cast extends StatelessWidget {
         if (cast != null && cast.length > 0)
           Flexible(
             child: GridView.builder(
-              physics: const BouncingScrollPhysics(),
+              
               itemCount: cast.length,
               itemBuilder: (context, index) {
                 CastModel item = cast[index];
@@ -1035,8 +1033,7 @@ class SimilarTV extends StatelessWidget {
               ),
               SizedBox(height: 5),
               Flexible(
-                child: GridView.builder(
-                  physics: BouncingScrollPhysics(),
+                child: GridView.builder(                  
                   padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
                   itemCount: similar.length,
                   itemBuilder: (context, index) {

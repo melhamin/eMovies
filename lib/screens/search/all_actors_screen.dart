@@ -51,7 +51,7 @@ class CastDetailsScreen extends StatelessWidget {
             ListView.builder(
           key: PageStorageKey('AllActorsScreen'),
           padding: const EdgeInsets.only(top: 40),
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),          
+          physics: const AlwaysScrollableScrollPhysics(),          
           itemCount: cast.length,
           itemBuilder: (_, i) {
             return InkWell(

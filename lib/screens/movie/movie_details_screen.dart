@@ -224,7 +224,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
 
     return film.images.length > 0
         ? GridView.builder(
-            physics: const BouncingScrollPhysics(),
+            
             padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             // controller: _scrollController,
             itemCount: images.length,
@@ -510,7 +510,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     if (_textEditingController.text.isEmpty) return;
     // print('tex---------> ${_textEditingController.text}');
     final result = Provider.of<Lists>(context, listen: false)
-        .addNewMovieList(_textEditingController.text);
+        .addNewMovieList(_textEditingController.text, true); // toggle updated lists too
     // Set _isEmpty to true and clear the textfield
 
     if (result) {
@@ -676,7 +676,8 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
           ),
         ),
         height: MediaQuery.of(context).size.height * 0.85,
-        child: ListView(
+        child: 
+        ListView(
           children: <Widget>[
             Container(
               height: 70,
@@ -723,8 +724,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             Container(
               height: MediaQuery.of(context).size.height * 0.75,
               child: ListView.builder(
-                physics: const BouncingScrollPhysics(
-                    parent: const AlwaysScrollableScrollPhysics()),
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(top: 20, right: LEFT_PADDING),
                 itemCount:
                     lists.length + 1, // since first element is New List button
@@ -777,12 +777,14 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     // print('details -----------> ${film.genreIDs}');
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
         body: Stack(
           children: [
             LayoutBuilder(
               builder: (ctx, constraints) {
                 return ListView(
-                  physics: const BouncingScrollPhysics(),
+                  
                   // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
                   children: [
                     BackgroundAndTitle(
@@ -1166,7 +1168,7 @@ class _OverviewState extends State<Overview>
   void onTap() => setState(() => _expanded = true);
 
   int getLength() {
-    double maxHeight = widget.constraints.maxHeight * 0.3 - 2;
+    double maxHeight = widget.constraints.maxHeight * 0.3 - 12;
     double maxWidth = widget.constraints.maxWidth - 2 * LEFT_PADDING;// padding of two sides
     // divide available width by 6(width of a character)
     int charInOneLine = (maxWidth ~/ 6);
@@ -1302,7 +1304,7 @@ class Cast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      physics: const BouncingScrollPhysics(),
+      
       itemCount: cast.length,
       itemBuilder: (ctx, i) {
         return CastItem(
@@ -1332,8 +1334,7 @@ class SimilarMovies extends StatelessWidget {
         ),
         SizedBox(height: 5),
         Flexible(
-          child: GridView.builder(
-            physics: BouncingScrollPhysics(),
+          child: GridView.builder(            
             padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             itemCount: similar.length,
             itemBuilder: (context, index) {

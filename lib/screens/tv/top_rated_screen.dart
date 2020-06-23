@@ -104,7 +104,7 @@ class _AllMoviesState extends State<TopRatedScreen> {
             children: [
                GridView.builder(
                   // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                  physics: const BouncingScrollPhysics(),
+                  
                   controller: scrollController,
                   key: const PageStorageKey('UpcomingScreen'),
                   cacheExtent: 12,
@@ -147,7 +147,7 @@ class _AllMoviesState extends State<TopRatedScreen> {
         //         Flexible(
         //           child: GridView.builder(
         //             // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-        //             physics: const BouncingScrollPhysics(),
+        //             
         //             controller: scrollController,
         //             key: PageStorageKey('TopRatedScreen'),
         //             cacheExtent: 12,

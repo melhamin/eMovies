@@ -107,8 +107,7 @@ class _AllResultsState extends State<AllResults> {
     return ListView(
       key: PageStorageKey('All Results'),
       padding: const EdgeInsets.only(bottom: kToolbarHeight),
-      physics: const BouncingScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics()),
+      physics: const  AlwaysScrollableScrollPhysics(),
       children: <Widget>[
         if (searchHistory.length > 0)
           Padding(
@@ -206,7 +205,7 @@ class _AllResultsState extends State<AllResults> {
   Widget _buildActors(List<ActorModel> items) {
     return GridView.builder(
       // padding:  EdgeInsets.only(left: LEFT_PADDING, right: LEFT_PADDING),
-      physics: const BouncingScrollPhysics(),
+      
       itemCount: items.length > 10 ? 10 : items.length,
       itemBuilder: (ctx, i) {
         return CastItem(
@@ -261,7 +260,7 @@ class _AllResultsState extends State<AllResults> {
           ? _buildRecentSearches(context)
           : ListView(
               padding: const EdgeInsets.only(top: 10, bottom: kToolbarHeight),
-              physics: const BouncingScrollPhysics(),
+              
               children: [
                 ...[
                   _buildSectionTitle('Actors', () => widget.handleTabChange(3)),

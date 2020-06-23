@@ -118,8 +118,7 @@ class _MoviesScreenState extends State<TVScreen>
         body: LayoutBuilder(
           builder: (context, constraints) {
             return ListView(
-              padding: EdgeInsets.only(bottom: kToolbarHeight),
-              physics: BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: kToolbarHeight),              
               children: [
                 _buildSectionTitle('Genres', () {
                   Navigator.of(context).push(_buildRoute(TrendingTVScreen()));
@@ -185,8 +184,7 @@ class _MoviesScreenState extends State<TVScreen>
     );
   }
 
-  @override
-  // TODO: implement wantKeepAlive
+  @override  
   bool get wantKeepAlive => true;
 }
 
@@ -197,9 +195,8 @@ class Grid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      key: PageStorageKey(storageKey),
-      physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      key: PageStorageKey(storageKey),      
+      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
       itemCount: tv.length > 20 ? 20 : tv.length,
       itemBuilder: (context, index) {
         return tvWid.TVItem(

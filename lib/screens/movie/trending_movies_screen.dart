@@ -109,7 +109,7 @@ class _TrendingMoviesScreenState extends State<TrendingMoviesScreen>
             children: [
               GridView.builder(
                 // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                physics: const BouncingScrollPhysics(),
+                
                 controller: scrollController,
                 key: const PageStorageKey('TrendingMoviesScreen'),
                 cacheExtent: 12,

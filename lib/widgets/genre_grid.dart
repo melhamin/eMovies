@@ -14,7 +14,7 @@ class GenreGrid extends StatelessWidget {
         // controller: _scrollController,              
         padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
         key: PageStorageKey('GenresPageGrid'),
-        physics: const BouncingScrollPhysics(),
+        
         addAutomaticKeepAlives: true,
         itemCount: itemsList.length,
         itemBuilder: (context, i) {

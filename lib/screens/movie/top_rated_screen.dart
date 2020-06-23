@@ -103,7 +103,7 @@ class _AllMoviesState extends State<TopRated>  {
             backgroundColor: Theme.of(context).primaryColor,
             child: GridView.builder(
               // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-              physics: const BouncingScrollPhysics(),
+              
               controller: scrollController,
               key: PageStorageKey('TopRated'),
               // cacheExtent: 12,

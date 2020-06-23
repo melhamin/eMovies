@@ -25,7 +25,7 @@ class MyListsScreen extends StatefulWidget {
 }
 
 class _MyListsScreenState extends State<MyListsScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isEditing = false;
 
   TabController _tabController;
@@ -78,6 +78,7 @@ class _MyListsScreenState extends State<MyListsScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -133,4 +134,7 @@ class _MyListsScreenState extends State<MyListsScreen>
       ),
     );
   }
+
+  @override  
+  bool get wantKeepAlive => true;
 }

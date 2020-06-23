@@ -14,19 +14,21 @@ class MoviesLists extends StatefulWidget {
   _MoviesListsState createState() => _MoviesListsState();
 }
 
-class _MoviesListsState extends State<MoviesLists> {
+class _MoviesListsState extends State<MoviesLists>
+    with AutomaticKeepAliveClientMixin {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
   bool _isEditing = false;
   bool _initLoaded = true;
+  bool _isListLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
     _listKey = GlobalKey<AnimatedListState>();
-    // animated lists    
+    // animated lists
   }
 
   @override
@@ -37,11 +39,12 @@ class _MoviesListsState extends State<MoviesLists> {
 
   @override
   void didChangeDependencies() {
-    if(_initLoaded) {      
-      _loadLists();      
+    if (_initLoaded) {
+      _loadLists();
     }
-    print('change -----------> ');
+    // print('change -----------> ');
     _initLoaded = false;
+    _isListLoaded = true;
     super.didChangeDependencies();
   }
 
@@ -49,8 +52,9 @@ class _MoviesListsState extends State<MoviesLists> {
   /// [list] Selected list item
   Route _buildRoute(String title, MediaType mediaType,
       [bool isFavorites = false]) {
-   return MaterialPageRoute(
-      builder: (context) => ListItemScreen(title: title, mediaType: mediaType, isFavorites: isFavorites),      
+    return MaterialPageRoute(
+      builder: (context) => ListItemScreen(
+          title: title, mediaType: mediaType, isFavorites: isFavorites),
     );
   }
 
@@ -63,7 +67,7 @@ class _MoviesListsState extends State<MoviesLists> {
     var future = Future(() {});
     for (var i = 0; i < _myLists.length; i++) {
       future = future.then((value) {
-        // Creates a delayed future for animating items
+        // Create a delayed future to animate items
         return Future.delayed(Duration(milliseconds: 100), () {
           // insert item to the list
           _listKey.currentState.insertItem(i);
@@ -102,7 +106,7 @@ class _MoviesListsState extends State<MoviesLists> {
       alignment: Alignment.center,
       color: ONE_LEVEL_ELEVATION,
       duration: Duration(seconds: TOAST_DURATION),
-      child: _buildToastMessageIcons(        
+      child: _buildToastMessageIcons(
           Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 70),
           'Removed\n$title'),
     );
@@ -238,7 +242,8 @@ class _MoviesListsState extends State<MoviesLists> {
                 list: list,
                 onTap: () {
                   // pass list's data to buildRoute
-                  Navigator.of(context).push(_buildRoute(list.title, MediaType.Movie));
+                  Navigator.of(context)
+                      .push(_buildRoute(list.title, MediaType.Movie));
                 }),
           ),
           if (_isEditing)
@@ -258,18 +263,27 @@ class _MoviesListsState extends State<MoviesLists> {
     );
   }
 
+  // insert the new listed created from outside this widget to animated list
+  void insertItemAddedFromOutside() {
+    _listKey.currentState.insertItem(0);
+    Provider.of<Lists>(context, listen: false).toggleMovieListsUpdated();
+  }
+
   @override
-  Widget build(BuildContext context) {    
-    final moviesLists = Provider.of<Lists>(context).moviesLists;        
+  Widget build(BuildContext context) {
+    super.build(context);
+    final moviesLists = Provider.of<Lists>(context).moviesLists;
+    final isListUpdated = Provider.of<Lists>(context).isMovieListsUpdated;
+
+    if (isListUpdated) insertItemAddedFromOutside();
+
     return ListView(
-      key: PageStorageKey('moviesLists'),
-      padding: const EdgeInsets.only(bottom: kToolbarHeight),
-      physics: const BouncingScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics()),
+      key: const PageStorageKey('moviesLists'),
+      padding: const EdgeInsets.only(bottom: kToolbarHeight),      
       children: <Widget>[
         _buildCustomTiles(context, 'Create List',
             Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
-            () {          
+            () {
           _showAddDialog(context);
         }),
         SizedBox(height: 5),
@@ -278,16 +292,15 @@ class _MoviesListsState extends State<MoviesLists> {
             'Favorites',
             Icon(Icons.favorite_border,
                 size: 40, color: Theme.of(context).accentColor), () {
-          Navigator.of(context).push(
-              _buildRoute('Favorites', MediaType.Movie, true));
+          Navigator.of(context)
+              .push(_buildRoute('Favorites', MediaType.Movie, true));
         }),
         SizedBox(height: 10),
         AnimatedList(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           key: _listKey,
-          itemBuilder: (ctx, i, animation) {
-            // print('moviesLists[i] ---------> ${moviesLists[i]}');
+          itemBuilder: (ctx, i, animation) {            
             return SlideTransition(
               position: CurvedAnimation(
                 curve: Curves.easeOut,
@@ -304,4 +317,7 @@ class _MoviesListsState extends State<MoviesLists> {
       ],
     );
   }
+
+  @override  
+  bool get wantKeepAlive => true;
 }

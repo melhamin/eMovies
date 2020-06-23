@@ -89,7 +89,7 @@ class _InTheatersGridState extends State<InTheatersGrid>
           Container(            
             child: PageView.builder(
               onPageChanged: _onPageViewChanged,
-              physics: const BouncingScrollPhysics(),
+              
               // itemCount: 10,
               controller: _pageController,
               itemBuilder: (ctx, i) {
@@ -205,28 +205,36 @@ class _GridItemState extends State<GridItem>
     // return str;
   }
 
-  Route _buildRoute() {
-   final initData = InitData.formObject(widget.item);
-    return PageRouteBuilder(
-      settings: RouteSettings(arguments: initData),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          MovieDetailsScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        // var curve = Curves.bounceIn;
-        var tween =
-            Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
-        var offsetAnimation = animation.drive(tween);
+  // Route _buildRoute() {
+  //  final initData = InitData.formObject(widget.item);
+   
+  //   return PageRouteBuilder(
+  //     settings: RouteSettings(arguments: initData),
+  //     pageBuilder: (context, animation, secondaryAnimation) =>
+  //         MovieDetailsScreen(),
+  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+  //       var begin = const Offset(
+  //           1, 0); // if x > 0 and y = 0 transition is from right to left
+  //       var end =
+  //           Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
+  //       // var curve = Curves.bounceIn;
+  //       var tween =
+  //           Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
+  //       var offsetAnimation = animation.drive(tween);
 
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+  //       return SlideTransition(
+  //         position: offsetAnimation,
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
+  Route _buildRoute() {
+    final initData = InitData.formObject(widget.item);
+    return MaterialPageRoute(
+      builder: (context) =>MovieDetailsScreen(),
+      settings: RouteSettings(arguments: initData),
+    );    
   }
 
   @override

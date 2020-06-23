@@ -95,8 +95,7 @@ class _ActorsResultState extends State<ActorsResult> {
                     // controller: _scrollController,
                     padding: const EdgeInsets.only(
                         bottom: kToolbarHeight, left: 10, right: 10, top: 10),
-                    physics: const BouncingScrollPhysics(
-                        parent: const AlwaysScrollableScrollPhysics()),
+                    physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: actors.length,
                     itemBuilder: (ctx, i) {
                       var item = actors[i];

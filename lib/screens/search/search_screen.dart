@@ -490,7 +490,7 @@ class NotSearching extends StatelessWidget {
         ];
       },
       body: ListView(
-        physics: const BouncingScrollPhysics(),
+        
         padding: const EdgeInsets.only(bottom: kToolbarHeight),
         children: <Widget>[
          _buildSectionTitle(context, 'Movies'),          

@@ -111,7 +111,7 @@ class _AllMoviesState extends State<UpcomingScreen>
             children: [
                GridView.builder(
                   // padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-                  physics: const BouncingScrollPhysics(),
+                  
                   controller: scrollController,
                   key: const PageStorageKey('UpcomingScreen'),
                   cacheExtent: 12,

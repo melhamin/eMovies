@@ -171,8 +171,7 @@ class Biography extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        physics: const BouncingScrollPhysics(
-            parent: const AlwaysScrollableScrollPhysics()),
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.only(
             bottom:
                 MediaQuery.of(context).size.height * 0.4 + 2 * kToolbarHeight),
@@ -229,8 +228,7 @@ class Movies extends StatelessWidget {
         ? _buildLoadingIndicator(context)
         : ListView.builder(
             itemCount: item.movies.length,
-            physics: const BouncingScrollPhysics(
-                parent: const AlwaysScrollableScrollPhysics()),
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(
                 bottom:
                     MediaQuery.of(context).size.height * 0.4 + kToolbarHeight),

@@ -14,7 +14,7 @@ class TVshowsLists extends StatefulWidget {
   _TVshowsListsState createState() => _TVshowsListsState();
 }
 
-class _TVshowsListsState extends State<TVshowsLists> {
+class _TVshowsListsState extends State<TVshowsLists> with AutomaticKeepAliveClientMixin {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
@@ -275,15 +275,24 @@ class _TVshowsListsState extends State<TVshowsLists> {
     );
   }
 
+  // insert the new listed created from outside this widget to animated list
+  void insertItemAddedFromOutside() {
+    _listKey.currentState.insertItem(0);
+    Provider.of<Lists>(context).toggleTVListsUpdated();
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final tvLists = Provider.of<Lists>(context).tvLists;
-    final favoriteTVs = Provider.of<Lists>(context).favoriteTVs;
+    final tvListsUpdated = Provider.of<Lists>(context).tvListsUpdated;
+
+    if(tvListsUpdated) insertItemAddedFromOutside();
+
     return ListView(
       key: PageStorageKey('TvLists'),
       padding: const EdgeInsets.only(bottom: kToolbarHeight),
-      physics: const BouncingScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics()),
+      physics:  const AlwaysScrollableScrollPhysics(),
       children: <Widget>[
         _buildCustomTiles(context, 'Create List',
             Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
@@ -305,6 +314,7 @@ class _TVshowsListsState extends State<TVshowsLists> {
           shrinkWrap: true,
           key: _listKey,
           itemBuilder: (ctx, i, animation) {
+            // print('tvLists[i] ---------> $i');
             return SlideTransition(
               position: CurvedAnimation(
                 curve: Curves.easeOut,
@@ -321,4 +331,7 @@ class _TVshowsListsState extends State<TVshowsLists> {
       ],
     );
   }
+
+  @override  
+  bool get wantKeepAlive => true;
 }

@@ -186,9 +186,7 @@ class _ListItemScreenState extends State<ListItemScreen>
                   ],
                 ),
                 body: ListView(
-                  padding: const EdgeInsets.only(top: 15),
-                  physics: const BouncingScrollPhysics(
-                      parent: const AlwaysScrollableScrollPhysics()),
+                  padding: const EdgeInsets.only(top: 15),                  
                   children: [
                     SizedBox(height: 15),
                     Padding(

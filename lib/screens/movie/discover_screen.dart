@@ -131,7 +131,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
   Widget _buildPopularActors(List<CastModel> popularPeople) {
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
-      physics: const BouncingScrollPhysics(),
+      
       itemCount: popularPeople.length > 20 ? 20 : popularPeople.length,
       itemBuilder: (ctx, i) {
         // print('length ++++++++++++++++++ ${popularPeople.length}');
@@ -185,7 +185,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
                 children: [
                   ListView(
                     controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
+                    
                     padding:
                         const EdgeInsets.only(bottom: kToolbarHeight, top: 20),
                     children: <Widget>[
@@ -420,7 +420,7 @@ class Grid extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       key: PageStorageKey(storageKey),
-      physics: const BouncingScrollPhysics(),
+      
       padding: const EdgeInsets.only(
           left: LEFT_PADDING, right: 5), // fix mainAxisSpacing error
       itemCount: items.length > 20 ? 20 : items.length,
@@ -452,7 +452,7 @@ class Grid extends StatelessWidget {
       builder: (context, constraints) {
         return ListView(
           padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT),
-          physics: const BouncingScrollPhysics(),
+          
           children: [
             _buildSectionTitle('Genres', () {
               Navigator.of(context).push(_buildRoute(TrendingMoviesScreen()));

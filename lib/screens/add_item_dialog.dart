@@ -42,7 +42,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     // autoFocus would cause a laggy animation when bottom sheet opens
     if (_initLoaded) {
       print('----------------');
-      Future.delayed(Duration(milliseconds: 200)).then((value) {
+      Future.delayed(Duration(milliseconds: 300)).then((value) {
         _focusNode.requestFocus();
       });
       _initLoaded = false;

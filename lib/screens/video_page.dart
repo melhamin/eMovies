@@ -155,9 +155,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
                             Flexible(
                               child: ListView.separated(
                                 shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(
-                                    parent:
-                                        const AlwaysScrollableScrollPhysics()),
+                                physics:const AlwaysScrollableScrollPhysics(),
                                 itemCount: _videos.length,
                                 separatorBuilder: (context, index) {
                                   return SizedBox(height: 10);

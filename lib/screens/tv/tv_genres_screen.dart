@@ -36,8 +36,7 @@ class _GenresScreenState extends State<GenresScreen>
       body: GridView.builder(  
         controller: _scrollController,      
         padding: const EdgeInsets.only(bottom: APP_BAR_HEIGHT - 2),
-        key: PageStorageKey('GenresPageGrid'),
-        physics: BouncingScrollPhysics(),
+        key: PageStorageKey('GenresPageGrid'),        
         addAutomaticKeepAlives: true,
         itemCount: MOVIE_GENRE_DETAILS.length,
         itemBuilder: (context, i) {

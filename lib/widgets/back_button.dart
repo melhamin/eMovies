@@ -43,7 +43,8 @@ class CustomBackButton extends StatelessWidget {
   }
 
   Widget _buildWithoutText() {
-    return Container(
+    return
+    Container(
         height: 40,
         width: 40,
         decoration: BoxDecoration(
