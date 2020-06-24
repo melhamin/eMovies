@@ -102,7 +102,7 @@ class _TVshowsListsState extends State<TVshowsLists> with AutomaticKeepAliveClie
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -277,8 +277,19 @@ class _TVshowsListsState extends State<TVshowsLists> with AutomaticKeepAliveClie
 
   // insert the new listed created from outside this widget to animated list
   void insertItemAddedFromOutside() {
-    _listKey.currentState.insertItem(0);
-    Provider.of<Lists>(context).toggleTVListsUpdated();
+
+    final loaded = Provider.of<Lists>(context, listen: false).tvListsLoaded;
+    // check if the movies are loaded(otherwise range error will be thrown)
+    if (loaded) {
+      _listKey.currentState.insertItem(0);      
+    }
+
+    // wait for the widget build to finish and the call functions(since these functions call notifylisteners,
+    // which makes the widget to reubild.)
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<Lists>(context, listen: false).toggleTVListsUpdated();
+      Provider.of<Lists>(context, listen: false).setTVListsLoaded();
+    });
   }
 
   @override
@@ -314,7 +325,7 @@ class _TVshowsListsState extends State<TVshowsLists> with AutomaticKeepAliveClie
           shrinkWrap: true,
           key: _listKey,
           itemBuilder: (ctx, i, animation) {
-            // print('tvLists[i] ---------> $i');
+            // print('moviesLists[i] ---------> $i');
             return SlideTransition(
               position: CurvedAnimation(
                 curve: Curves.easeOut,

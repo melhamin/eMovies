@@ -34,7 +34,7 @@ class _MyListsScreenState extends State<MyListsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2, initialIndex: 0);
+    _tabController = TabController(vsync: this, length: 2, initialIndex: 0);    
   }
 
   @override
@@ -96,7 +96,6 @@ class _MyListsScreenState extends State<MyListsScreen>
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Helvatica',
                         color: Colors.white.withOpacity(0.87)),
                   ),
                 ),
@@ -135,6 +134,6 @@ class _MyListsScreenState extends State<MyListsScreen>
     );
   }
 
-  @override  
+  @override
   bool get wantKeepAlive => true;
 }

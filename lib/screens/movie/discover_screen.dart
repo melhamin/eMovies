@@ -94,7 +94,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
         children: [
           Text(title,
               style: TextStyle(
-                fontFamily: 'Helvatica',
+                
                 fontSize: 16,
                 // fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87),
@@ -194,7 +194,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
                             const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
                         child: Text('Discover',
                             style: TextStyle(
-                              fontFamily: 'Helvatica',
+                              
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
                               color: Colors.white.withOpacity(0.87),

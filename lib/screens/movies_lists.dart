@@ -87,7 +87,6 @@ class _MoviesListsState extends State<MoviesLists>
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -265,8 +264,19 @@ class _MoviesListsState extends State<MoviesLists>
 
   // insert the new listed created from outside this widget to animated list
   void insertItemAddedFromOutside() {
-    _listKey.currentState.insertItem(0);
-    Provider.of<Lists>(context, listen: false).toggleMovieListsUpdated();
+
+    final loaded = Provider.of<Lists>(context, listen: false).movieListsLoaded;
+    // check if the movies are loaded(otherwise range error will be thrown)
+    if (loaded) {
+      _listKey.currentState.insertItem(0);      
+    }
+
+    // wait for the widget build to finish and the call functions(since these functions call notifylisteners,
+    // which makes the widget to reubild.)
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<Lists>(context, listen: false).toggleMovieListsUpdated();
+      Provider.of<Lists>(context, listen: false).setMovieListsLoaded();
+    });
   }
 
   @override
@@ -279,7 +289,7 @@ class _MoviesListsState extends State<MoviesLists>
 
     return ListView(
       key: const PageStorageKey('moviesLists'),
-      padding: const EdgeInsets.only(bottom: kToolbarHeight),      
+      padding: const EdgeInsets.only(bottom: kToolbarHeight),
       children: <Widget>[
         _buildCustomTiles(context, 'Create List',
             Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
@@ -300,7 +310,7 @@ class _MoviesListsState extends State<MoviesLists>
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           key: _listKey,
-          itemBuilder: (ctx, i, animation) {            
+          itemBuilder: (ctx, i, animation) {
             return SlideTransition(
               position: CurvedAnimation(
                 curve: Curves.easeOut,
@@ -318,6 +328,6 @@ class _MoviesListsState extends State<MoviesLists>
     );
   }
 
-  @override  
+  @override
   bool get wantKeepAlive => true;
 }

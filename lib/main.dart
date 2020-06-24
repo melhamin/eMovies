@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/screens/main_screen.dart';
 import 'package:e_movies/providers/search.dart';
@@ -34,7 +36,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    if(isIOS) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.black);    
+    }
 //    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
 //        statusBarColor: Colors.white,
 //            systemNavigationBarIconBrightness: Brightness.light,
@@ -54,7 +59,7 @@ class MyApp extends StatelessWidget {
           // primaryColor: Hexcolor('#2c3e50'),
           primaryColor: Colors.black,
           applyElevationOverlayColor: true,
-          fontFamily: 'Helvatica',
+          
           splashColor: Colors.transparent,  
           highlightColor: Colors.transparent,        
           // primarySwatch:,                   

@@ -477,7 +477,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         color: Theme.of(context).accentColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -493,7 +493,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'Helvatica',
+                      
                       color: Theme.of(context).accentColor,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -579,7 +579,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                         color: Hexcolor('#DEDEDE'),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Helvatica',
+                        
                       ),
                       autofocus: true,
                       textInputAction: TextInputAction.go,
@@ -622,7 +622,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -702,7 +702,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                            fontFamily: 'Helvatica',
+                            
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                             color: Theme.of(context).accentColor,

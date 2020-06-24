@@ -62,7 +62,7 @@ class GenreTile extends StatelessWidget {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Colors.black.withOpacity(0.9),
+                          Colors.black.withOpacity(0.8),
                           Colors.black.withOpacity(0.05),                                                    
                         ]),
                   ),

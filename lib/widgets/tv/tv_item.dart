@@ -184,7 +184,7 @@ class TVItem extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontFamily: 'Helvatica',
+                            
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white.withOpacity(0.87),

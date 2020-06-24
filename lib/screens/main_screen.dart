@@ -33,7 +33,7 @@ class _MainScreenState extends State<MainScreen>
     super.initState();
 
     // load lists    
-    Future.delayed(Duration.zero).then((value) {
+    Future.delayed(Duration.zero).then((value) {      
       Provider.of<Lists>(context, listen: false).loadMovieLists();
       Provider.of<Lists>(context, listen: false).loadTVLists();
       Provider.of<Search>(context, listen: false).loadTopMovieGenres();

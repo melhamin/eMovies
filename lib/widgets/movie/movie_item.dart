@@ -81,13 +81,13 @@ class MovieItem extends StatelessWidget {
                   Positioned.fill(
                     bottom: -2,
                     child: Container(
-                      height: constraints.maxHeight * 0.45,
+                      height: constraints.maxHeight * 0.5,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.black.withOpacity(0.9),
-                            Colors.black.withOpacity(0.01),
+                            Colors.black.withOpacity(1),
+                            Colors.black.withOpacity(0.05),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
@@ -109,7 +109,7 @@ class MovieItem extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: 'Helvatica',
+                              
                               fontSize: 16,                              
                               color: Colors.white.withOpacity(0.87),
                             ),
@@ -134,7 +134,7 @@ class MovieItem extends StatelessWidget {
                                   child: Container(
                                     margin: const EdgeInsets.only(right: 3),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 5.0, vertical: 2),
+                                        horizontal: 2.0, vertical: 2),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
                                         border:

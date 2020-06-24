@@ -105,7 +105,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         color: Theme.of(context).accentColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -121,7 +121,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'Helvatica',
+                      
                       color: Theme.of(context).accentColor,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -181,7 +181,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                       color: Hexcolor('#DEDEDE'),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Helvatica',
+                      
                     ),
                     autofocus: true,
                     textInputAction: TextInputAction.go,
@@ -602,7 +602,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -893,7 +893,7 @@ class _OverviewState extends State<Overview>
   void onTap() => setState(() => _expanded = true);
 
   int getLength() {
-    double maxHeight = widget.constraints.maxHeight * 0.22 - 15;
+    double maxHeight = widget.constraints.maxHeight * 0.22 - 18;
     double maxWidth = widget.constraints.maxWidth - 2 * LEFT_PADDING;// padding of two sides
     // divide available width by 6(width of a character)
     int charInOneLine = (maxWidth ~/ 6);

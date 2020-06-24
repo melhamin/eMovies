@@ -114,7 +114,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -171,7 +171,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                 color: Hexcolor('#DEDEDE'),
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Helvatica',
+                
               ),
             ),
           ),
@@ -200,7 +200,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                       color: Hexcolor('#DEDEDE'),
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Helvatica',
+                      
                     ),
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -213,7 +213,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
                         color: Colors.red,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Helvatica',
+                        
                       ),
                     ),
                     textInputAction: TextInputAction.go,

@@ -77,7 +77,7 @@ class CastDetailsScreen extends StatelessWidget {
                     TextSpan(
                         text: cast[i].character,
                         style: TextStyle(
-                          fontFamily: 'Helvatica',
+                          
                           color: Theme.of(context).accentColor,
                           fontSize: 16,
                         )),
