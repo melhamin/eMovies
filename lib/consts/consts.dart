@@ -4,108 +4,90 @@ import 'package:hexcolor/hexcolor.dart';
 // Theme and text styles
 
 TextStyle kTitleStyle = TextStyle(
-  
   fontWeight: FontWeight.bold,
   fontSize: 20,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kTitleStyle2 = TextStyle(
-  
-  fontWeight: FontWeight.bold,
+  // fontWeight: FontWeight.bold,
   fontSize: 18,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kTitleStyle3 = TextStyle(
-  
   fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kBodyStyle = TextStyle(
-  
-  fontWeight: FontWeight.w500,
+  // fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
   height: 1.5,
 );
 TextStyle kBodyStyle2 = TextStyle(
-  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kSubtitle1 = TextStyle(
-  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 TextStyle kSubtitle2 = TextStyle(
-  
   // fontWeight: FontWeight.bold,
   fontSize: 14,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 
 TextStyle kItemTitle = TextStyle(
-    
-    fontWeight: FontWeight.w600,
-    fontSize: 18,
-    color: Hexcolor('#DEDEDE'));
+    fontWeight: FontWeight.w600, fontSize: 18, color: Hexcolor('#DEDEDE'));
 TextStyle kInGridTitle = TextStyle(
-  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#DEDEDE'),
 );
 
 TextStyle kSeeAll = TextStyle(
-    
+
     // fontWeight: FontWeight.bold,
     fontSize: 16,
     // color: Hexcolor('#DEDEDE'),
     color: Colors.white.withOpacity(0.6));
 TextStyle kAppBarTextStyle = TextStyle(
-  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Colors.pink,
 );
 
 TextStyle kBottomBarTextStyle = TextStyle(
-  
-  fontWeight: FontWeight.bold,
-  fontSize: 14,
+  // fontWeight: FontWeight.bold,
+  fontSize: 15,
 );
 TextStyle kSelectedTabStyle = TextStyle(
-    
     fontWeight: FontWeight.bold,
     fontSize: 16,
     color: Colors.white.withOpacity(0.87));
 
 TextStyle kUnselectedTabStyle = TextStyle(
-  
   fontSize: 16,
   fontWeight: FontWeight.bold,
   color: Colors.white.withOpacity(0.6),
 );
 
 TextStyle kTBStyle = TextStyle(
-  
   fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#55AB55'),
 );
 
 TextStyle kBTStyle = TextStyle(
-  
   fontSize: 18,
   fontWeight: FontWeight.bold,
   color: Colors.pink,
 );
 
 TextStyle kListsItemTitleStyle = TextStyle(
-  
   fontSize: 18,
   // fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),

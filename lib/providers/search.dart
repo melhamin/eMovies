@@ -5,11 +5,7 @@ import 'package:e_movies/models/actor_model.dart';
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/models/tv_model.dart';
-import 'package:e_movies/providers/cast.dart';
-import 'package:e_movies/providers/tv.dart';
-import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:e_movies/providers/movies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +15,7 @@ class Search with ChangeNotifier {
 
   static const SEARCH_HISTORY = 'search_history';
   static const TOP_MOVIE_GENRES = 'top_movie_genres';
-  static const TOP_TV_GENRES = 'top_movie_genres';
+  static const TOP_TV_GENRES = 'top_tv_genres';
 
   List<MovieModel> _movies = [];
   List<TVModel> _tvShows = [];
@@ -169,8 +165,8 @@ class Search with ChangeNotifier {
       });
     }
 
-    savePrefs();
     notifyListeners();
+    savePrefs();
   }
 
   void addToTopMovieGenres(InitData item) {
@@ -178,7 +174,7 @@ class Search with ChangeNotifier {
       int currentValue = myTopMovieGenres[elem.toString()];
       myTopMovieGenres.update(elem.toString(), (value) {
         // print('elem -----> $elem, value --------> $value');
-        return currentValue + 1; // add one to current value
+        return currentValue + 1; 
       });
       saveTopMovieGenres(); // save to prefs
       loadTopMovieGenres();
@@ -189,11 +185,10 @@ class Search with ChangeNotifier {
   void addToTopTVGenres(InitData item) {
     item.genreIDs.forEach((elem) {
       int currentValue = myTopTVGenres[elem.toString()];
-      myTopTVGenres.update(elem.toString(), (value) {
-        // print('elem -----> $elem, value --------> $value');
-        return currentValue + 1; // add one to current value
+      myTopTVGenres.update(elem.toString(), (value) {        
+        return currentValue + 1; 
       });
-      saveTopTVGenres(); // save to prefs
+      saveTopTVGenres(); 
       loadTopTVGenres();
     });
     notifyListeners();

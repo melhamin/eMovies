@@ -1,5 +1,4 @@
 import 'package:async/async.dart';
-import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart' show TV;
 import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart';
@@ -7,8 +6,6 @@ import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
-
-import 'package:e_movies/widgets/tv/tv_item.dart';
 
 enum MovieLoaderStatus {
   STABLE,

@@ -63,7 +63,9 @@ class MovieItem extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                item.posterUrl == null
+                Container(
+                  padding: const EdgeInsets.only(bottom: 1),
+                  child: item.posterUrl == null
                     ? PlaceHolderImage(item.title)
                     : CachedNetworkImage(
                         imageUrl: item.posterUrl,
@@ -77,9 +79,10 @@ class MovieItem extends StatelessWidget {
                           );
                         },
                       ),
+                ),
                 if (!withoutDetails)
                   Positioned.fill(
-                    bottom: -2,
+                    bottom: 0,
                     child: Container(
                       height: constraints.maxHeight * 0.5,
                       width: double.infinity,

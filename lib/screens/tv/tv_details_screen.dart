@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/cast_model.dart';
 import 'package:e_movies/models/init_data.dart';
-import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/models/review_model.dart';
 import 'package:e_movies/models/tv_model.dart';
 import 'package:e_movies/my_toast_message.dart';
 import 'package:e_movies/providers/lists.dart';
+import 'package:e_movies/screens/movies_lists.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/widgets/back_button.dart';
@@ -17,10 +17,8 @@ import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart';
-import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/review_item.dart';
-import 'package:e_movies/widgets/route_builder.dart';
 import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -250,99 +248,39 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     }
   }
 
-  void _showAddToList(BuildContext context, InitData initData) {
-    final lists = Provider.of<Lists>(context, listen: false).tvLists;
+  void _showAddToList(BuildContext context, InitData initData) {    
     showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.only(),
-        decoration: BoxDecoration(
-          // color: Colors.black,
-          color: BASELINE_COLOR,
-          borderRadius: BorderRadius.only(
+      backgroundColor: BASELINE_COLOR,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
+      ),
+      isScrollControlled: true,
+      // enableDrag: true,
+      context: context,
+      builder: (context) => Container(
+           decoration: BoxDecoration(          
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),          
         ),
-        height: MediaQuery.of(context).size.height * 0.85,
-        child: ListView(
-          children: <Widget>[
-            Container(
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: ONE_LEVEL_ELEVATION,
-              ),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.cen,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      width: 82,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5),
-                        child: Text(
-                          'Cancel',
-                          style: kBTStyle,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacer(
-                    flex: 1,
-                  ),
-                  Text('Add to List', style: kTitleStyle),
-                  Spacer(
-                    flex: 2,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(top: 20, right: LEFT_PADDING),
-                itemCount:
-                    lists.length + 1, // since first element is New List button
-                itemBuilder: (context, i) {
-                  return i == 0
-                      ? Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Center(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Theme.of(context).accentColor,
-                              ),
-                              child: FlatButton(
-                                child: Text('New List', style: kTitleStyle),
-                                onPressed: () => _showAddNewListDialog(context),
-                              ),
-                            ),
-                          ),
-                        )
-                      : MyListsItem(
-                          list: lists[i - 1],
-                          onTap: () {
-                            _addNewItemtoList(context, i - 1, initData);
-                          },
-                        );
-                },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [       
+            FittedBox(child: CloseButton(color: Colors.white.withOpacity(0.87), )),                
+            Flexible(
+              child: Container(
+                // padding: const EdgeInsets.only(top: 20),
+                child: MyLists(mediaType: MediaType.TV ,initData: initData, isOut: true),
               ),
             ),
           ],
         ),
-      ),
+        height: MediaQuery.of(context).size.height * 0.85,
+      ),    
     );
   }
 
@@ -405,7 +343,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context)
-                      .push(BuildRoute.buildRoute(toPage: ImageView(images)));
+                      .push(_buildRoute(ImageView(images)));
                 },
                 child: CachedNetworkImage(
                   imageUrl: images[index],
@@ -660,6 +598,8 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     print('id --------> ${initData.id}');
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
         body: Stack(
           children: [
             LayoutBuilder(
@@ -730,7 +670,7 @@ class TitleAndDetails extends StatelessWidget {
   final BoxConstraints constraints;
 
   List<Widget> _buildGenres(List<dynamic> genres) {
-    print('build genres --------------');
+    // print('build genres --------------');
     if (genres == null || genres.length == 0) return [];
     // some genres are not included in tvgenres list
     // but exist in movies genres list
@@ -744,8 +684,8 @@ class TitleAndDetails extends StatelessWidget {
     int length = genres.length > 3 ? 3 : genres.length;
     for (int i = 0; i < length; i++) {
       res.add(Container(
-        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-        margin: EdgeInsets.only(right: 5),
+        padding:const EdgeInsets.symmetric(horizontal: 2),
+        margin: const EdgeInsets.only(right: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: kTextBorderColor, width: 2)),
@@ -755,13 +695,13 @@ class TitleAndDetails extends StatelessWidget {
         ),
       ));
     }
-    print('genres end ----------------');
+    // print('genres end ----------------');
     return res;
   }
 
   @override
   Widget build(BuildContext context) {
-    print('initData ------> ${InitData.toJson(initData)}');
+    // print('initData ------> ${InitData.toJson(initData)}');
     return Container(
       // color: Colors.red,
       height: constraints.maxHeight * 0.15,
@@ -830,7 +770,7 @@ class BackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('background ------> ');
+    // print('background ------> ');
     return Container(
       height: constraints.maxHeight * 0.5,
       width: constraints.maxWidth,
@@ -905,7 +845,7 @@ class _OverviewState extends State<Overview>
 
   @override
   Widget build(BuildContext context) {
-    print('legth ------> ${getLength()}');
+    // print('legth ------> ${getLength()}');
     super.build(context);
     RegExp pattern = new RegExp(r'\n', caseSensitive: false);
     final overview = widget.overview.replaceAll(pattern, '');
@@ -934,48 +874,7 @@ class _OverviewState extends State<Overview>
           ),
         ),
       ),
-    );
-    // return AnimatedSize(
-    //   duration: Duration(milliseconds: 300),
-    //   vsync: this,
-    //   curve: Curves.easeIn,
-    //   child: Container(
-    //     // color: Colors.blue,
-    //     padding: const EdgeInsets.only(
-    //         left: LEFT_PADDING, right: LEFT_PADDING, top: 10),
-    //     constraints: !_expanded
-    //         ? BoxConstraints(maxHeight: widget.constraints.maxHeight * 0.22)
-    //         : BoxConstraints(minHeight: widget.constraints.maxHeight * 0.22),
-    //     child: GestureDetector(
-    //         onTap: !_expanded
-    //             ? () {
-    //                 setState(() {
-    //                   _expanded = true;
-    //                 });
-    //               }
-    //             : null, // only expandable when not expanded yet
-    //         child: !_expanded
-    //             ? SizedBox.expand(
-    //                 child: RichText(
-    //                   text: TextSpan(
-    //                     style: kBodyStyle,
-    //                     text: overview.length > 230
-    //                         ? overview.substring(0, 230) + '...'
-    //                         : overview,
-    //                     children: [
-    //                       if (!_expanded && overview.length > 230)
-    //                         TextSpan(
-    //                           text: 'More',
-    //                           style: TextStyle(
-    //                               color: Theme.of(context).accentColor),
-    //                         ),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               )
-    //             : Text(overview, style: kBodyStyle)),
-    //   ),
-    // );
+    );   
   }
 
   @override
@@ -987,7 +886,7 @@ class Cast extends StatelessWidget {
   Cast({this.cast});
   @override
   Widget build(BuildContext context) {
-    print('cast ------> ');
+    // print('cast ------> ');
     return Column(
       children: [
         if (cast != null && cast.length > 0)
@@ -1019,7 +918,7 @@ class SimilarTV extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('similar ------> ');
+    // print('similar ------> ');
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
@@ -1063,7 +962,7 @@ class Reviews extends StatelessWidget {
   Reviews(this.reviews);
   @override
   Widget build(BuildContext context) {
-    print('reviews ------> ');
+    // print('reviews ------> ');
     return ListView.separated(
       separatorBuilder: (_, i) => SizedBox(height: 10),
       physics: const NeverScrollableScrollPhysics(),

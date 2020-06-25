@@ -41,7 +41,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
     // used instead of (autoFocus = true)
     // autoFocus would cause a laggy animation when bottom sheet opens
     if (_initLoaded) {
-      print('----------------');
+      // print('----------------');
       Future.delayed(Duration(milliseconds: 300)).then((value) {
         _focusNode.requestFocus();
       });
@@ -146,20 +146,15 @@ class _AddItemDialogState extends State<AddItemDialog> {
         ),
       ),
       height: MediaQuery.of(context).size.height * 0.85,
-      child: ListView(
+      child: ListView(        
         children: <Widget>[
+          
           Container(
             height: 50,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  onPressed: _onClose,
-                ),
+                CloseButton(color: Theme.of(context).accentColor),
               ],
             ),
           ),

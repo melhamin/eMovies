@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:e_movies/widgets/tv/tv_item.dart' as wid;
-
 class TVGenreItemScreen extends StatefulWidget {
   final int id;
   TVGenreItemScreen(this.id);

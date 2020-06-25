@@ -1,4 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/my_toast_message.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/screens/add_item_dialog.dart';
@@ -9,26 +10,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class MoviesLists extends StatefulWidget {
+class MyLists extends StatefulWidget {
+  final InitData initData;
+  final bool isOut;
+  @required
+  final MediaType mediaType;
+  MyLists({this.mediaType, this.initData, this.isOut = false});
+
   @override
-  _MoviesListsState createState() => _MoviesListsState();
+  _MyListsState createState() => _MyListsState();
 }
 
-class _MoviesListsState extends State<MoviesLists>
-    with AutomaticKeepAliveClientMixin {
+class _MyListsState extends State<MyLists> {
   TextEditingController _textEditingController;
 
   GlobalKey<AnimatedListState> _listKey;
-  bool _isEditing = false;
-  bool _initLoaded = true;
-  bool _isListLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController();
     _listKey = GlobalKey<AnimatedListState>();
-    // animated lists
   }
 
   @override
@@ -39,12 +41,6 @@ class _MoviesListsState extends State<MoviesLists>
 
   @override
   void didChangeDependencies() {
-    if (_initLoaded) {
-      _loadLists();
-    }
-    // print('change -----------> ');
-    _initLoaded = false;
-    _isListLoaded = true;
     super.didChangeDependencies();
   }
 
@@ -54,26 +50,8 @@ class _MoviesListsState extends State<MoviesLists>
       [bool isFavorites = false]) {
     return MaterialPageRoute(
       builder: (context) => ListItemScreen(
-          title: title, mediaType: mediaType, isFavorites: isFavorites),
+          title: title, mediaType: widget.mediaType, isFavorites: isFavorites),
     );
-  }
-
-  /// Inserts, already loaded lists from shared preferences, to AnimatedList
-  void _loadLists() {
-    // Lists are already fetched from shared preferences when app is opened
-    // Get loaded lists
-    final _myLists = Provider.of<Lists>(context, listen: false).moviesLists;
-
-    var future = Future(() {});
-    for (var i = 0; i < _myLists.length; i++) {
-      future = future.then((value) {
-        // Create a delayed future to animate items
-        return Future.delayed(Duration(milliseconds: 100), () {
-          // insert item to the list
-          _listKey.currentState.insertItem(i);
-        });
-      });
-    }
   }
 
   Widget _buildToastMessageIcons(Icon icon, String message,
@@ -99,7 +77,9 @@ class _MoviesListsState extends State<MoviesLists>
 
   /// Deletes selectd element form lists
   void _deleteList(String title) {
-    Provider.of<Lists>(context, listen: false).removeMovieList(title);
+    widget.mediaType == MediaType.Movie
+        ? Provider.of<Lists>(context, listen: false).removeMovieList(title)
+        : Provider.of<Lists>(context, listen: false).removeTVList(title);
     ToastUtils.myToastMessage(
       context: context,
       alignment: Alignment.center,
@@ -175,7 +155,7 @@ class _MoviesListsState extends State<MoviesLists>
       isScrollControlled: true,
       context: context,
       builder: (context) =>
-          AddItemDialog(listKey: _listKey, mediaType: MediaType.Movie),
+          AddItemDialog(listKey: _listKey, mediaType: widget.mediaType),
     );
   }
 
@@ -217,9 +197,7 @@ class _MoviesListsState extends State<MoviesLists>
   /// Builds dismissible list item
   /// [list] is the list item that its details will be build
   /// [index] is index of the current element. It is used for removing item from AnimatedList(if not deleted manualy a range exception would be thrown)
-  Widget _buildListItem(ListItemModel list, int index) {
-    // print('listitem data-----------> ${list['data']}');
-    // final listData = InitialData.fromJson(list['data']);
+  Widget _buildListItem(ListItemModel list, int index) {    
     return Dismissible(
       direction: DismissDirection.endToStart,
       key: UniqueKey(),
@@ -233,101 +211,132 @@ class _MoviesListsState extends State<MoviesLists>
         _deleteList(list.title);
       },
       confirmDismiss: (_) => _confirmDeletion(),
+      child: MyListsItem(
+          list: list,
+          onTap: () {
+            // pass list's data to buildRoute
+            Navigator.of(context)
+                .push(_buildRoute(list.title, widget.mediaType));
+          }),
+    );
+  }
+
+  // if MoviesLists is built in tv or movie details screen, this function will add the item to the
+  // list instead of navigating to the list screen
+  void _fromOutsideAddHandler(InitData item, int index) {
+    final result = widget.mediaType == MediaType.Movie
+        ? Provider.of<Lists>(context, listen: false)
+            .addNewMovieToList(index, item)
+        : Provider.of<Lists>(context, listen: false)
+            .addNewTVToList(index, item);
+    if (result) {
+      Navigator.of(context).pop();
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: TOAST_DURATION),
+          child: _buildToastMessageIcons(
+              Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
+              'Item added.'));
+    } else {
+      ToastUtils.myToastMessage(
+          context: context,
+          alignment: Alignment.center,
+          color: BASELINE_COLOR_TRANSPARENT,
+          duration: Duration(seconds: TOAST_DURATION),
+          child: _buildToastMessageIcons(
+              Icon(Icons.warning,
+                  color: Colors.white.withOpacity(0.87), size: 50),
+              'Item is already in the list.'));
+    }
+  }
+
+  Widget outList(ListItemModel list, int index) {
+    return Container(
+      // color: Colors.red,
       child: Row(
         children: <Widget>[
-          Flexible(
-            flex: _isEditing ? 8 : 1,
+          Flexible(            
             child: MyListsItem(
-                list: list,
-                onTap: () {
-                  // pass list's data to buildRoute
-                  Navigator.of(context)
-                      .push(_buildRoute(list.title, MediaType.Movie));
-                }),
-          ),
-          if (_isEditing)
-            Flexible(
-              flex: 1,
-              child: IconButton(
-                icon: Icon(Icons.close, color: Colors.white.withOpacity(0.45)),
-                color: Colors.red,
-                onPressed: () {
-                  _removeListItem(index);
-                  _deleteList(list.title);
-                },
-              ),
-            )
+              list: list,
+              onTap: () => _fromOutsideAddHandler(widget.initData, index),
+            ),
+          )
         ],
       ),
     );
   }
 
-  // insert the new listed created from outside this widget to animated list
-  void insertItemAddedFromOutside() {
+  Widget _buildAddButton() {
+    return widget.isOut
+        ? Center(
+            child: Container(
+              // margin: const EdgeInsets.only(bottom: 20.0),
+              width: MediaQuery.of(context).size.width / 2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: Theme.of(context).accentColor,
+              ),
+              child: FlatButton(
+                child: Text('New List', style: kTitleStyle),
+                onPressed: () => _showAddDialog(context),
+              ),
+            ),
+          )
+        : _buildCustomTiles(context, 'Create List',
+            Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
+            () {
+            _showAddDialog(context);
+          });
+  }
 
-    final loaded = Provider.of<Lists>(context, listen: false).movieListsLoaded;
-    // check if the movies are loaded(otherwise range error will be thrown)
-    if (loaded) {
-      _listKey.currentState.insertItem(0);      
-    }
-
-    // wait for the widget build to finish and the call functions(since these functions call notifylisteners,
-    // which makes the widget to reubild.)
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<Lists>(context, listen: false).toggleMovieListsUpdated();
-      Provider.of<Lists>(context, listen: false).setMovieListsLoaded();
+  Widget _buildFavoriteList() {
+    return _buildCustomTiles(
+        context,
+        'Favorites',
+        Icon(Icons.favorite_border,
+            size: 40, color: Theme.of(context).accentColor), () {
+      Navigator.of(context)
+          .push(_buildRoute('Favorites', widget.mediaType, true));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    final moviesLists = Provider.of<Lists>(context).moviesLists;
-    final isListUpdated = Provider.of<Lists>(context).isMovieListsUpdated;
-
-    if (isListUpdated) insertItemAddedFromOutside();
-
     return ListView(
       key: const PageStorageKey('moviesLists'),
-      padding: const EdgeInsets.only(bottom: kToolbarHeight),
+      padding:
+          EdgeInsets.only(bottom: kToolbarHeight, top: widget.isOut ? 10 : 0),
       children: <Widget>[
-        _buildCustomTiles(context, 'Create List',
-            Icon(Icons.add, size: 40, color: Colors.white.withOpacity(0.60)),
-            () {
-          _showAddDialog(context);
-        }),
-        SizedBox(height: 5),
-        _buildCustomTiles(
-            context,
-            'Favorites',
-            Icon(Icons.favorite_border,
-                size: 40, color: Theme.of(context).accentColor), () {
-          Navigator.of(context)
-              .push(_buildRoute('Favorites', MediaType.Movie, true));
-        }),
+        _buildAddButton(),
+        if (!widget.isOut) _buildFavoriteList(),
         SizedBox(height: 10),
-        AnimatedList(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          key: _listKey,
-          itemBuilder: (ctx, i, animation) {
-            return SlideTransition(
-              position: CurvedAnimation(
-                curve: Curves.easeOut,
-                parent: animation,
-              ).drive(Tween<Offset>(
-                // animate form right end to left end
-                begin: Offset(1, 0),
-                end: Offset(0, 0),
-              )),
-              child: _buildListItem(moviesLists[i], i),
-            );
-          },
-        ),
+        Consumer<Lists>(builder: (ctx, item, _) {
+          final moviesLists = widget.mediaType == MediaType.Movie ? item.moviesLists : item.tvLists;
+          return AnimatedList(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            key: _listKey,
+            initialItemCount: moviesLists.length,
+            itemBuilder: (ctx, i, animation) {
+              return SlideTransition(
+                position: CurvedAnimation(
+                  curve: Curves.easeOut,
+                  parent: animation,
+                ).drive(Tween<Offset>(
+                  // animate form right end to left end
+                  begin: Offset(1, 0),
+                  end: Offset(0, 0),
+                )),
+                child: widget.isOut
+                    ? outList(moviesLists[i], i)
+                    : _buildListItem(moviesLists[i], i),
+              );
+            },
+          );
+        }),
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

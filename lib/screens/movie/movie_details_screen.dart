@@ -6,6 +6,7 @@ import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/models/review_model.dart';
 import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/screens/movies_lists.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
@@ -15,22 +16,18 @@ import 'package:e_movies/widgets/expandable_text.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
-import 'package:e_movies/widgets/route_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hexcolor/hexcolor.dart';
 
 import 'package:e_movies/widgets/movie/movie_item.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart';
-import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:e_movies/widgets/review_item.dart';
 
 import 'package:e_movies/my_toast_message.dart';
@@ -186,33 +183,6 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     );
   }
 
-  // Widget _buildRatings(double voteAverage) {
-  //   return Container(
-  //     padding: const EdgeInsets.only(top: 10, left: LEFT_PADDING),
-  //     decoration: BoxDecoration(
-  //       border: Border(
-  //         top: BorderSide(width: 0.5, color: LINE_COLOR),
-  //         bottom: BorderSide(width: 0.5, color: LINE_COLOR),
-  //       ),
-  //     ),
-  //     child: SlideTransition(
-  //       position: _animation,
-  //       child: GridView(
-  //         children: [
-  //           RatingItem(title: 'My Rating', subtitle: '9.3'),
-  //           RatingItem(title: 'TMDB Rating', subtitle: voteAverage.toString()),
-  //           // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
-  //           // RatingItem(title: 'TMDB Rating', subtitle: '9.5'),
-  //         ],
-  //         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //           crossAxisCount: 1,
-  //           childAspectRatio: 1 / 3,
-  //         ),
-  //         scrollDirection: Axis.horizontal,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildImages(MovieModel film) {
     List<String> images = [];
@@ -224,7 +194,6 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
 
     return film.images.length > 0
         ? GridView.builder(
-            
             padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             // controller: _scrollController,
             itemCount: images.length,
@@ -232,7 +201,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context)
-                      .push(BuildRoute.buildRoute(toPage: ImageView(images)));
+                      .push(_buildRoute(ImageView(images)));
                 },
                 child: CachedNetworkImage(
                   imageUrl: images[index],
@@ -352,6 +321,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       return Container();
     } else {
       return Container(
+        margin: const EdgeInsets.only(top: 30),
         height: constraints.maxHeight * 0.3,
         child: SimilarMovies(similar),
       );
@@ -362,12 +332,11 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
     return MaterialPageRoute(
       builder: (context) => toPage,
       settings: RouteSettings(arguments: args),
-      
     );
   }
 
   List<Widget> _buildCast() {
-    List<CastModel> cast = [];    
+    List<CastModel> cast = [];
     if (film.cast != null) {
       film.cast.forEach((element) {
         cast.add(CastModel(
@@ -416,17 +385,17 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
 
   List<Widget> _buildReviews() {
     List<ReviewModel> reviews = [];
-    if(film.reviews != null) {
-      film.reviews.forEach((element) { 
+    if (film.reviews != null) {
+      film.reviews.forEach((element) {
         reviews.add(ReviewModel.fromJson(element));
       });
     }
     return [
-      if(reviews.isNotEmpty)
-      Padding(
-        padding: EdgeInsets.only(left: LEFT_PADDING, bottom: 5, top: 30),
-        child: Text('Reviews', style: kSubtitle1),
-      ),      
+      if (reviews.isNotEmpty)
+        Padding(
+          padding: EdgeInsets.only(left: LEFT_PADDING, bottom: 5, top: 30),
+          child: Text('Reviews', style: kSubtitle1),
+        ),
       Reviews(reviews),
     ];
   }
@@ -442,174 +411,12 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       _buildDetails(film),
       SizedBox(height: 30),
       ..._buildCast(),
-      SizedBox(height: 30),
-      _buildSimilarMovies(constraints),      
-      ..._buildReviews(),      
+      _buildSimilarMovies(constraints),
+      ..._buildReviews(),
       SizedBox(height: 10),
     ];
   }
-
-  Widget _buildDialogButtons(String title, Function onTap,
-      [bool leftButton = false]) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-            color: ONE_LEVEL_ELEVATION,
-            // border: Border(right: BorderSide(color: kTextBorderColor, width: 0.5)),
-            borderRadius: BorderRadius.only(
-              bottomLeft: leftButton
-                  ? Radius.circular(20)
-                  : Radius.circular(0), // add border radius to left
-              bottomRight: leftButton
-                  ? Radius.circular(0)
-                  : Radius.circular(20), // and right accordingly
-            )),
-        height: 40,
-        child: leftButton // only add right border to the left button
-            ? Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                      right: BorderSide(color: kTextBorderColor, width: 0.5)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 5.0),
-                  child: FlatButton(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        
-                        color: Theme.of(context).accentColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: onTap,
-                  ),
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: FlatButton(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      
-                      color: Theme.of(context).accentColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  onPressed: onTap,
-                ),
-              ),
-      ),
-    );
-  }
-
-  void _addList(BuildContext context) {
-    if (_textEditingController.text.isEmpty) return;
-    // print('tex---------> ${_textEditingController.text}');
-    final result = Provider.of<Lists>(context, listen: false)
-        .addNewMovieList(_textEditingController.text, true); // toggle updated lists too
-    // Set _isEmpty to true and clear the textfield
-
-    if (result) {
-      // update top movie genres list
-      Provider.of<Search>(context, listen: false).addToTopMovieGenres(initData);
-      Navigator.of(context).pop();
-      _textEditingController.clear();
-    } else {
-      ToastUtils.myToastMessage(
-        context: context,
-        alignment: Alignment.center,
-        color: BASELINE_COLOR_TRANSPARENT,
-        duration: Duration(seconds: TOAST_DURATION),
-        child: _buildToastMessageIcons(
-            Icon(Icons.warning,
-                color: Colors.white.withOpacity(0.87), size: 50),
-            'List Already Exist'),
-      );
-    }
-  }
-
-  void _showAddNewListDialog(BuildContext context) {
-    // _textEditingController.text = '${initData.title}';
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: ONE_LEVEL_ELEVATION,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: 50,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Create New List', style: kTitleStyle),
-              Text('Give a name for this new list', style: kBodyStyle),
-            ],
-          ),
-        ),
-        contentPadding: EdgeInsets.all(0),
-        content: Container(
-          height: 120,
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(color: kTextBorderColor, width: 0.5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Form(
-                  child: TextFormField(
-                      controller: _textEditingController,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(left: 10),
-                        hintText: 'Name',
-                        hintStyle: kSubtitle1,
-                        border: InputBorder.none,
-                      ),
-                      cursorColor: Theme.of(context).accentColor,
-                      style: TextStyle(
-                        color: Hexcolor('#DEDEDE'),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        
-                      ),
-                      autofocus: true,
-                      textInputAction: TextInputAction.go,
-                      onFieldSubmitted: (val) => _addList(context)),
-                ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                decoration: BoxDecoration(
-                    border: Border(
-                        top: BorderSide(color: kTextBorderColor, width: 0.5))),
-                // padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    _buildDialogButtons('Cancel', () {
-                      _textEditingController.clear();
-                      Navigator.of(context).pop();
-                    }, true),
-                    _buildDialogButtons('Create', () => _addList(context)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+ 
 
   Widget _buildToastMessageIcons(Icon icon, String message,
       [double iconSize = 50]) {
@@ -622,7 +429,6 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
         Text(
           message,
           style: TextStyle(
-            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -632,130 +438,40 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
       ],
     );
   }
-
-  void _addNewItemtoList(BuildContext context, int index, InitData item) {
-    final result = Provider.of<Lists>(context, listen: false)
-        .addNewMovieToList(index, item);
-    if (result) {
-      Navigator.of(context).pop();
-      ToastUtils.myToastMessage(
-          context: context,
-          alignment: Alignment.center,
-          color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: TOAST_DURATION),
-          child: _buildToastMessageIcons(
-              Icon(Icons.done, color: Colors.white.withOpacity(0.87), size: 50),
-              'Item added.'));
-    } else {
-      ToastUtils.myToastMessage(
-          context: context,
-          alignment: Alignment.center,
-          color: BASELINE_COLOR_TRANSPARENT,
-          duration: Duration(seconds: TOAST_DURATION),
-          child: _buildToastMessageIcons(
-              Icon(Icons.warning,
-                  color: Colors.white.withOpacity(0.87), size: 50),
-              'Item is already in the list.'));
-    }
-  }
-
-  void _showAddToList(BuildContext context, InitData initData) {
-    final lists = Provider.of<Lists>(context, listen: false).moviesLists;
+  
+  void _showAddToList(BuildContext context, InitData initData) {    
     showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.only(),
-        decoration: BoxDecoration(
-          // color: Colors.black,
-          color: BASELINE_COLOR,
-          borderRadius: BorderRadius.only(
+      backgroundColor: BASELINE_COLOR,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           ),
+      ),
+      isScrollControlled: true,
+      // enableDrag: true,
+      context: context,
+      builder: (context) => Container(
+           decoration: BoxDecoration(          
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),          
         ),
-        height: MediaQuery.of(context).size.height * 0.85,
-        child: 
-        ListView(
-          children: <Widget>[
-            Container(
-              height: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: ONE_LEVEL_ELEVATION,
-              ),
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.cen,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      width: 82,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5),
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(
-                            
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).accentColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacer(
-                    flex: 1,
-                  ),
-                  Text('Add to List', style: kTitleStyle),
-                  Spacer(
-                    flex: 2,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.75,
-              child: ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(top: 20, right: LEFT_PADDING),
-                itemCount:
-                    lists.length + 1, // since first element is New List button
-                itemBuilder: (context, i) {
-                  return i == 0
-                      ? Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Center(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Theme.of(context).accentColor,
-                              ),
-                              child: FlatButton(
-                                child: Text('New List', style: kTitleStyle),
-                                onPressed: () => _showAddNewListDialog(context),
-                              ),
-                            ),
-                          ),
-                        )
-                      : MyListsItem(
-                          list: lists[i - 1],
-                          onTap: () =>
-                              _addNewItemtoList(context, i - 1, initData));
-                },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [       
+            FittedBox(child: CloseButton(color: Colors.white.withOpacity(0.87), )),                
+            Flexible(
+              child: Container(
+                // padding: const EdgeInsets.only(top: 20),
+                child: MyLists(mediaType: MediaType.Movie ,initData: initData, isOut: true),
               ),
             ),
           ],
         ),
-      ),
+        height: MediaQuery.of(context).size.height * 0.85,
+      ),    
     );
   }
 
@@ -772,9 +488,6 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
   Widget build(BuildContext context) {
     super.build(context);
     initData = ModalRoute.of(context).settings.arguments as InitData;    
-    // print('initData------------> ${InitData.toJson(initData)}');
-    // if(!_isLoading)
-    // print('details -----------> ${film.genreIDs}');
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -784,7 +497,6 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             LayoutBuilder(
               builder: (ctx, constraints) {
                 return ListView(
-                  
                   // padding: const EdgeInsets.only(top: APP_BAR_HEIGHT),
                   children: [
                     BackgroundAndTitle(
@@ -942,12 +654,8 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
 
   Route _buildRoute(Widget toPage) {
     return MaterialPageRoute(
-      builder: (context) => toPage,
-      settings: RouteSettings(arguments: [widget.film.id, MediaType.Movie])
-      
-    );
-
-    
+        builder: (context) => toPage,
+        settings: RouteSettings(arguments: [widget.film.id, MediaType.Movie]));
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -1094,7 +802,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
                       children: [
                         Text(
                           widget.initData.title ?? 'N/A',
-                          style: kTitleStyle2,
+                          style: kTitleStyle3,
                           softWrap: true,
                           // overflow: TextOverflow.ellipsis,
                         ),
@@ -1169,7 +877,8 @@ class _OverviewState extends State<Overview>
 
   int getLength() {
     double maxHeight = widget.constraints.maxHeight * 0.3 - 12;
-    double maxWidth = widget.constraints.maxWidth - 2 * LEFT_PADDING;// padding of two sides
+    double maxWidth =
+        widget.constraints.maxWidth - 2 * LEFT_PADDING; // padding of two sides
     // divide available width by 6(width of a character)
     int charInOneLine = (maxWidth ~/ 6);
     // divide number of lines by 32(font with size 16 and lineHeight 1.5, which is 32)
@@ -1189,7 +898,7 @@ class _OverviewState extends State<Overview>
       constraints: _expanded
           ? BoxConstraints(
               maxHeight: 400,
-              minHeight: widget.constraints.maxHeight * 0.3 - 2,              
+              minHeight: widget.constraints.maxHeight * 0.3 - 2,
             )
           : BoxConstraints(
               minHeight: widget.constraints.maxHeight * 0.3 - 2,
@@ -1204,9 +913,9 @@ class _OverviewState extends State<Overview>
             onTap: onTap,
             trimExpandedText: '',
             trimCollapsedText: '...More',
-            // trimLines: 7,     
+            // trimLines: 7,
             trimLength: getLength(),
-            trimMode: TrimMode.Length,       
+            trimMode: TrimMode.Length,
           ),
         ),
       ),
@@ -1304,7 +1013,6 @@ class Cast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      
       itemCount: cast.length,
       itemBuilder: (ctx, i) {
         return CastItem(
@@ -1329,13 +1037,13 @@ class SimilarMovies extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: LEFT_PADDING),
+          padding: const EdgeInsets.only(left: LEFT_PADDING),
           child: Text('Similar Movies', style: kSubtitle1),
         ),
         SizedBox(height: 5),
         Flexible(
-          child: GridView.builder(            
-            padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          child: GridView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
             itemCount: similar.length,
             itemBuilder: (context, index) {
               return MovieItem(

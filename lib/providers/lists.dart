@@ -208,6 +208,7 @@ class Lists with ChangeNotifier {
   }
 
   bool addNewMovieToList(int listIndex, InitData item) {
+    
     final temp = _moviesLists[listIndex]
         .items
         .firstWhere((element) => element.id == item.id, orElse: () => null);

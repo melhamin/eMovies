@@ -282,7 +282,7 @@ class _GridItemState extends State<GridItem>
                     children: [
                       Text(
                         widget.item.title ?? 'N/A',
-                        style: kTitleStyle2,
+                        style: kTitleStyle3,
                         softWrap: true,
                         // overflow: TextOverflow.ellipsis,
                         // maxLines: 1,

@@ -8,9 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:e_movies/screens/movie/discover_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
-import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/screens/search/search_screen.dart';
-import 'package:e_movies/screens/tv/tv_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
 import 'package:provider/provider.dart';
 

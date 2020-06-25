@@ -136,7 +136,7 @@ class _SearchingState extends State<Searching>
     return [
       Tab(icon: Text('All')),
       Tab(icon: Text('Movies')),
-      Tab(icon: Text('TV shows')),
+      Tab(icon: Text('TV')),
       Tab(icon: Text('People')),
     ];
   }
@@ -203,11 +203,7 @@ class _SearchingState extends State<Searching>
                             setState(() {
                               _isFetching = false;
                             });
-                          });
-                          //  Provider.of<Search>(context, listen: false)
-                          //     .searchTVShows(value, 1);
-                          //     Provider.of<Search>(context, listen: false)
-                          //     .searchPerson(value, 1);
+                          });                        
                         },
                       ),
                     ),
@@ -217,7 +213,7 @@ class _SearchingState extends State<Searching>
                     child: FlatButton(
                       child: Text(
                         'Cancel',
-                        style: kSelectedTabStyle,
+                        style: kBodyStyle,
                       ),
                       onPressed: () {
                         setState(() {
@@ -238,7 +234,7 @@ class _SearchingState extends State<Searching>
               ),
               PreferredSize(
                 child: currentPage,
-                preferredSize: Size.fromHeight(40),
+                preferredSize: Size(double.infinity, 40),
               ),
             ],
           ),

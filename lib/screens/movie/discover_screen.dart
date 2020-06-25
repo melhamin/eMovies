@@ -20,7 +20,6 @@ import 'package:e_movies/screens/movie/upcoming_screen.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart' as movieWid;
-import 'package:e_movies/widgets/tv/tv_item.dart' as tvWid;
 import 'package:e_movies/widgets/movie/cast_item.dart' as castWid;
 
 class DiscoverScreen extends StatefulWidget {
