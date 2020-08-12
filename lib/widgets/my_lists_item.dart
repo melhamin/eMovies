@@ -17,7 +17,7 @@ class MyListsItem extends StatelessWidget {
       splashColor: Colors.black,
       highlightColor: Colors.black,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+        padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
         margin: const EdgeInsets.only(bottom: 5),
         width: MediaQuery.of(context).size.width,
         height: 70,

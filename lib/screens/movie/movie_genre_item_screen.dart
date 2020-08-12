@@ -1,8 +1,8 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/providers/movies.dart';
@@ -65,6 +65,7 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
       if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
         if (loaderStatus != null && loaderStatus == MovieLoaderStatus.STABLE) {
           loaderStatus = MovieLoaderStatus.LOADING;
+          if(this.mounted)
           setState(() {
             _isLoading = true;
           });
@@ -85,20 +86,10 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
       }
     }
     return true;
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 30,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  }  
 
   @override
-  Widget build(BuildContext context) {
-    print('isLoading ---------> $_initLoaded');
+  Widget build(BuildContext context) {        
     final movies = Provider.of<Movies>(context).genre;
     return SafeArea(
       child: Scaffold(
@@ -125,7 +116,7 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
               ),
               Positioned(
                 top: 10,
-                left: 10,
+                left: 0,
                 child: CustomBackButton(text: MOVIE_GENRES[widget.id] ),
               ),
               if (_isLoading)
@@ -133,7 +124,7 @@ class _MovieGenreItemState extends State<MovieGenreItem> {
                   bottom: 10,                  
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: _buildLoadingIndicator(context),
+                    child: LoadingIndicator(),
                   ),
                 )
             ],

@@ -1,8 +1,18 @@
+import 'package:e_movies/my_toast_message.dart';
+import 'package:e_movies/screens/list_item_screen.dart';
 import 'package:e_movies/screens/movies_lists.dart';
 import 'package:e_movies/screens/search/tabs.dart';
+import 'package:e_movies/screens/tv_lists.dart';
+import 'package:e_movies/widgets/my_lists_item.dart';
+import 'package:e_movies/widgets/nav_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
+
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/providers/lists.dart';
 
 enum MediaType {
   TV,
@@ -15,7 +25,7 @@ class MyListsScreen extends StatefulWidget {
 }
 
 class _MyListsScreenState extends State<MyListsScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool _isEditing = false;
 
   TabController _tabController;
@@ -24,7 +34,7 @@ class _MyListsScreenState extends State<MyListsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 2, initialIndex: 0);    
+    _tabController = TabController(vsync: this, length: 2, initialIndex: 0);
   }
 
   @override
@@ -51,8 +61,8 @@ class _MyListsScreenState extends State<MyListsScreen>
     return TabBarView(
       controller: _tabController,
       children: [
-        MyLists(mediaType: MediaType.Movie),
-        MyLists(mediaType: MediaType.TV),        
+        MoviesLists(),
+        TVshowsLists(),
       ],
     );
   }
@@ -67,7 +77,8 @@ class _MyListsScreenState extends State<MyListsScreen>
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -85,6 +96,7 @@ class _MyListsScreenState extends State<MyListsScreen>
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'Helvatica',
                         color: Colors.white.withOpacity(0.87)),
                   ),
                 ),
@@ -122,5 +134,7 @@ class _MyListsScreenState extends State<MyListsScreen>
       ),
     );
   }
-  
+
+  @override  
+  bool get wantKeepAlive => true;
 }

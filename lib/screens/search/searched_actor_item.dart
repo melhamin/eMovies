@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/actor_model.dart';
-import 'package:e_movies/screens/movie/cast_details_screen.dart';
-import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/screens/movie/cast/cast_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/material.dart';
 
@@ -43,7 +42,7 @@ class SearchedActorItem extends StatelessWidget {
         title: Text(
           item.name?? 'N/A',
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),

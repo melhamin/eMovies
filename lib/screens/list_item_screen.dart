@@ -191,14 +191,14 @@ class _ListItemScreenState extends State<ListItemScreen>
                     SizedBox(height: 15),
                     Padding(
                       padding:
-                          const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                          const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(widget.title,
                               style: TextStyle(
-                                
+                                fontFamily: 'Helvatica',
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white.withOpacity(0.87),
@@ -283,7 +283,7 @@ class _ListItemScreenState extends State<ListItemScreen>
               ),
             Positioned(
               top: 10,
-              left: 10,
+              left: 0,
               child: CustomBackButton(),
             ),
           ],

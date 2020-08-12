@@ -2,12 +2,15 @@ import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/providers/tv.dart' show TV;
 import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import 'package:e_movies/widgets/top_bar.dart';
+import 'package:e_movies/widgets/tv/tv_item.dart';
 
 enum MovieLoaderStatus {
   STABLE,
@@ -87,15 +90,7 @@ class _AllMoviesState extends State<OnAirScreen> {
       await Provider.of<TV>(context, listen: false)
           .fetchOnAirToday(1);
   }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 30,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {    
@@ -132,7 +127,7 @@ class _AllMoviesState extends State<OnAirScreen> {
                 ),
                 Positioned(
                 top: 10,
-                left: 10,
+                left: 0,
                 child: CustomBackButton(text: 'On Air Today'),
               ),
               if (_isFetching)
@@ -140,7 +135,7 @@ class _AllMoviesState extends State<OnAirScreen> {
                   bottom: 10,                  
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: _buildLoadingIndicator(context),
+                    child: LoadingIndicator(size: 30),
                   ),
                 )
             ],

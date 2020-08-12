@@ -3,9 +3,9 @@ import 'package:e_movies/models/video_model.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -131,8 +131,7 @@ class _VideoPageState extends State<VideoPage> with TickerProviderStateMixin {
         ),
         body: _isFetching
             ? Center(
-                child: SpinKitCircle(
-                    size: 21, color: Theme.of(context).accentColor))
+                child: LoadingIndicator())
             : LayoutBuilder(
                 builder: (ctx, constraints) {
                   return _videos.isEmpty

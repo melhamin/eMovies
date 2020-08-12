@@ -20,7 +20,7 @@ class PlaceHolderImage extends StatelessWidget {
             child: FittedBox(
               child: Text(title, style: TextStyle(
                 fontSize: 28,
-                
+                fontFamily: 'Helvatica',
                 fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87)
               )),

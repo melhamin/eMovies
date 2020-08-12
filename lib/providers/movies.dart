@@ -260,27 +260,6 @@ class Movies with ChangeNotifier {
     // print(response.body);
   }
 
-  // Future<void> getSimilar(int id) async {
-  //   final url = 'https://api.themoviedb.org/3/movie/$id/similar?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&page=1';
-  //   try {
-  //     final response = await http.get(url);
-  //     print(response.body);
-
-  //     final responseData = json.decode(response.body) as Map<String, dynamic>;
-  //     final data = responseData['results'];
-  //     // print('toprated ------------> $data');
-
-  //       _similar.clear();
-
-  //     data.forEach((element) {
-  //       _similar.add(MovieItem.fromJson(element));
-  //     });
-
-  //   } catch (error) {
-  //     print('Movies - getSimilar error -------------> $error');
-  //   }
-  // }
-
   Future<void> fetchVideos(int id) async {
     final url =
         '$BASE_URL/movie/$id/videos?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US';
@@ -333,6 +312,6 @@ class Movies with ChangeNotifier {
 
   void clearGenre() {
     _genre.clear();
-    notifyListeners();
+    // notifyListeners();
   }
 }

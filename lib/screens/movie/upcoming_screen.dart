@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -85,15 +86,7 @@ class _AllMoviesState extends State<UpcomingScreen>
     }
     return true;
   }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 30,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -130,15 +123,15 @@ class _AllMoviesState extends State<UpcomingScreen>
                 ),
                 Positioned(
                 top: 10,
-                left: 10,
-                child: CustomBackButton(text: 'Coming Soon'),
+                left: 0,
+                child: CustomBackButton(text: 'Upcoming'),
               ),
               if (_isFetching)
                 Positioned.fill(
                   bottom: 10,                  
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: _buildLoadingIndicator(context),
+                    child: LoadingIndicator(),
                   ),
                 )
             ],

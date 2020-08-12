@@ -14,7 +14,7 @@ class DetailsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      margin: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
       decoration: BoxDecoration(
         border: Border(
           bottom: !last ? BorderSide(width: 0.5, color: LINE_COLOR):

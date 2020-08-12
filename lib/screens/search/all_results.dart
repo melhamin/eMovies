@@ -3,16 +3,16 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/actor_model.dart';
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/screens/search/searched_movie_item.dart';
 import 'package:e_movies/screens/search/searched_tv_item.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 import 'package:e_movies/screens/my_lists_screen.dart';
@@ -72,7 +72,7 @@ class _AllResultsState extends State<AllResults> {
         title: Text(
           item.title ?? 'N/A',
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),
@@ -112,7 +112,7 @@ class _AllResultsState extends State<AllResults> {
         if (searchHistory.length > 0)
           Padding(
             padding: const EdgeInsets.only(
-                top: 15, left: LEFT_PADDING + 5, bottom: 15),
+                top: 15, left: DEFAULT_PADDING + 5, bottom: 15),
             child: Text('Recent searches', style: kTitleStyle2),
           ),
         ListView.builder(
@@ -167,8 +167,8 @@ class _AllResultsState extends State<AllResults> {
       [bool withSeeAll = true]) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: LEFT_PADDING,
-        right: LEFT_PADDING,
+        left: DEFAULT_PADDING,
+        right: DEFAULT_PADDING,
         // top: 30,
         bottom: 10,
       ),
@@ -185,7 +185,7 @@ class _AllResultsState extends State<AllResults> {
                       padding: EdgeInsets.only(top: 3),
                       child: Text('See All',
                           style: TextStyle(
-                              
+                              fontFamily: 'Helvatica',
                               fontSize: 14,
                               color: Colors.white.withOpacity(0.45)))),
                   SizedBox(width: 3),
@@ -239,10 +239,7 @@ class _AllResultsState extends State<AllResults> {
     return Center(
       child: widget.searchController.text.isEmpty
           ? null
-          : SpinKitCircle(
-              size: 21,
-              color: Theme.of(context).accentColor,
-            ),
+          : LoadingIndicator(),
     );
   }
 
@@ -273,7 +270,7 @@ class _AllResultsState extends State<AllResults> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                        const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
                     child: Divider(color: kTextBorderColor, thickness: 0.5),
                   ),
                 ],
@@ -288,7 +285,7 @@ class _AllResultsState extends State<AllResults> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                        const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
                     child: Divider(color: kTextBorderColor, thickness: 0.5),
                   ),
                 ],

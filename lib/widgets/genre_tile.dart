@@ -15,10 +15,9 @@ class GenreTile extends StatelessWidget {
 
   Route _buildRoute() {
     return MaterialPageRoute(
-      builder: (context) => mediaType == MediaType.Movie
-          ? MovieGenreItem(genreId)
-          : TVGenreItemScreen(genreId),
-    );
+      builder: (context) =>mediaType == MediaType.Movie ? MovieGenreItem(genreId) : TVGenreItemScreen(genreId),      
+    );  
+   
   }
 
   void _onTap(BuildContext context) {
@@ -39,44 +38,46 @@ class GenreTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Stack(
-                children: [
-                  Container(
-                    height: double.infinity,
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(bottom: 1),
-                    // color: Colors.red,
-                    child: FadeInImage(
-                      // fadeInDuration: Duration(milliseconds: 200),
-                      image: AssetImage(imageUrl),
-                      placeholder: AssetImage('assets/images/placeholder.png'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    // alignment: Alignment.bottomCenter,
-                    bottom: 0,
-                    child: Container(
-                      height: constraints.maxHeight * 0.7,
-                      width: constraints.maxWidth,
-                      padding: const EdgeInsets.all(0),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.9),
-                              Colors.black.withOpacity(0.05),
-                            ]),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 10,
-                    left: 10,
-                    child: Text(title, style: kTitleStyle2),
-                  ),
-                ],
+            children: [
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                // color: Colors.red,
+                child: FadeInImage(
+                  // fadeInDuration: Duration(milliseconds: 200),
+                  image: AssetImage(imageUrl),
+                  placeholder: AssetImage('assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
+              Positioned(
+                // alignment: Alignment.bottomCenter,
+                bottom: -2,
+                child: Container(
+                  height: constraints.maxHeight * 0.6,
+                  width: constraints.maxWidth,
+                  padding: const EdgeInsets.all(0),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.9),
+                          Colors.black.withOpacity(0.05),                                                    
+                        ]),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                left: 10,
+                child: Text(
+                  title,
+                  style: kTitleStyle2,
+                ),
+              ),
+            ],
+          ),
             ),
           ),
           onTap: () => _onTap(context),

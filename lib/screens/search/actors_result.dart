@@ -3,6 +3,7 @@ import 'package:async/async.dart';
 import 'package:e_movies/screens/search/searched_actor_item.dart';
 
 import 'package:e_movies/providers/search.dart' show Search;
+import 'package:e_movies/widgets/loading_indicator.dart';
 
 
 import 'package:flutter/material.dart';
@@ -44,10 +45,7 @@ class _ActorsResultState extends State<ActorsResult> {
     return Center(
       child: widget.searchController.text.isEmpty
           ? null
-          : SpinKitCircle(
-              size: 21,
-              color: Theme.of(context).accentColor,
-            ),
+          : LoadingIndicator(),
     );
   }
 

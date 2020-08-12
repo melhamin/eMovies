@@ -6,10 +6,11 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/providers/movies.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -65,16 +66,7 @@ class _InTheatersGridState extends State<InTheatersGrid>
     setState(() {
       curr = index;
     });    
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 21,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +76,7 @@ class _InTheatersGridState extends State<InTheatersGrid>
     // print('isLoading-------------> $isLoading');
     return Stack(
       children: [
-        if (isLoading) _buildLoadingIndicator(context),
+        if (isLoading) LoadingIndicator(),
         if (!isLoading && inTheaters.isNotEmpty)
           Container(            
             child: PageView.builder(
@@ -193,42 +185,8 @@ class _GridItemState extends State<GridItem>
 
   String _getYearAndDuration() {
     return DateFormat.yMMMd().format(widget.item.date);
-    // String str = '';
-    // if (item.date == null) {
-    //   str += 'N/A';
-    // } else {
-    //   str += item.date.year.toString();
-    // }
-    // if (item.duration != null) {
-    //   str = str + ' \u2022 ' + item.duration.toString() + ' min';
-    // }
-    // return str;
+    
   }
-
-  // Route _buildRoute() {
-  //  final initData = InitData.formObject(widget.item);
-   
-  //   return PageRouteBuilder(
-  //     settings: RouteSettings(arguments: initData),
-  //     pageBuilder: (context, animation, secondaryAnimation) =>
-  //         MovieDetailsScreen(),
-  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-  //       var begin = const Offset(
-  //           1, 0); // if x > 0 and y = 0 transition is from right to left
-  //       var end =
-  //           Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-  //       // var curve = Curves.bounceIn;
-  //       var tween =
-  //           Tween(begin: begin, end: end); // .chain(CurveTween(curve: curve))
-  //       var offsetAnimation = animation.drive(tween);
-
-  //       return SlideTransition(
-  //         position: offsetAnimation,
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
   Route _buildRoute() {
     final initData = InitData.formObject(widget.item);
     return MaterialPageRoute(
@@ -282,7 +240,7 @@ class _GridItemState extends State<GridItem>
                     children: [
                       Text(
                         widget.item.title ?? 'N/A',
-                        style: kTitleStyle3,
+                        style: kTitleStyle2,
                         softWrap: true,
                         // overflow: TextOverflow.ellipsis,
                         // maxLines: 1,

@@ -2,23 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/cast_model.dart';
 import 'package:e_movies/models/init_data.dart';
+import 'package:e_movies/models/movie_model.dart';
 import 'package:e_movies/models/review_model.dart';
 import 'package:e_movies/models/tv_model.dart';
 import 'package:e_movies/my_toast_message.dart';
 import 'package:e_movies/providers/lists.dart';
-import 'package:e_movies/screens/movies_lists.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/video_page.dart';
 import 'package:e_movies/widgets/back_button.dart';
 import 'package:e_movies/widgets/expandable_text.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:e_movies/widgets/movie/cast_item.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/widgets/image_clipper.dart';
 import 'package:e_movies/widgets/image_view.dart';
 import 'package:e_movies/widgets/movie/details_item.dart';
 import 'package:e_movies/widgets/movie/movie_item.dart';
+import 'package:e_movies/widgets/my_lists_item.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:e_movies/widgets/review_item.dart';
+import 'package:e_movies/widgets/route_builder.dart';
 import 'package:e_movies/screens/search/all_actors_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +106,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                     child: Text(
                       title,
                       style: TextStyle(
-                        
+                        fontFamily: 'Helvatica',
                         color: Theme.of(context).accentColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -119,7 +122,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                   child: Text(
                     title,
                     style: TextStyle(
-                      
+                      fontFamily: 'Helvatica',
                       color: Theme.of(context).accentColor,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -179,7 +182,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                       color: Hexcolor('#DEDEDE'),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      
+                      fontFamily: 'Helvatica',
                     ),
                     autofocus: true,
                     textInputAction: TextInputAction.go,
@@ -248,46 +251,106 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     }
   }
 
-  void _showAddToList(BuildContext context, InitData initData) {    
+  void _showAddToList(BuildContext context, InitData initData) {
+    final lists = Provider.of<Lists>(context, listen: false).tvLists;
     showModalBottomSheet(
-      backgroundColor: BASELINE_COLOR,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-      ),
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      // enableDrag: true,
       context: context,
       builder: (context) => Container(
-           decoration: BoxDecoration(          
+        padding: const EdgeInsets.only(),
+        decoration: BoxDecoration(
+          // color: Colors.black,
+          color: BASELINE_COLOR,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
-          ),          
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [       
-            FittedBox(child: CloseButton(color: Colors.white.withOpacity(0.87), )),                
-            Flexible(
-              child: Container(
-                // padding: const EdgeInsets.only(top: 20),
-                child: MyLists(mediaType: MediaType.TV ,initData: initData, isOut: true),
+        height: MediaQuery.of(context).size.height * 0.85,
+        child: ListView(
+          children: <Widget>[
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                color: ONE_LEVEL_ELEVATION,
+              ),
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.cen,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      width: 82,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, top: 5),
+                        child: Text(
+                          'Cancel',
+                          style: kBTStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Spacer(
+                    flex: 1,
+                  ),
+                  Text('Add to List', style: kTitleStyle),
+                  Spacer(
+                    flex: 2,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(top: 20, right: DEFAULT_PADDING),
+                itemCount:
+                    lists.length + 1, // since first element is New List button
+                itemBuilder: (context, i) {
+                  return i == 0
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Theme.of(context).accentColor,
+                              ),
+                              child: FlatButton(
+                                child: Text('New List', style: kTitleStyle),
+                                onPressed: () => _showAddNewListDialog(context),
+                              ),
+                            ),
+                          ),
+                        )
+                      : MyListsItem(
+                          list: lists[i - 1],
+                          onTap: () {
+                            _addNewItemtoList(context, i - 1, initData);
+                          },
+                        );
+                },
               ),
             ),
           ],
         ),
-        height: MediaQuery.of(context).size.height * 0.85,
-      ),    
+      ),
     );
   }
 
   Widget _buildBottomIcons() {
     final isInFavorites = Provider.of<Lists>(context).isFavoriteTV(initData);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
       decoration: BoxDecoration(
           color: ONE_LEVEL_ELEVATION,
           borderRadius: BorderRadius.only(
@@ -336,14 +399,14 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
 
     return item.images.length > 0
         ? GridView.builder(            
-            padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+            padding: EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
             // controller: _scrollController,
             itemCount: images.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
                   Navigator.of(context)
-                      .push(_buildRoute(ImageView(images)));
+                      .push(BuildRoute.buildRoute(toPage: ImageView(images)));
                 },
                 child: CachedNetworkImage(
                   imageUrl: images[index],
@@ -351,10 +414,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                   fit: BoxFit.cover,
                   placeholder: (context, url) {
                     return Center(
-                      child: SpinKitCircle(
-                        size: LOADING_INDICATOR_SIZE,
-                        color: Theme.of(context).accentColor,
-                      ),
+                      child:LoadingIndicator(),
                     );
                   },
                 ),
@@ -447,7 +507,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
         : [
             Padding(
               padding: const EdgeInsets.only(
-                  left: LEFT_PADDING, bottom: 5, right: LEFT_PADDING),
+                  left: DEFAULT_PADDING, bottom: 5, right: DEFAULT_PADDING),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -505,7 +565,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     return [
       if (reviews.isNotEmpty)
         Padding(
-          padding: EdgeInsets.only(left: LEFT_PADDING, bottom: 5, top: 30),
+          padding: EdgeInsets.only(left: DEFAULT_PADDING, bottom: 5, top: 30),
           child: Text('Reviews', style: kSubtitle1),
         ),
       Reviews(reviews),
@@ -540,7 +600,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
         Text(
           message,
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),
@@ -580,16 +640,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
             ''),
       );
     }
-  }
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: SpinKitCircle(
-        size: 21,
-        color: Theme.of(context).accentColor,
-      ),
-    );
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -598,8 +649,6 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
     print('id --------> ${initData.id}');
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
         body: Stack(
           children: [
             LayoutBuilder(
@@ -618,17 +667,17 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                         initData: initData, constraints: constraints),
                     // SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.only(left: LEFT_PADDING),
+                      padding: const EdgeInsets.only(left: DEFAULT_PADDING),
                       child: Text('Storyline', style: kTitleStyle2),
                     ),
                     _isLoading
                         ? Container(
                             height: constraints.maxHeight * 0.22,
-                            child: _buildLoadingIndicator(context),
+                            child: LoadingIndicator(),
                           )
                         : Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: LEFT_PADDING),
+                                horizontal: DEFAULT_PADDING),
                             child: Overview(
                                 constraints: constraints,
                                 overview: details.overview),
@@ -646,7 +695,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
             ),
             Positioned(
               top: 10,
-              left: 10,
+              left: 0,
               child: CustomBackButton(),
             ),
           ],
@@ -670,7 +719,7 @@ class TitleAndDetails extends StatelessWidget {
   final BoxConstraints constraints;
 
   List<Widget> _buildGenres(List<dynamic> genres) {
-    // print('build genres --------------');
+    print('build genres --------------');
     if (genres == null || genres.length == 0) return [];
     // some genres are not included in tvgenres list
     // but exist in movies genres list
@@ -684,8 +733,8 @@ class TitleAndDetails extends StatelessWidget {
     int length = genres.length > 3 ? 3 : genres.length;
     for (int i = 0; i < length; i++) {
       res.add(Container(
-        padding:const EdgeInsets.symmetric(horizontal: 2),
-        margin: const EdgeInsets.only(right: 5),
+        padding: EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+        margin: EdgeInsets.only(right: 5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: kTextBorderColor, width: 2)),
@@ -695,17 +744,16 @@ class TitleAndDetails extends StatelessWidget {
         ),
       ));
     }
-    // print('genres end ----------------');
+    print('genres end ----------------');
     return res;
   }
 
   @override
-  Widget build(BuildContext context) {
-    // print('initData ------> ${InitData.toJson(initData)}');
+  Widget build(BuildContext context) {    
     return Container(
       // color: Colors.red,
       height: constraints.maxHeight * 0.15,
-      padding: const EdgeInsets.only(left: LEFT_PADDING),
+      padding: const EdgeInsets.only(left: DEFAULT_PADDING),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -725,7 +773,7 @@ class TitleAndDetails extends StatelessWidget {
           // Text(' 45 min', style: kSubtitle1),
           Container(
             height: 22,
-            padding: const EdgeInsets.only(right: LEFT_PADDING),
+            padding: const EdgeInsets.only(right: DEFAULT_PADDING),
             child: ListView(
               physics: const NeverScrollableScrollPhysics(),
               scrollDirection: Axis.horizontal,
@@ -770,7 +818,7 @@ class BackgroundImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print('background ------> ');
+    print('background ------> ');
     return Container(
       height: constraints.maxHeight * 0.5,
       width: constraints.maxWidth,
@@ -833,8 +881,8 @@ class _OverviewState extends State<Overview>
   void onTap() => setState(() => _expanded = true);
 
   int getLength() {
-    double maxHeight = widget.constraints.maxHeight * 0.22 - 18;
-    double maxWidth = widget.constraints.maxWidth - 2 * LEFT_PADDING;// padding of two sides
+    double maxHeight = widget.constraints.maxHeight * 0.22 - 15;
+    double maxWidth = widget.constraints.maxWidth - 2 * DEFAULT_PADDING;// padding of two sides
     // divide available width by 6(width of a character)
     int charInOneLine = (maxWidth ~/ 6);
     // divide number of lines by 32(font with size 16 and lineHeight 1.5, which is 32)
@@ -845,7 +893,7 @@ class _OverviewState extends State<Overview>
 
   @override
   Widget build(BuildContext context) {
-    // print('legth ------> ${getLength()}');
+    print('legth ------> ${getLength()}');
     super.build(context);
     RegExp pattern = new RegExp(r'\n', caseSensitive: false);
     final overview = widget.overview.replaceAll(pattern, '');
@@ -874,7 +922,48 @@ class _OverviewState extends State<Overview>
           ),
         ),
       ),
-    );   
+    );
+    // return AnimatedSize(
+    //   duration: Duration(milliseconds: 300),
+    //   vsync: this,
+    //   curve: Curves.easeIn,
+    //   child: Container(
+    //     // color: Colors.blue,
+    //     padding: const EdgeInsets.only(
+    //         left: LEFT_PADDING, right: LEFT_PADDING, top: 10),
+    //     constraints: !_expanded
+    //         ? BoxConstraints(maxHeight: widget.constraints.maxHeight * 0.22)
+    //         : BoxConstraints(minHeight: widget.constraints.maxHeight * 0.22),
+    //     child: GestureDetector(
+    //         onTap: !_expanded
+    //             ? () {
+    //                 setState(() {
+    //                   _expanded = true;
+    //                 });
+    //               }
+    //             : null, // only expandable when not expanded yet
+    //         child: !_expanded
+    //             ? SizedBox.expand(
+    //                 child: RichText(
+    //                   text: TextSpan(
+    //                     style: kBodyStyle,
+    //                     text: overview.length > 230
+    //                         ? overview.substring(0, 230) + '...'
+    //                         : overview,
+    //                     children: [
+    //                       if (!_expanded && overview.length > 230)
+    //                         TextSpan(
+    //                           text: 'More',
+    //                           style: TextStyle(
+    //                               color: Theme.of(context).accentColor),
+    //                         ),
+    //                     ],
+    //                   ),
+    //                 ),
+    //               )
+    //             : Text(overview, style: kBodyStyle)),
+    //   ),
+    // );
   }
 
   @override
@@ -886,7 +975,7 @@ class Cast extends StatelessWidget {
   Cast({this.cast});
   @override
   Widget build(BuildContext context) {
-    // print('cast ------> ');
+    print('cast ------> ');
     return Column(
       children: [
         if (cast != null && cast.length > 0)
@@ -918,7 +1007,7 @@ class SimilarTV extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print('similar ------> ');
+    print('similar ------> ');
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
@@ -927,13 +1016,13 @@ class SimilarTV extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(left: LEFT_PADDING),
+                padding: EdgeInsets.only(left: DEFAULT_PADDING),
                 child: Text('Similar', style: kSubtitle1),
               ),
               SizedBox(height: 5),
               Flexible(
                 child: GridView.builder(                  
-                  padding: EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+                  padding: EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
                   itemCount: similar.length,
                   itemBuilder: (context, index) {
                     return MovieItem(
@@ -962,7 +1051,7 @@ class Reviews extends StatelessWidget {
   Reviews(this.reviews);
   @override
   Widget build(BuildContext context) {
-    // print('reviews ------> ');
+    print('reviews ------> ');
     return ListView.separated(
       separatorBuilder: (_, i) => SizedBox(height: 10),
       physics: const NeverScrollableScrollPhysics(),
@@ -970,7 +1059,7 @@ class Reviews extends StatelessWidget {
       itemCount: reviews.length,
       itemBuilder: (_, i) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
           color: ONE_LEVEL_ELEVATION,
           child: ReviewItem(
             item: reviews[i],

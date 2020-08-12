@@ -1,14 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 
 class MovieItem extends StatelessWidget {
@@ -63,34 +62,28 @@ class MovieItem extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.only(bottom: 1),
-                  child: item.posterUrl == null
+                item.posterUrl == null
                     ? PlaceHolderImage(item.title)
                     : CachedNetworkImage(
                         imageUrl: item.posterUrl,
                         fit: BoxFit.cover,
                         placeholder: (context, url) {
                           return Center(
-                            child: SpinKitCircle(
-                              color: Theme.of(context).accentColor,
-                              size: LOADING_INDICATOR_SIZE,
-                            ),
+                            child: LoadingIndicator(),
                           );
                         },
                       ),
-                ),
                 if (!withoutDetails)
                   Positioned.fill(
-                    bottom: 0,
+                    bottom: -2,
                     child: Container(
-                      height: constraints.maxHeight * 0.5,
+                      height: constraints.maxHeight * 0.45,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Colors.black.withOpacity(1),
-                            Colors.black.withOpacity(0.05),
+                            Colors.black.withOpacity(0.9),
+                            Colors.black.withOpacity(0.01),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
@@ -112,7 +105,7 @@ class MovieItem extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              
+                              fontFamily: 'Helvatica',
                               fontSize: 16,                              
                               color: Colors.white.withOpacity(0.87),
                             ),
@@ -137,7 +130,7 @@ class MovieItem extends StatelessWidget {
                                   child: Container(
                                     margin: const EdgeInsets.only(right: 3),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 2.0, vertical: 2),
+                                        horizontal: 5.0, vertical: 2),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
                                         border:

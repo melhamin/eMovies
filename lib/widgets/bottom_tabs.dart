@@ -28,7 +28,8 @@ class BottomTabs extends StatelessWidget {
             'Discover',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.home),          
+          activeIcon:Icon(Icons.home),       
+          icon: Icon(CupertinoIcons.home),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
@@ -53,6 +54,7 @@ class BottomTabs extends StatelessWidget {
             style: kBottomBarTextStyle,
           ),
           icon: Icon(CupertinoIcons.location),
+          activeIcon: Icon(CupertinoIcons.location_solid),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         BottomNavigationBarItem(
@@ -60,7 +62,7 @@ class BottomTabs extends StatelessWidget {
             'Account',
             style: kBottomBarTextStyle,
           ),
-          icon: Icon(Icons.account_circle),
+          icon: Icon(CupertinoIcons.profile_circled),
           backgroundColor: Theme.of(context).primaryColor,
         ),
         

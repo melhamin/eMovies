@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/init_data.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
+import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/tv/tv_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
@@ -62,7 +62,7 @@ class ListDataItem extends StatelessWidget {
         title: Text(
           initData.title,
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 16,
             // fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),

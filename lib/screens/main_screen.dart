@@ -1,12 +1,12 @@
-import 'dart:ui';
 
+import 'package:e_movies/consts/sysQuery.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/screens/account_screen.dart';
 import 'package:e_movies/screens/cinemas_screen.dart';
 import 'package:flutter/material.dart';
 
-import 'package:e_movies/screens/movie/discover_screen.dart';
+import 'package:e_movies/screens/movie/discover/discover_screen.dart';
 import 'package:e_movies/screens/my_lists_screen.dart';
 import 'package:e_movies/screens/search/search_screen.dart';
 import 'package:e_movies/widgets/bottom_tabs.dart';
@@ -31,7 +31,7 @@ class _MainScreenState extends State<MainScreen>
     super.initState();
 
     // load lists    
-    Future.delayed(Duration.zero).then((value) {      
+    Future.delayed(Duration.zero).then((value) {
       Provider.of<Lists>(context, listen: false).loadMovieLists();
       Provider.of<Lists>(context, listen: false).loadTVLists();
       Provider.of<Search>(context, listen: false).loadTopMovieGenres();
@@ -86,6 +86,7 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
+    SysQuery().init(context);
     // final _background_image = Image.asset(
     //   'assets/images/background_image_1.jpg',
     //   fit: BoxFit.cover,
@@ -111,8 +112,6 @@ class _MainScreenState extends State<MainScreen>
         ],
       ),
     );  
-    return SafeArea(
-      child: _content,
-    );
+    return SafeArea(child: _content);
   }
 }

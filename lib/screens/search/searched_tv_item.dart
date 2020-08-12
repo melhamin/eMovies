@@ -45,7 +45,7 @@ class SearchedTVItem extends StatelessWidget {
         title: Text(
           item.title ?? 'N/A',
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),

@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/init_data.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/providers/search.dart';
+import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
 import 'package:e_movies/widgets/placeholder_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class SearchedMovieItem extends StatelessWidget {
         title: Text(
           item.title ?? 'N/A',
           style: TextStyle(
-            
+            fontFamily: 'Helvatica',
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),

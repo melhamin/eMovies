@@ -79,11 +79,6 @@ class Lists with ChangeNotifier {
   bool movieListsUpdated = false;
   bool tvListsUpdated = false;
 
-  
-  bool movieListsLoaded = false;
-  bool tvListsLoaded = false;
-
-
   // Movies
   List<ListItemModel> _moviesLists = [];
   List<InitData> _favoriteMovies = [];
@@ -113,26 +108,6 @@ class Lists with ChangeNotifier {
   // for updating movies animated list when item added from outside the lists screeen
   bool get isMovieListsUpdated {
     return movieListsUpdated;
-  }
-
-  // used for updating the list from outside the widget only if it is loaded
-  bool get isMovieListsLoaded {
-    return movieListsLoaded;
-  }
-
-  void setMovieListsLoaded() {
-    movieListsLoaded = true;
-    notifyListeners();
-  }
-
-  // used for updating the list from outside the widget only if it is loaded
-  bool get isTVListsLoaded {
-    return tvListsLoaded;
-  }
-
-  void setTVListsLoaded() {
-    tvListsLoaded = true;
-    notifyListeners();
   }
 
   void toggleMovieListsUpdated() {
@@ -179,7 +154,6 @@ class Lists with ChangeNotifier {
         _moviesLists.add(ListItemModel.fromJson(element));
       });
     }    
-    
     notifyListeners(); 
   }
 
@@ -208,7 +182,6 @@ class Lists with ChangeNotifier {
   }
 
   bool addNewMovieToList(int listIndex, InitData item) {
-    
     final temp = _moviesLists[listIndex]
         .items
         .firstWhere((element) => element.id == item.id, orElse: () => null);
@@ -232,7 +205,10 @@ class Lists with ChangeNotifier {
     // item to the animated list
     if(toggleListsUpdated) movieListsUpdated = true;
     notifyListeners();
-
+    // print('add ---------> $movieListsUpdated');
+    // set is back to false so that it adds only once
+    // movieListsUpdated = false;
+    // toggle();
     saveMovieLists();
     return true;
   }
@@ -376,6 +352,8 @@ class Lists with ChangeNotifier {
     if(toggleListsUpdated) tvListsUpdated = true;
     notifyListeners();
 
+    // set is back to false so that it adds only once
+    tvListsUpdated = false;    
     saveTVLists();
     return true;
   }

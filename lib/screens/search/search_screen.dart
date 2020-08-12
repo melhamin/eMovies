@@ -136,7 +136,7 @@ class _SearchingState extends State<Searching>
     return [
       Tab(icon: Text('All')),
       Tab(icon: Text('Movies')),
-      Tab(icon: Text('TV')),
+      Tab(icon: Text('TV shows')),
       Tab(icon: Text('People')),
     ];
   }
@@ -155,7 +155,7 @@ class _SearchingState extends State<Searching>
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(100),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+          padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
           child: Column(
             children: [
               Row(
@@ -181,11 +181,11 @@ class _SearchingState extends State<Searching>
                           hintStyle: TextStyle(
                             color: Colors.white.withOpacity(0.87),
                             fontSize: 18,
-                            
+                            fontFamily: 'Helvatica',
                           ),
                         ),
                         style: TextStyle(
-                          
+                          fontFamily: 'Helvatica',
                           fontSize: 18,
                           // fontWeight: FontWeight.bold,
                           height: 0.9,
@@ -203,7 +203,11 @@ class _SearchingState extends State<Searching>
                             setState(() {
                               _isFetching = false;
                             });
-                          });                        
+                          });
+                          //  Provider.of<Search>(context, listen: false)
+                          //     .searchTVShows(value, 1);
+                          //     Provider.of<Search>(context, listen: false)
+                          //     .searchPerson(value, 1);
                         },
                       ),
                     ),
@@ -213,7 +217,7 @@ class _SearchingState extends State<Searching>
                     child: FlatButton(
                       child: Text(
                         'Cancel',
-                        style: kBodyStyle,
+                        style: kSelectedTabStyle,
                       ),
                       onPressed: () {
                         setState(() {
@@ -234,7 +238,7 @@ class _SearchingState extends State<Searching>
               ),
               PreferredSize(
                 child: currentPage,
-                preferredSize: Size(double.infinity, 40),
+                preferredSize: Size.fromHeight(40),
               ),
             ],
           ),
@@ -269,11 +273,11 @@ class _SearchingState extends State<Searching>
 //              hintStyle: TextStyle(
 //                color: Colors.white.withOpacity(0.87),
 //                fontSize: 18,
-//                
+//                fontFamily: 'Helvatica',
 //              ),
 //            ),
 //            style: TextStyle(
-//              
+//              fontFamily: 'Helvatica',
 //              fontSize: 18,
 //              // fontWeight: FontWeight.bold,
 //              height: 0.9,
@@ -327,8 +331,8 @@ class NotSearching extends StatelessWidget {
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: LEFT_PADDING,
-        right: LEFT_PADDING,
+        left: DEFAULT_PADDING,
+        right: DEFAULT_PADDING,
         // top: 30,
         bottom: 10,
       ),
@@ -340,7 +344,7 @@ class NotSearching extends StatelessWidget {
                     color: Colors.white.withOpacity(0.12), width: 1))),
         child: Text(title,
             style: TextStyle(
-                
+                fontFamily: 'Helvatica',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87))),
@@ -354,7 +358,7 @@ class NotSearching extends StatelessWidget {
     // print('all genres -----------> $genres');
     return GridView.builder(
       shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+      padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
       physics: const NeverScrollableScrollPhysics(),
       itemCount: genres.length,
       itemBuilder: (ctx, i) {
@@ -396,7 +400,7 @@ class NotSearching extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+        padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
         itemCount: genres.length,
         itemBuilder: (_, i) {
           final item = getGenreItem(genres[i], mediaType);
@@ -420,7 +424,7 @@ class NotSearching extends StatelessWidget {
   Widget _buildTitle(String title) {
     return Padding(
       padding:
-          const EdgeInsets.symmetric(horizontal: LEFT_PADDING, vertical: 10),
+          const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING, vertical: 10),
       child: Text(title, style: kSubtitle1),
     );
   }
@@ -443,7 +447,7 @@ class NotSearching extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    
+                    fontFamily: 'Helvatica',
                     color: Colors.white.withOpacity(0.87)),
               ),
             ),
@@ -474,7 +478,7 @@ class NotSearching extends StatelessWidget {
                     Text('Movies, TV shows, People',
                         style: TextStyle(
                           fontSize: 16,
-                          
+                          fontFamily: 'Helvatica',
                           color: Hexcolor('#010101'),
                           fontWeight: FontWeight.bold,
                         ))

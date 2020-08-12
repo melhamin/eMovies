@@ -1,5 +1,6 @@
 import 'package:async/async.dart';
 import 'package:e_movies/screens/search/searched_tv_item.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -39,10 +40,7 @@ class _TVShowsResultState extends State<TVShowsResult> {
     return Center(
       child: widget.searchController.text.isEmpty
           ? null
-          : SpinKitCircle(
-              size: 21,
-              color: Theme.of(context).accentColor,
-            ),
+          : LoadingIndicator(),
     );
   }
 

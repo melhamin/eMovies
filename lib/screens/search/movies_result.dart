@@ -1,13 +1,10 @@
 import 'package:async/async.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/screens/movie/movie_details_screen.dart';
 import 'package:e_movies/providers/search.dart' show Search;
-import 'package:e_movies/widgets/placeholder_image.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:e_movies/screens/search/searched_movie_item.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 enum LoaderStatus {
@@ -46,10 +43,7 @@ class _MoviesResultState extends State<MoviesResult> {
     return Center(
       child: widget.searchController.text.isEmpty
           ? null
-          : SpinKitCircle(
-              size: 21,
-              color: Theme.of(context).accentColor,
-            ),
+          : LoadingIndicator(),
     );
   }
 
