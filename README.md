@@ -1,4 +1,4 @@
-# eMovies a crossplatform flutter application for browsing movies and TV shows.
+# eMovies a cross-platform flutter application for browsing movies and TV shows.
 <p float="left">
   <img src="https://user-images.githubusercontent.com/48331678/90113584-3f7a5b80-dd5a-11ea-88ce-a425203d0beb.PNG" width="30%" height="50%" /> 
   <img src="https://user-images.githubusercontent.com/48331678/90113859-9b44e480-dd5a-11ea-906d-a5e10c89229a.PNG" width="30%" height="50%"/>
