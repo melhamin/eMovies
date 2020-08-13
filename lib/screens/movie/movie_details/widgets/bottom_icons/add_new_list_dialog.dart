@@ -92,7 +92,7 @@ class AddNewListDialog extends StatelessWidget {
                       color: Hexcolor('#DEDEDE'),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Helvatica',
+                      
                     ),
                     autofocus: true,
                     textInputAction: TextInputAction.go,
@@ -109,14 +109,14 @@ class AddNewListDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  DialogButtons(
+                  DialogButton(
                       title: 'Cancel',
                       onTap: () {
                         textEditingController.clear();
                         Navigator.of(context).pop();
                       },
                       leftButton: true),
-                  DialogButtons(
+                  DialogButton(
                       title: 'Create', onTap: () => _addList(context)),
                 ],
               ),

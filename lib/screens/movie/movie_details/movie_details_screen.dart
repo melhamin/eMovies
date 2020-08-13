@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/models/movie_model.dart';
-import 'package:e_movies/screens/movie/movie_details.dart/widgets/movie_details.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/background_and_title.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/bottom_icons/bottom_icons.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/movie_cast.dart';
+import 'package:e_movies/screens/movie/movie_details/widgets/details.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/movie_images.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/reviews.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/similar_movies.dart';
@@ -115,7 +115,7 @@ class _MovieDetailsPageState extends State<MovieDetailsScreen>
             height: constraints.maxHeight * 0.20,
             child: MovieImages(movie: film)),
       SizedBox(height: 20),
-      MovieDetails(movie: film),
+      Details(movie: film),
       SizedBox(height: 30),
       MovieCast(movie: film),
       SizedBox(height: 30),

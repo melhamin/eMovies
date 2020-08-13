@@ -2,11 +2,11 @@ import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 
 
-class DialogButtons extends StatelessWidget {
+class DialogButton extends StatelessWidget {
   final String title;
   final Function onTap;
   final bool leftButton;
-  const DialogButtons({
+  const DialogButton({
     this.title,
     this.onTap,
     this.leftButton = false,
@@ -41,7 +41,7 @@ class DialogButtons extends StatelessWidget {
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         color: Theme.of(context).accentColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class DialogButtons extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'Helvatica',
+                      
                       color: Theme.of(context).accentColor,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

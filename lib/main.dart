@@ -45,8 +45,7 @@ class MyApp extends StatelessWidget {
           // primaryColor: Color(0xff1C306D),
           // primaryColor: Hexcolor('#2c3e50'),
           primaryColor: Colors.black,
-          applyElevationOverlayColor: true,
-          fontFamily: 'Helvatica',
+          applyElevationOverlayColor: true,          
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           

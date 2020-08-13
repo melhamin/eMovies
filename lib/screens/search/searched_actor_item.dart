@@ -42,7 +42,7 @@ class SearchedActorItem extends StatelessWidget {
         title: Text(
           item.name?? 'N/A',
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),

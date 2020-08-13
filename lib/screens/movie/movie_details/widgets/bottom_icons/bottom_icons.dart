@@ -1,13 +1,15 @@
+import 'package:e_movies/screens/movie/movie_details/widgets/bottom_icons/add_to_list_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:e_movies/consts/consts.dart';
 import 'package:e_movies/models/init_data.dart';
 import 'package:e_movies/providers/lists.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/screens/movie/movie_details/widgets/bottom_icons/toast_message_details.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../../my_toast_message.dart';
-import 'add_to_list_dialog.dart';
+
 
 class BottomIcons extends StatelessWidget {
   final InitData initData;

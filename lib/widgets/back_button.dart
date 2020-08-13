@@ -32,7 +32,7 @@ class CustomBackButton extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 2),
                 child: Text(text,
                     style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         fontSize: 20,
                         color: Colors.white.withOpacity(0.87))),
               ),

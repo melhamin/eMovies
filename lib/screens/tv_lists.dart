@@ -84,7 +84,7 @@ class _TVshowsListsState extends State<TVshowsLists> with AutomaticKeepAliveClie
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),

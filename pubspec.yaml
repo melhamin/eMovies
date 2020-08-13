@@ -54,50 +54,55 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - assets/images/
+    - assets/images/movies/
+    - assets/images/tv/
+    - assets/svg/
+    - assets/icons/
 
-    - assets/images/background_image_1.jpg
-    - assets/images/placeholder.png
-    - assets/images/logo.png
-    - assets/icons/play.svg
+    # - assets/images/background_image_1.jpg
+    # - assets/images/placeholder.png
+    # - assets/images/logo.png
+    # - assets/icons/play.svg
 
-    - assets/images/movies/action.jpg
-    - assets/images/movies/adventure.jpg
-    - assets/images/movies/comedy.jpg
-    - assets/images/movies/animation.jpg
-    - assets/images/movies/comedy.jpg
-    - assets/images/movies/crime.jpeg
-    - assets/images/movies/documentary.jpg
-    - assets/images/movies/drama.jpg
-    - assets/images/movies/family.jpg
-    - assets/images/movies/fantasy.jpg
-    - assets/images/movies/history.jpg
-    - assets/images/movies/horror.jpg
-    - assets/images/movies/music.jpg
-    - assets/images/movies/mystery.jpg
-    - assets/images/movies/romance.jpg
-    - assets/images/movies/sci-fi.jpg
-    - assets/images/movies/thriller.jpg
-    - assets/images/movies/war.jpg
-    - assets/images/movies/western.jpg
+    # - assets/images/movies/action.jpg
+    # - assets/images/movies/adventure.jpg
+    # - assets/images/movies/comedy.jpg
+    # - assets/images/movies/animation.jpg
+    # - assets/images/movies/comedy.jpg
+    # - assets/images/movies/crime.jpeg
+    # - assets/images/movies/documentary.jpg
+    # - assets/images/movies/drama.jpg
+    # - assets/images/movies/family.jpg
+    # - assets/images/movies/fantasy.jpg
+    # - assets/images/movies/history.jpg
+    # - assets/images/movies/horror.jpg
+    # - assets/images/movies/music.jpg
+    # - assets/images/movies/mystery.jpg
+    # - assets/images/movies/romance.jpg
+    # - assets/images/movies/sci-fi.jpg
+    # - assets/images/movies/thriller.jpg
+    # - assets/images/movies/war.jpg
+    # - assets/images/movies/western.jpg
 
-    - assets/images/tv/action_adventure.jpg
-    - assets/images/tv/comedy.jpg
-    - assets/images/tv/animation.jpg
-    - assets/images/tv/comedy.jpg
-    - assets/images/tv/crime.jpg
-    - assets/images/tv/drama.jpg
-    - assets/images/tv/documentary.jpg
-    - assets/images/tv/family.jpg
-    - assets/images/tv/kids.jpg
-    - assets/images/tv/mystery.jpg
-    - assets/images/tv/news.jpg
-    - assets/images/tv/reality.jpg
-    - assets/images/tv/sci-fi_fantasy.jpg
-    - assets/images/tv/sci-fi.jpg
-    - assets/images/tv/soap.jpg
-    - assets/images/tv/talk.jpg
-    - assets/images/tv/western.jpg
-    - assets/images/tv/war_politics.jpg
+    # - assets/images/tv/action_adventure.jpg
+    # - assets/images/tv/comedy.jpg
+    # - assets/images/tv/animation.jpg
+    # - assets/images/tv/comedy.jpg
+    # - assets/images/tv/crime.jpg
+    # - assets/images/tv/drama.jpg
+    # - assets/images/tv/documentary.jpg
+    # - assets/images/tv/family.jpg
+    # - assets/images/tv/kids.jpg
+    # - assets/images/tv/mystery.jpg
+    # - assets/images/tv/news.jpg
+    # - assets/images/tv/reality.jpg
+    # - assets/images/tv/sci-fi_fantasy.jpg
+    # - assets/images/tv/sci-fi.jpg
+    # - assets/images/tv/soap.jpg
+    # - assets/images/tv/talk.jpg
+    # - assets/images/tv/western.jpg
+    # - assets/images/tv/war_politics.jpg
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.
     # For details regarding adding assets from package dependencies, see

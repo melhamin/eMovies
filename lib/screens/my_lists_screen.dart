@@ -96,7 +96,7 @@ class _MyListsScreenState extends State<MyListsScreen>
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Helvatica',
+                        
                         color: Colors.white.withOpacity(0.87)),
                   ),
                 ),

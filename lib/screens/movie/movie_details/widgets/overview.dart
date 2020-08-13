@@ -24,7 +24,7 @@ class _OverviewState extends State<Overview>
   void onTap() => setState(() => _expanded = true);
 
   int getLength() {
-    double maxHeight = widget.constraints.maxHeight * 0.3;
+    double maxHeight = widget.constraints.maxHeight * 0.3 - 5;
     double maxWidth = widget.constraints.maxWidth -
         2 * DEFAULT_PADDING; // padding of two sides
     // divide available width by 6(width of a character)
@@ -45,11 +45,11 @@ class _OverviewState extends State<Overview>
       constraints: _expanded
           ? BoxConstraints(
               maxHeight: 400,
-              minHeight: widget.constraints.maxHeight * 0.3,
+              minHeight: widget.constraints.maxHeight * 0.3 - 5,
             )
           : BoxConstraints(
-              minHeight: widget.constraints.maxHeight * 0.3,
-              maxHeight: widget.constraints.maxHeight * 0.3,
+              minHeight: widget.constraints.maxHeight * 0.3 - 5,
+              maxHeight: widget.constraints.maxHeight * 0.3 - 5,
             ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10.0),

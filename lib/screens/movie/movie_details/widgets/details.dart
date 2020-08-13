@@ -3,9 +3,9 @@ import 'package:e_movies/models/movie_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class MovieDetails extends StatelessWidget {
+class Details extends StatelessWidget {
   final MovieModel movie;
-  const MovieDetails({
+  const Details({
     this.movie,
     Key key,
   }) : super(key: key);

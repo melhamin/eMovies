@@ -72,7 +72,7 @@ class _BackgroundAndTitleState extends State<BackgroundAndTitle>
 
   String _getGenre() {
     // print('genreIDs-----------> ${widget.initData['genreIDs']}');
-    return widget.initData.genreIDs == null
+    return widget.initData.genreIDs == null || widget.initData.genreIDs.isEmpty
         ? 'N/A'
         : MOVIE_GENRES[widget.initData.genreIDs[0]] ?? 'N/A';
   }

@@ -32,7 +32,7 @@ class SectionTitle extends StatelessWidget {
         children: [
           Text(title,
               style: TextStyle(
-                fontFamily: 'Helvatica',
+                
                 fontSize: 16,
                 // fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87),

@@ -60,7 +60,7 @@ class Search with ChangeNotifier {
   // Movies
   Future<void> searchMovies(String query, int page) async {
     final url =
-        '$BASE_URL/search/movie?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&query=$query&page=$page&include_adult=false';
+        '$BASE_URL/search/movie?api_key=${DotEnv().env['API_KEY']}&language=en-US&query=$query&page=$page&include_adult=false';
 
     if (query.isNotEmpty)
       try {
@@ -87,7 +87,7 @@ class Search with ChangeNotifier {
 
   Future<void> searchTVShows(String query, int page) async {
     final url =
-        '$BASE_URL/search/tv?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&query=$query&page=$page&include_adult=false';
+        '$BASE_URL/search/tv?api_key=${DotEnv().env['API_KEY']}&language=en-US&query=$query&page=$page&include_adult=false';
 
     if (query.isNotEmpty)
       try {
@@ -109,7 +109,7 @@ class Search with ChangeNotifier {
 
   Future<void> searchPerson(String query, int page) async {
     final url =
-        '$BASE_URL/search/person?api_key=${DotEnv().env['TMDB_API_KEY']}&language=en-US&query=$query&$page=1&include_adult=false';
+        '$BASE_URL/search/person?api_key=${DotEnv().env['API_KEY']}&language=en-US&query=$query&$page=1&include_adult=false';
 
     if (query.isNotEmpty)
       try {

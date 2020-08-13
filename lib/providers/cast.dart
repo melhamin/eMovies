@@ -15,7 +15,7 @@ import 'package:e_movies/consts/consts.dart';
 
 class Cast with ChangeNotifier {
 
-  final TMDB_API_KEY = DotEnv().env['TMDB_API_KEY'];
+  final API_KEY = DotEnv().env['API_KEY'];
 
   PersonModel person;
   List<MovieModel> _movies = [];
@@ -35,8 +35,8 @@ class Cast with ChangeNotifier {
   }
 
   Future<void> getPersonDetails(int id) async {    
-      final personUrl = '$BASE_URL/person/$id?api_key=$TMDB_API_KEY&language=en-US';
-      final moviesUrl = '$BASE_URL/person/$id/movie_credits?api_key=$TMDB_API_KEY&language=en-US';
+      final personUrl = '$BASE_URL/person/$id?api_key=$API_KEY&language=en-US';
+      final moviesUrl = '$BASE_URL/person/$id/movie_credits?api_key=$API_KEY&language=en-US';
 
     try {
       final personResponse = await http.get(personUrl);
@@ -73,7 +73,7 @@ class Cast with ChangeNotifier {
 
   } 
   Future<void> getPopularPeople(int page) async {    
-      final url = 'https://api.themoviedb.org/3/person/popular?api_key=$TMDB_API_KEY&language=en-US&page=1';
+      final url = 'https://api.themoviedb.org/3/person/popular?api_key=$API_KEY&language=en-US&page=1';
 
     try {
       final response = await http.get(url);

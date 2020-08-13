@@ -21,7 +21,7 @@ class ToastMessageDetails extends StatelessWidget {
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),

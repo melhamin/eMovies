@@ -3,109 +3,108 @@ import 'package:hexcolor/hexcolor.dart';
 
 // Theme and text styles
 
-TextStyle kTitleStyle = TextStyle(
-  fontFamily: 'Helvatica',
+TextStyle kTitleStyle = TextStyle(  
   fontWeight: FontWeight.bold,
   fontSize: 20,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kTitleStyle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 18,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kTitleStyle3 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kBodyStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
   height: 1.5,
 );
 TextStyle kBodyStyle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kSubtitle1 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 TextStyle kSubtitle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 14,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 
 TextStyle kItemTitle = TextStyle(
-    fontFamily: 'Helvatica',
+    
     fontWeight: FontWeight.w600,
     fontSize: 18,
     color: Hexcolor('#DEDEDE'));
 TextStyle kInGridTitle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#DEDEDE'),
 );
 
 TextStyle kSeeAll = TextStyle(
-    fontFamily: 'Helvatica',
+    
     // fontWeight: FontWeight.bold,
     fontSize: 16,
     // color: Hexcolor('#DEDEDE'),
     color: Colors.white.withOpacity(0.6));
 TextStyle kAppBarTextStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Colors.pink,
 );
 
 TextStyle kBottomBarTextStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 14,
 );
 TextStyle kSelectedTabStyle = TextStyle(
-    fontFamily: 'Helvatica',
+    
     fontWeight: FontWeight.bold,
     fontSize: 16,
     color: Colors.white.withOpacity(0.87));
 
 TextStyle kUnselectedTabStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontSize: 16,
   fontWeight: FontWeight.bold,
   color: Colors.white.withOpacity(0.6),
 );
 
 TextStyle kTBStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#55AB55'),
 );
 
 TextStyle kBTStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontSize: 18,
   fontWeight: FontWeight.bold,
   color: Colors.pink,
 );
 
 TextStyle kListsItemTitleStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontSize: 18,
   // fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),

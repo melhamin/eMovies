@@ -126,7 +126,7 @@ class _MoviesScreenState extends State<DiscoverScreen>
                           horizontal: DEFAULT_PADDING),
                       child: Text('Discover',
                           style: TextStyle(
-                            fontFamily: 'Helvatica',
+                            
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
                             color: Colors.white.withOpacity(0.87),

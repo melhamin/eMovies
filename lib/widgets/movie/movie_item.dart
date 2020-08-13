@@ -105,7 +105,7 @@ class MovieItem extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontFamily: 'Helvatica',
+                              
                               fontSize: 16,                              
                               color: Colors.white.withOpacity(0.87),
                             ),

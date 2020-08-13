@@ -198,7 +198,7 @@ class _ListItemScreenState extends State<ListItemScreen>
                         children: [
                           Text(widget.title,
                               style: TextStyle(
-                                fontFamily: 'Helvatica',
+                                
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white.withOpacity(0.87),

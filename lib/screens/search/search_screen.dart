@@ -181,11 +181,11 @@ class _SearchingState extends State<Searching>
                           hintStyle: TextStyle(
                             color: Colors.white.withOpacity(0.87),
                             fontSize: 18,
-                            fontFamily: 'Helvatica',
+                            
                           ),
                         ),
                         style: TextStyle(
-                          fontFamily: 'Helvatica',
+                          
                           fontSize: 18,
                           // fontWeight: FontWeight.bold,
                           height: 0.9,
@@ -273,11 +273,11 @@ class _SearchingState extends State<Searching>
 //              hintStyle: TextStyle(
 //                color: Colors.white.withOpacity(0.87),
 //                fontSize: 18,
-//                fontFamily: 'Helvatica',
+//                
 //              ),
 //            ),
 //            style: TextStyle(
-//              fontFamily: 'Helvatica',
+//              
 //              fontSize: 18,
 //              // fontWeight: FontWeight.bold,
 //              height: 0.9,
@@ -344,7 +344,7 @@ class NotSearching extends StatelessWidget {
                     color: Colors.white.withOpacity(0.12), width: 1))),
         child: Text(title,
             style: TextStyle(
-                fontFamily: 'Helvatica',
+                
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.white.withOpacity(0.87))),
@@ -447,7 +447,7 @@ class NotSearching extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Helvatica',
+                    
                     color: Colors.white.withOpacity(0.87)),
               ),
             ),
@@ -478,7 +478,7 @@ class NotSearching extends StatelessWidget {
                     Text('Movies, TV shows, People',
                         style: TextStyle(
                           fontSize: 16,
-                          fontFamily: 'Helvatica',
+                          
                           color: Hexcolor('#010101'),
                           fontWeight: FontWeight.bold,
                         ))

@@ -72,7 +72,7 @@ class _AllResultsState extends State<AllResults> {
         title: Text(
           item.title ?? 'N/A',
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             color: Colors.white.withOpacity(0.87),
           ),
@@ -185,7 +185,7 @@ class _AllResultsState extends State<AllResults> {
                       padding: EdgeInsets.only(top: 3),
                       child: Text('See All',
                           style: TextStyle(
-                              fontFamily: 'Helvatica',
+                              
                               fontSize: 14,
                               color: Colors.white.withOpacity(0.45)))),
                   SizedBox(width: 3),

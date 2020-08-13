@@ -67,7 +67,7 @@ class CastItem extends StatelessWidget {
         SizedBox(height: 2),
         Text(item.name.split(' ')[0],
             style: TextStyle(
-              fontFamily: 'Helvatica',
+              
               // fontWeight: FontWeight.bold,
               fontSize: 14,
               color: Hexcolor('#FFFFFF').withOpacity(0.87),

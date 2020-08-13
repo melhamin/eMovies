@@ -106,7 +106,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         color: Theme.of(context).accentColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -122,7 +122,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                   child: Text(
                     title,
                     style: TextStyle(
-                      fontFamily: 'Helvatica',
+                      
                       color: Theme.of(context).accentColor,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -182,7 +182,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
                       color: Hexcolor('#DEDEDE'),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Helvatica',
+                      
                     ),
                     autofocus: true,
                     textInputAction: TextInputAction.go,
@@ -600,7 +600,7 @@ class _TVDetailsScreenState extends State<TVDetailsScreen> with AutomaticKeepAli
         Text(
           message,
           style: TextStyle(
-            fontFamily: 'Helvatica',
+            
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.white.withOpacity(0.87),

@@ -91,7 +91,7 @@ class AddToListDialog extends StatelessWidget {
                     child: Text(
                       'Cancel',
                       style: TextStyle(
-                        fontFamily: 'Helvatica',
+                        
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Theme.of(context).accentColor,
