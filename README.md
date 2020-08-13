@@ -8,7 +8,7 @@
   <img src="https://user-images.githubusercontent.com/48331678/90114707-caa82100-dd5b-11ea-9bb8-8cff1bf9b403.PNG" width="30%" height="50%"/>
 </p>
 
-More details [here](https://github.com/melhamin/iNova/blob/master/screenshots.md)
+[Browse more](https://github.com/melhamin/iNova/blob/master/screenshots.md)
 
 # Main Features
 
