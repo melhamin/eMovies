@@ -3,6 +3,7 @@ import 'package:e_movies/screens/main_screen.dart';
 import 'package:e_movies/providers/search.dart';
 import 'package:e_movies/screens/movie/movie_details/movie_details_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,7 +17,6 @@ import 'package:e_movies/providers/cast.dart';
 import 'package:e_movies/providers/tv.dart';
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/providers/lists.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 import 'screens/movie/trending_movies_screen.dart';
 
@@ -28,7 +28,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {        
     FlutterStatusbarcolor.setStatusBarColor(Hexcolor('#121212'));
     FlutterStatusbarcolor.setStatusBarWhiteForeground(true);
     return MultiProvider(

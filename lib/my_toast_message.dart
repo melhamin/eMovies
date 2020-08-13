@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:e_movies/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
+// import 'package:simple_animations/simple_animations.dart';
 
 // class ToastUtils {
 //   static Timer toastTimer;

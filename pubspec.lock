@@ -21,11 +21,7 @@ packages:
       name: cached_network_image
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
-    version: "2.0.0"
-=======
     version: "2.2.0+1"
->>>>>>> DiffUI
   characters:
     dependency: transitive
     description:
@@ -82,8 +78,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0-nullsafety"
-<<<<<<< HEAD
-=======
   file:
     dependency: transitive
     description:
@@ -91,7 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.2.1"
->>>>>>> DiffUI
   flutter:
     dependency: "direct main"
     description: flutter
@@ -289,10 +282,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.4"
-<<<<<<< HEAD
-  rating_bar:
-    dependency: "direct main"
-=======
   rxdart:
     dependency: transitive
     description:
@@ -309,7 +298,6 @@ packages:
     version: "1.0.2"
   sa_multi_tween:
     dependency: transitive
->>>>>>> DiffUI
     description:
       name: sa_multi_tween
       url: "https://pub.dartlang.org"
@@ -411,8 +399,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0-nullsafety"
-<<<<<<< HEAD
-=======
   supercharged:
     dependency: transitive
     description:
@@ -420,7 +406,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.0"
->>>>>>> DiffUI
   synchronized:
     dependency: transitive
     description:
@@ -442,16 +427,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.19-nullsafety"
-<<<<<<< HEAD
-  transparent_image:
-    dependency: "direct main"
-    description:
-      name: transparent_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
-=======
->>>>>>> DiffUI
   typed_data:
     dependency: transitive
     description:
