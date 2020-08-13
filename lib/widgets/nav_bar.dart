@@ -15,7 +15,7 @@ class NavBar extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.black.withOpacity(0),
+        color: BASELINE_COLOR,
       ),
       child: Padding(
         padding: const EdgeInsets.all(7.0),
@@ -23,11 +23,11 @@ class NavBar extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          color: Colors.black54,
-          child: TabBar(
+          color: ONE_LEVEL_ELEVATION,
+          child: TabBar(                                                
             indicator: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).accentColor,                          
             ),
             controller: tabController,
             tabs: tabs,

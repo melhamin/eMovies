@@ -1,5 +1,5 @@
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_genre_item_screen.dart';
+import 'package:e_movies/screens/movie/movie_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
 class MovieGenreTile extends StatelessWidget {
@@ -10,23 +10,9 @@ class MovieGenreTile extends StatelessWidget {
   MovieGenreTile({this.title, this.imageUrl, this.genreId});
 
   Route _buildRoute() {
-    return PageRouteBuilder(
-      // settings: RouteSettings(arguments: genreId),
-      pageBuilder: (context, animation, secondaryAnimation) => MovieGenreItem(genreId),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+    return MaterialPageRoute(
+      builder: (context) => MovieGenreItem(genreId),      
+    );      
   }
 
   void _onTap(BuildContext context) {
@@ -41,18 +27,13 @@ class MovieGenreTile extends StatelessWidget {
         return GestureDetector(
           child: Stack(
             children: [
-              Card(
-                color: Colors.black,
-                shadowColor: Colors.white30,
-                elevation: 5,
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  child: FadeInImage(
-                    image: AssetImage(imageUrl),
-                    placeholder: AssetImage('assets/images/placeholder.png'),
-                    fit: BoxFit.cover,
-                  ),
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: FadeInImage(
+                  image: AssetImage(imageUrl),
+                  placeholder: AssetImage('assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
               Align(
@@ -72,11 +53,11 @@ class MovieGenreTile extends StatelessWidget {
                 ),
               ),
               Positioned(
-                bottom: 15,
-                left: 15,
+                bottom: 10,
+                left: 10,
                 child: Text(
                   title,
-                  style: kTitleStyle,
+                  style: kTitleStyle2,
                 ),
               ),
             ],
@@ -87,7 +68,4 @@ class MovieGenreTile extends StatelessWidget {
     );
   }
 
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
 }

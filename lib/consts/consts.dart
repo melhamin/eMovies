@@ -3,94 +3,110 @@ import 'package:hexcolor/hexcolor.dart';
 
 // Theme and text styles
 
-TextStyle kTitleStyle = TextStyle(
-  fontFamily: 'Helvatica',
+TextStyle kTitleStyle = TextStyle(  
   fontWeight: FontWeight.bold,
-  fontSize: 21,
+  fontSize: 20,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kTitleStyle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 18,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
+TextStyle kTitleStyle3 = TextStyle(
+  
+  fontWeight: FontWeight.bold,
+  fontSize: 16,
+  color: Hexcolor('#FFFFFF').withOpacity(0.87),
+);
 TextStyle kBodyStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
   height: 1.5,
 );
 TextStyle kBodyStyle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.87),
 );
 TextStyle kSubtitle1 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 TextStyle kSubtitle2 = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 14,
   color: Hexcolor('#FFFFFF').withOpacity(0.6),
 );
 
 TextStyle kItemTitle = TextStyle(
-    fontFamily: 'Helvatica',
+    
     fontWeight: FontWeight.w600,
     fontSize: 18,
     color: Hexcolor('#DEDEDE'));
 TextStyle kInGridTitle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.w500,
   fontSize: 16,
   color: Hexcolor('#DEDEDE'),
 );
 
 TextStyle kSeeAll = TextStyle(
-  fontFamily: 'Helvatica',
-  fontWeight: FontWeight.bold,
-  fontSize: 16,
-  color: Hexcolor('#DEDEDE'),
-);
+    
+    // fontWeight: FontWeight.bold,
+    fontSize: 16,
+    // color: Hexcolor('#DEDEDE'),
+    color: Colors.white.withOpacity(0.6));
 TextStyle kAppBarTextStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   // fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Colors.pink,
 );
 
 TextStyle kBottomBarTextStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 14,
+);
+TextStyle kSelectedTabStyle = TextStyle(
+    
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+    color: Colors.white.withOpacity(0.87));
+
+TextStyle kUnselectedTabStyle = TextStyle(
   
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+  color: Colors.white.withOpacity(0.6),
 );
 
 TextStyle kTBStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontWeight: FontWeight.bold,
   fontSize: 16,
   color: Hexcolor('#55AB55'),
 );
 
 TextStyle kBTStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontSize: 18,
   fontWeight: FontWeight.bold,
-  color: Hexcolor('#55AB55'),
+  color: Colors.pink,
 );
 
 TextStyle kListsItemTitleStyle = TextStyle(
-  fontFamily: 'Helvatica',
+  
   fontSize: 18,
-  fontWeight: FontWeight.bold,
+  // fontWeight: FontWeight.bold,
   color: Hexcolor('#DEDEDE'),
 );
 
@@ -106,17 +122,21 @@ const THUMBNAIL_URL = '';
 
 const Color TRRANSPARENT_BACKGROUND_COLOR = Color(0x991C306D);
 const Color LINE_COLOR = Colors.white10;
-Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212');
+Color BASELINE_COLOR_TRANSPARENT = Hexcolor('#BF121212').withOpacity(0.45);
 // Color BASELINE_COLOR = Color.fromRGBO(28, 28, 30, 1);
+// Color BASELINE_COLOR = Hexcolor('#191414');
 Color BASELINE_COLOR = Hexcolor('#121212');
-Color ONE_LEVEL_ELEVATION = Hexcolor('#202020');
+Color ONE_LEVEL_ELEVATION = Hexcolor('#212121');
+// Color ONE_LEVEL_ELEVATION = Hexcolor('#121212');
 Color ONE_LEVEL_ELEVATION_WITHOPACITY = Hexcolor('#BF212121');
+// Color TWO_LEVEL_ELEVATION = Hexcolor('#202020');
 Color TWO_LEVEL_ELEVATION = Hexcolor('#303030');
 Color THREE_LEVEL_ELEVATION = Hexcolor('#424242');
 const double APP_BAR_HEIGHT = 56;
-const double LEFT_PADDING = 15;
+const double DEFAULT_PADDING = 15;
 const AVATAR_RADIUS = 20;
 const LOADING_INDICATOR_SIZE = 21.0;
+const TOAST_DURATION = 2;
 
 // Genres
 const Map<int, String> MOVIE_GENRES = {
@@ -165,6 +185,11 @@ const MOVIE_GENRE_DETAILS = [
     'genreId': 35,
   },
   {
+    'imageUrl': 'assets/images/movies/fantasy.jpg',
+    'title': 'Fantasy',
+    'genreId': 14,
+  },
+  {
     'imageUrl': 'assets/images/movies/crime.jpeg',
     'title': 'Crime',
     'genreId': 80,
@@ -192,7 +217,7 @@ const MOVIE_GENRE_DETAILS = [
   {
     'imageUrl': 'assets/images/movies/horror.jpg',
     'title': 'Horror',
-    'genreId': 14,
+    'genreId': 27,
   },
   {
     'imageUrl': 'assets/images/movies/music.jpg',

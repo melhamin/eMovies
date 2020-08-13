@@ -1,4 +1,6 @@
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/widgets/back_button.dart';
+import 'package:e_movies/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:photo_view/photo_view.dart';
@@ -23,33 +25,39 @@ class _ImageViewState extends State<ImageView>
   Widget build(BuildContext context) {
     // print(widget.images);
 
-    return Scaffold(
-        appBar: AppBar(
-          leading: BackButton(),
-          centerTitle: true,          
-          title: Text('Gallery', style: kTitleStyle),          
-        ),
-        body: Center(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: PhotoViewGallery.builder(
-              loadingBuilder: (context, event) {
-                return SpinKitCircle(
-                  color: Theme.of(context).accentColor,
-                  size: 21,
-                );
-              },
-              itemCount: widget.images.length,
-              builder: (context, index) {
-                return PhotoViewGalleryPageOptions(
-                  imageProvider: NetworkImage(widget.images[index]),
-                  // initialScale: PhotoViewComputedScale.contained * 0.8,
-                  heroAttributes:
-                      PhotoViewHeroAttributes(tag: widget.images[index]),
-                );
-              },
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Center(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: PhotoViewGallery.builder(
+                  loadingBuilder: (context, event) {
+                    return LoadingIndicator();
+                  },
+                  itemCount: widget.images.length,
+                  builder: (context, index) {
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: NetworkImage(widget.images[index]),
+                      // initialScale: PhotoViewComputedScale.contained * 0.8,
+                      heroAttributes:
+                          PhotoViewHeroAttributes(tag: widget.images[index]),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        ));
+            Positioned(
+              left: 0,
+              top: 10,
+              child: CustomBackButton(
+                text: 'Gallery',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

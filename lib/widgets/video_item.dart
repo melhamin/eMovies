@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/models/video_model.dart';
 import 'package:flutter/material.dart';
-import 'package:e_movies/providers/movies.dart' as prov;
 
 class VideoItem extends StatelessWidget {
-  final prov.VideoItem videoDetails;
+  final VideoModel videoDetails;
   final Function onTap;
   VideoItem({this.videoDetails, this.onTap});
   @override

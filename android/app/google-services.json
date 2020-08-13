@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "383461235038",
+    "firebase_url": "https://emovies-92793.firebaseio.com",
+    "project_id": "emovies-92793",
+    "storage_bucket": "emovies-92793.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383461235038:android:4490fcff3918a594e057cf",
+        "android_client_info": {
+          "package_name": "com.example.e_movies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383461235038-hh5lcdkmb7koivdki0q6ic7npap7e5th.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0wN6NQ-oTZzdzCPlQ4qz4R8h70o2UCpc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383461235038-hh5lcdkmb7koivdki0q6ic7npap7e5th.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

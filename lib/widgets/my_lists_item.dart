@@ -1,32 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_movies/consts/consts.dart';
+import 'package:e_movies/providers/lists.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 class MyListsItem extends StatelessWidget {
-  final Map<String, dynamic> list;
+  final ListItemModel list;
   final Function onTap;
   MyListsItem({this.list, this.onTap});
 
-  // // when length is 1 or 2 crossAxisCount should be 1 (in case 2 since childAspectRatio is 2, each image will occupy half of the space)
-  // int _calcCrossAxisCount(int length) {
-  //   return length <= 2 ? 1 : 2;
-  // }
-
-  // // when length 2 both ratio should be 2 (since crossAxisCount is 1 both images will be visible)
-  // double _calcChildAspectRation(int length) {
-  //   return length == 2 ? 2 : 1;
-  // }
-
   @override
   Widget build(BuildContext context) {
-    final data = list['data'];
+    final data = list.items;
     return InkWell(
       onTap: onTap,
       splashColor: Colors.black,
       highlightColor: Colors.black,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: LEFT_PADDING),
+        padding: const EdgeInsets.symmetric(horizontal: DEFAULT_PADDING),
+        margin: const EdgeInsets.only(bottom: 5),
         width: MediaQuery.of(context).size.width,
         height: 70,
         child: Row(
@@ -46,7 +38,7 @@ class MyListsItem extends StatelessWidget {
                   : (data.length > 0 &&
                           data.length < 4) // 0 > items > 4 show only one image
                       ? CachedNetworkImage(
-                          imageUrl: data[0]['posterUrl'],
+                          imageUrl: data[0].posterUrl,
                           fit: BoxFit.cover,
                         )
                       : GridView.builder(
@@ -55,37 +47,39 @@ class MyListsItem extends StatelessWidget {
                           itemCount: 4,
                           itemBuilder: (context, i) {
                             return CachedNetworkImage(
-                              imageUrl: data[i]['posterUrl'],
+                              imageUrl: data[i].posterUrl,
                               fit: BoxFit.cover,
                             );
                           },
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            mainAxisSpacing: 0,
-                            crossAxisSpacing: 0,
                             childAspectRatio: 1,
                           ),
                           scrollDirection: Axis.horizontal,
                         ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
+            Flexible(
               child: Align(
-                alignment: Alignment.topCenter,
+                alignment: Alignment.centerLeft,
                 child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.only(left: 10, top: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          list['title'],
+                          list.title,
                           style: kListsItemTitleStyle,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 5),
                         Text(
-                          data.length == 0 ? 'empty' : '${data.length} ' + (data.length == 1 ? 'item' : 'items'),
+                          data.length == 0
+                              ? 'empty'
+                              : '${data.length} ' +
+                                  (data.length == 1 ? 'item' : 'items'),
                           style: kSubtitle1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     )),

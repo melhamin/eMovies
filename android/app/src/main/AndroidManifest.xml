@@ -11,6 +11,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="eMovies"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- TODO: Add your API key here -->
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBRSfkDri6B5BUoDZEtZVjtjFDuhhPuc7s"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

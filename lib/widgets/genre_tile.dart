@@ -1,38 +1,23 @@
-import 'package:e_movies/pages/tv/tv_genre_item_screen.dart';
+import 'package:e_movies/screens/my_lists_screen.dart';
+import 'package:e_movies/screens/tv/tv_genre_item_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_movies/consts/consts.dart';
-import 'package:e_movies/pages/movie/movie_genre_item_screen.dart';
+import 'package:e_movies/screens/movie/movie_genre_item_screen.dart';
 
 class GenreTile extends StatelessWidget {
   final String title;
   final String imageUrl;
   final int genreId;
-  final int
-      mediaType; // whether item is movie or tv show so navigate to corresponding screen(0 for movies, 1 for tv show)
+  final MediaType mediaType;
 
   GenreTile({this.title, this.imageUrl, this.genreId, this.mediaType});
 
   Route _buildRoute() {
-    return PageRouteBuilder(
-      // settings: RouteSettings(arguments: genreId),
-      pageBuilder: (context, animation,
-              secondaryAnimation) => // navigates to corresponding screen according to media type parameter(0 for movies, 1 for tv show)
-          mediaType == 0 ? MovieGenreItem(genreId) : TVGenreItemScreen(genreId),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = const Offset(
-            1, 0); // if x > 0 and y = 0 transition is from right to left
-        var end =
-            Offset.zero; // if y > 0 and x = 0 transition is from bottom to top
-        var tween = Tween(begin: begin, end: end);
-        var offsetAnimation = animation.drive(tween);
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
+    return MaterialPageRoute(
+      builder: (context) =>mediaType == MediaType.Movie ? MovieGenreItem(genreId) : TVGenreItemScreen(genreId),      
+    );  
+   
   }
 
   void _onTap(BuildContext context) {
@@ -45,57 +30,59 @@ class GenreTile extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(
-          child: Stack(
+          child: Card(
+            color: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
             children: [
-              Card(
-                color: BASELINE_COLOR,
-                shadowColor: Colors.white30,
-                elevation: 5,
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  // color: Colors.red,
-                  child: FadeInImage(
-                    image: AssetImage(imageUrl),
-                    placeholder: AssetImage('assets/images/placeholder.png'),
-                    fit: BoxFit.cover,
-                  ),
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                // color: Colors.red,
+                child: FadeInImage(
+                  // fadeInDuration: Duration(milliseconds: 200),
+                  image: AssetImage(imageUrl),
+                  placeholder: AssetImage('assets/images/placeholder.png'),
+                  fit: BoxFit.cover,
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
+              Positioned(
+                // alignment: Alignment.bottomCenter,
+                bottom: -2,
                 child: Container(
-                  height: constraints.maxHeight * 0.4,
+                  height: constraints.maxHeight * 0.6,
                   width: constraints.maxWidth,
-                  margin: const EdgeInsets.only(bottom: 1, left: 1),
+                  padding: const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                         colors: [
-                          Color.fromRGBO(0, 0, 0, 0.9),
-                          Color.fromRGBO(0, 0, 0, 0.05),
+                          Colors.black.withOpacity(0.9),
+                          Colors.black.withOpacity(0.05),                                                    
                         ]),
                   ),
                 ),
               ),
               Positioned(
-                bottom: 15,
-                left: 15,
+                bottom: 10,
+                left: 10,
                 child: Text(
                   title,
-                  style: kTitleStyle,
+                  style: kTitleStyle2,
                 ),
               ),
             ],
+          ),
+            ),
           ),
           onTap: () => _onTap(context),
         );
       },
     );
   }
-
-  // @override
-  // // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
 }

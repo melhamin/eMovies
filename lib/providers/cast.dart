@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:e_movies/models/cast_model.dart';
+import 'package:e_movies/models/movie_model.dart';
+import 'package:e_movies/models/person_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -6,52 +9,29 @@ import 'package:http/http.dart' as http;
 import 'package:e_movies/providers/movies.dart';
 import 'package:e_movies/consts/consts.dart';
 
-class CastItem {
-  final int id;
-  final String name;
-  final String imageUrl;
 
-  String character;
-  String job;
 
-  CastItem({
-    @required this.id,
-    @required this.name,
-    @required this.imageUrl,
-    this.character,
-    this.job,
-  });
-}
 
-class Person {
-  final String name;
-  final DateTime birthday;
-  final String placeOfBirth;
-  final String biography;
-  final movies;  
-
-  Person({
-    this.name,
-    this.birthday,
-    this.placeOfBirth,
-    this.biography,
-    this.movies,
-  });
-}
 
 class Cast with ChangeNotifier {
 
   final API_KEY = DotEnv().env['API_KEY'];
 
-  Person person;
-  List<MovieItem> _movies = [];
+  PersonModel person;
+  List<MovieModel> _movies = [];
+  List<CastModel> _popularPeople = [];
 
-  Person get getPerson {
+
+  PersonModel get getPerson {
     return person;
   }
 
-  List<MovieItem> get getMovies {
+  List<MovieModel> get getMovies {
     return [..._movies];
+  }
+
+  List<CastModel> get popularPeople {
+    return [..._popularPeople];
   }
 
   Future<void> getPersonDetails(int id) async {    
@@ -70,12 +50,12 @@ class Cast with ChangeNotifier {
 
       _movies.clear();
       fetchedMovies.forEach((element) {
-        _movies.add(MovieItem.fromJson(element));
+        _movies.add(MovieModel.fromJson(element));
         // print('added element id ------------------> ${element['id']}');
       });
       
       
-      person = Person(
+      person = PersonModel(
         name: personData['name'],
         birthday: DateTime.parse(personData['birthday']),
         biography: personData['biography'],
@@ -84,14 +64,40 @@ class Cast with ChangeNotifier {
       );
       // print(personResponse.body);
 
+    notifyListeners();
     }
     catch (error) {
       print('cast provider error -------------> $error');
       throw error;
     }
-    notifyListeners();
 
   } 
+  Future<void> getPopularPeople(int page) async {    
+      final url = 'https://api.themoviedb.org/3/person/popular?api_key=$API_KEY&language=en-US&page=1';
+
+    try {
+      final response = await http.get(url);
+      final responseData = json.decode(response.body) as Map<String, dynamic>;    
+      final data = responseData['results'];
+
+      // print('results -----------> $data');
+
+      data.forEach((element) {
+        _popularPeople.add(CastModel.fromJson(element));
+      }); 
+
+      // print('done---------> $_popularPeople');
+     
+    notifyListeners();
+    }
+    catch (error) {
+      print('cast provider error -------------> $error');
+      throw error;
+    }
+
+  } 
+
+
 
 
 
