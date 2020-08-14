@@ -29,12 +29,12 @@
 Please feel free to pull the project and run it on your own machine.
 
 Steps to run on your own machine:
-- Grap an API key from [here](https://www.themoviedb.org/documentation/api)
+- Grab an API key from [here](https://www.themoviedb.org/documentation/api)
 - In the project directory create a .env file
 - Add you api key as (API_KEY = YOUR_API_KEY) in .env file
 - Build and run 
 
-Feel free to add or change anything or suggest any changes.
+Feedback and suggestions are welcomed.
 
 
 
