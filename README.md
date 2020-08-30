@@ -24,7 +24,6 @@
 - Share content with other users(coming soon)
 - See showtimes and cinemas nearby(coming soon)
 
-# eMovies is powered by The Movie Database(TMDB)
 
 Please feel free to pull the project and run it on your own machine.
 
@@ -36,5 +35,6 @@ Steps to run on your own machine:
 
 Feedback and suggestions are welcomed.
 
+### eMovies is powered by The Movie Database(TMDB)
 
 
