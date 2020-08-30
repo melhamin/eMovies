@@ -35,6 +35,6 @@ Steps to run on your own machine:
 
 Feedback and suggestions are welcomed.
 
-### eMovies is powered by The Movie Database(TMDB)
+###### eMovies is powered by The Movie Database(TMDB)
 
 
