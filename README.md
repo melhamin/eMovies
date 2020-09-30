@@ -79,6 +79,6 @@ SOFTWARE.
 
 Feedback and suggestions are welcomed.
 
-###### eMovies is powered by The Movie Database(TMDB)
+###### Powered by The Movie Database(TMDB)
 
 
