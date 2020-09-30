@@ -79,6 +79,4 @@ SOFTWARE.
 
 Feedback and suggestions are welcomed.
 
-###### Powered by The Movie Database(TMDB)
-
 
